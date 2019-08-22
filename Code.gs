@@ -1,7 +1,7 @@
 
-function ttt(data)
+function log(data)
 {
-   var spreadsheet = SpreadsheetApp.openById('1De09vO4YHLGzPpy8Xfzqg2YExEZ_5si0wvam3wagt1w');
+   var spreadsheet = SpreadsheetApp.openById('1wy0jQqGutfD_FAS3fT3yzih_FdpKKFimtLLhkpuSJ4U');
   var sheet = spreadsheet.getSheetByName('Sheet1');
   sheet.appendRow([data]);
 }
@@ -9,7 +9,8 @@ function ttt(data)
 
 function test()
 {
-          showMenu(432298769, CONTACTS_INFO);
+log('hello word');
+          //showMenu(432298769, CONTACTS_INFO);
   //sendMeetingNotifications();
   
   

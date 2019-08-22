@@ -3,12 +3,12 @@
 // Поставити трігер на checkReservedBooks, виконання щодня
 
 /* БАЗА ДАННИХ */
-var databaseSpreadSheetId = '1SIWh9duMMiaz2UClVM1amuY-Qw29KZuaHm141qI7oaY';
+var databaseSpreadSheetId = '1ew25_oLHQir6p8s2QI-b4QSUphGXbmhxMmBi1onbWvs';
 
 /* TELEGRAM */
-var token = "835758828:AAEsPoQzA9qZpVyIZISNWBom2hIeAFJgh_s"; 
+var token = "606081299:AAFH24fP4ojGn1VKECXz3aXOapHc2rInj_o"; 
 var telegramUrl = "https://api.telegram.org/bot" + token;
-var webAppUrl = "https://script.google.com/macros/s/AKfycbwA_dXcVLm1-tK-lZKsHZt5eWzE9l57C1Rl_VjOtO5SA876-2og/exec";
+var webAppUrl = "https://script.google.com/macros/s/AKfycbxxoi_mTYeG1yhl1DCOd3vqvF3f-mcRZJj3BQgm2Q/exec";
 
 /* НАЛАШТУВАННЯ */
 
