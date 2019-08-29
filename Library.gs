@@ -114,7 +114,7 @@ var LIBRARY_HISTORY_RETURNED = 'Повернута';
 var LIBRARY_PLACE = 'Де знаходиться книга';
 
 /* ПРАВИЛА КОРИСТУВАННЯ БIБЛIОТЕКОЮ */
-var LIBRARY_RULES = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quaerat provident, soluta est distinctio neque qui voluptatem dolores magni molestiae aspernatur quia rem laboriosam possimus nesciunt odit culpa nulla voluptate consequuntur.';
+var LIBRARY_RULES = "Любий читачу! Книжок у нас багато, а правил їх читання всього лише 5:\n\n1. Забронюйте книгу за допомогою меню кома-бота\n2. Прийдіть за нею в четвер о 19:00 на наше щотижневе засідання\n3. Залиште заставу за книгу (якщо ви не член клубу) та зробіть внесок на розвиток бібліотеки – <b>{0}грн</b>\n4. Читайте та залишайте відгук на книгу у себе в соціальних мережах з тегом #комачитає. І не забудьте підписатися на нас в instagram (https://www.instagram.com/koma.club) та facebook (https://www.facebook.com/ToastmastersUkrainian/)\n5. Повертайте книгу на поличку та переходьте до п.1\n\nПриємного читання! 📖";
 
 function processLibrary(userData, text) {
     if (userData.statuses[1] && text != LIBRARY_SHOW_LIST && text != LIBRARY_TAKE_BOOK && text != LIBRARY_SHOW_RULES) {
@@ -195,7 +195,8 @@ function processLibrary(userData, text) {
         else if (text == LIBRARY_SHOW_RULES) {
             var newStatus = LIBRARY + "___" + LIBRARY_SHOW_RULES + "___";
             updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userData.telegramId, MEMBERS_HEADER_TELEGRAM_STATUS, newStatus);
-            showMenu(userData.telegramId, LIBRARY_RULES);
+            var message = format(LIBRARY_RULES, LIBRARY_BOOK_FEE);
+            showMenu(userData.telegramId, message);
             return false;
         }
         
