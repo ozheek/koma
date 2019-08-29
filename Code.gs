@@ -9,8 +9,8 @@ function log(data)
 
 function test()
 {
-log('hello word');
-          //showMenu(432298769, CONTACTS_INFO);
+Browser.msgBox(JSON.stringify(getMe()));
+ 
   //sendMeetingNotifications();
   
   
@@ -45,6 +45,7 @@ log('hello word');
 function getMe() {
   var url = telegramUrl + "/getMe";
   var response = UrlFetchApp.fetch(url);
+  return response;
 }
 
 function doGet(e) {
@@ -54,6 +55,7 @@ function doGet(e) {
 
 function doPost(e)
 {  
+log(JSON.stringify(e));
   var contents = JSON.parse(e.postData.contents);
   //ttt(contents);
 
@@ -281,7 +283,7 @@ function processRequest(userData, text)
             //  isContinue = true;
             //}     
             else if (text == LIBRARY) {                         
-              showMenu(userData.telegramId, 'Яку операцію бажаєте виконати?', [LIBRARY_SHOW_LIST, LIBRARY_TAKE_BOOK]);
+              showMenu(userData.telegramId, 'Яку операцію бажаєте виконати?', [LIBRARY_SHOW_LIST, LIBRARY_TAKE_BOOK, LIBRARY_SHOW_RULES]);
               
               isContinue = true;
               //showLibraryBooks(userData.telegramId);

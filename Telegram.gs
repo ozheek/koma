@@ -6,11 +6,9 @@ function setWebhook() {
 }
 
 function sendText(chatId, text, replyMarkup) { 
-  if (!replyMarkup)
-  {
-    replyMarkup = '{"remove_keyboard": true}';
+  if(!replyMarkup){
+    replyMarkup = "";
   }
-  
   var data = {
     method: "post",
     payload: {

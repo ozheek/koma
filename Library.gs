@@ -12,6 +12,7 @@ var LIBRARY_RETURN_BOOK = 'Повернути книгу';
 var LIBRARY_TAKE_BOOK = 'Взяти книгу';
 var LIBRARY_ADD_BOOK = 'Додати книгу';
 var LIBRARY_SHOW_LIST = 'Показати список книг';
+var LIBRARY_SHOW_RULES = 'Правила користування бібліотекою';
 
 /* ТЕКСТИ */
 var LIBRARY_LIST = '<b>Список книг в бібліотеці:</b>\n\n';
@@ -63,7 +64,7 @@ var LIBRARY_RETUTRN_START = 'Введіть код книги, яку хочет
 var LIBRARY_RETURN_NOT_READ = 'Книгу <b>{0}</b> (<i>{1}</i>) ніхто не брав читати, її неможливо повернути.';
 var LIBRARY_RETURN_CONFIRM = 'Вам повернули книгу <b>{0}</b> (<i>{1}</i>), а ви віддали заставу <b>{2}грн</b>?';
 var LIBRARY_RETURN_CANCEL = 'Книгу <b>{0}</b> (<i>{1}</i>) не було повернуто. Її досі читає <b>{2}</b>.';
-var LIBRARY_RETURN_SUCCESS = 'Від сьогоднішнього дня книга <b>{0}</b> (<i>{1}</i>) доступна для наступного читата 😍';
+var LIBRARY_RETURN_SUCCESS = 'Від сьогоднішнього дня книга <b>{0}</b> (<i>{1}</i>) доступна для наступного читача 😍';
 
 var LIBRARY_TAKE_START = 'Введіть код книги:';
 var LIBRARY_TAKE_REQUESTED = 'Ваш запит, щоб взяти книгу <b>{0}</b> (<i>{1}</i>) відправлено бібліотекарю. \n\nПрийдіть на наступне засідання клубу за книгою, інакше резерв буде скасовано.';
@@ -112,8 +113,11 @@ var LIBRARY_HISTORY_RETURNED = 'Повернута';
 /* СПИСКИ */
 var LIBRARY_PLACE = 'Де знаходиться книга';
 
+/* ПРАВИЛА КОРИСТУВАННЯ БIБЛIОТЕКОЮ */
+var LIBRARY_RULES = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quaerat provident, soluta est distinctio neque qui voluptatem dolores magni molestiae aspernatur quia rem laboriosam possimus nesciunt odit culpa nulla voluptate consequuntur.';
+
 function processLibrary(userData, text) {
-    if (userData.statuses[1] && text != LIBRARY_SHOW_LIST && text != LIBRARY_TAKE_BOOK) {
+    if (userData.statuses[1] && text != LIBRARY_SHOW_LIST && text != LIBRARY_TAKE_BOOK && text != LIBRARY_SHOW_RULES) {
         if (userData.statuses[1] == LIBRARY_TAKE_BOOK) {
             if (userData.statuses[2]) {
                 if (!userData.statuses[3]) {
@@ -188,6 +192,13 @@ function processLibrary(userData, text) {
             showMenu(userData.telegramId, LIBRARY_TAKE_START, [LIBRARY_SHOW_LIST]);
             return false;
         }
+        else if (text == LIBRARY_SHOW_RULES) {
+            var newStatus = LIBRARY + "___" + LIBRARY_SHOW_RULES + "___";
+            updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userData.telegramId, MEMBERS_HEADER_TELEGRAM_STATUS, newStatus);
+            showMenu(userData.telegramId, LIBRARY_RULES);
+            return false;
+        }
+        
     }
 }
 
