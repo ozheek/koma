@@ -4,6 +4,7 @@ var SHEET_LIBRARY_HISTORY = 'Бібліотека (Історія)';
 /* ОПЦІЇ */
 var LIBRARY_BOOK_FEE = 10; // 10грн
 var LIBRARY_RESERVATION_DAYS = 7; // 7днів
+var LIBRARY_DAYS_BEFORE_RETURN = 1 // 1 день
 
 /* МЕНЮ */
 var LIBRARY = '📚 Бібліотека';
@@ -65,6 +66,8 @@ var LIBRARY_RETURN_NOT_READ = 'Книгу <b>{0}</b> (<i>{1}</i>) ніхто н�
 var LIBRARY_RETURN_CONFIRM = 'Вам повернули книгу <b>{0}</b> (<i>{1}</i>), а ви віддали заставу <b>{2}грн</b>?';
 var LIBRARY_RETURN_CANCEL = 'Книгу <b>{0}</b> (<i>{1}</i>) не було повернуто. Її досі читає <b>{2}</b>.';
 var LIBRARY_RETURN_SUCCESS = 'Від сьогоднішнього дня книга <b>{0}</b> (<i>{1}</i>) доступна для наступного читача 😍';
+var LIBRARY_RETURN_REMINDER = 'Привiт, {0}! \n\nВи взяли книгу <b>{1}</b> (<i>{2}</i>) на <b>{3}</b> днiв до <b>{4}</b>.\
+                               \n\nВ нас багато книг в бібліотеці, тож швиденько дочитуйте - і гайда брати нову! 😉';
 
 var LIBRARY_TAKE_START = 'Введіть код книги:';
 var LIBRARY_TAKE_REQUESTED = 'Ваш запит, щоб взяти книгу <b>{0}</b> (<i>{1}</i>) відправлено бібліотекарю. \n\nПрийдіть на наступне засідання клубу за книгою, інакше резерв буде скасовано.';
@@ -200,7 +203,7 @@ function processLibrary(userData, text) {
         else if (text == LIBRARY_SHOW_RULES) {
             var message = format(LIBRARY_RULES, LIBRARY_BOOK_FEE);
             showMenu(userData.telegramId, message);
-            return false;
+            return true;
         }
         
     }
@@ -702,4 +705,38 @@ function updateLibraryBook(code, status, givenBy, reader, readFrom, paidMortgage
             break;
         }
     }
+}
+
+
+function remindReserveEnding() {
+  var sheet = SpreadsheetApp.openById(databaseSpreadSheetId).getSheetByName(SHEET_LIBRARY);
+  var headerValues = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  var authorHeaderIndex = headerValues.findIndex(LIBRARY_HEADER_AUTHOR); 
+  var titleHeaderIndex = headerValues.findIndex(LIBRARY_HEADER_TITLE); 
+  var statusHeaderIndex = headerValues.findIndex(LIBRARY_HEADER_STATUS); 
+  var freeFromHeaderIndex = headerValues.findIndex(LIBRARY_HEADER_FREE_FROM); 
+  var readerHeaderIndex = headerValues.findIndex(LIBRARY_HEADER_READER);
+  var daysToReadHeaderIndex = headerValues.findIndex(LIBRARY_HEADER_DAYS_TO_READ);
+  var values = sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn()).getValues();
+  var increasedDate = new Date().setDate(new Date().getDate() + LIBRARY_DAYS_BEFORE_RETURN);
+  
+  for (var i = 0; i < values.length; i++) {
+        var row = values[i];
+        if (row[statusHeaderIndex] == LIBRARY_BOOK_STATUS_TAKEN) {
+            var freeFrom = parseDate(row[freeFromHeaderIndex]);
+            if (freeFrom <= increasedDate) {
+                var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, row[readerHeaderIndex]);
+                if (memberInfo) {
+                    showMenu(memberInfo.telegramId, format(LIBRARY_RETURN_REMINDER, memberInfo.callName || memberInfo.fullName, row[titleHeaderIndex], row[authorHeaderIndex], row[daysToReadHeaderIndex], formatDate(row[freeFromHeaderIndex])));                                                                                                                                                               
+                }
+            }
+        }
+  }
+}
+
+/* ЗАПУСТИТИ, ЩОБ ВСТАНОВИТИ ТРIГГЕР */
+
+function setRemindTrigger(){
+  var trigger = ScriptApp.newTrigger("remindReserveEnding").timeBased().atHour(16).everyDays(1).inTimezone("Europe/Kiev").create();
+  return trigger;
 }

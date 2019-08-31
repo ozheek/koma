@@ -382,38 +382,43 @@ function getAllMembers(searchHeader, searchValue) {
 
     return sortedMembers;
 }
-
+                   //Ім'я та прізвище| yegorka shalaiev
 function getMemberInfo(searchHeader, searchValue) {
     var sheet = SpreadsheetApp.openById(databaseSpreadSheetId).getSheetByName(SHEET_CONTACTS);
+    // массив заголовков листа
     var headerValues = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-
+    // индекс заголовка Ім'я та прізвище
     var searchColumnIndex = headerValues.findIndex(searchHeader);
-
+    // индекс колонок с ид телеграма, статусом и полным именем
     var telegramIdColumnIndex = headerValues.findIndex(MEMBERS_HEADER_TELEGRAM_ID);
     var statusColumnIndex = headerValues.findIndex(MEMBERS_HEADER_TELEGRAM_STATUS);
     var fullNameColumnIndex = headerValues.findIndex(MEMBERS_HEADER_FULLNAME);
-
+    var callNameColumnIndex = headerValues.findIndex(MEMBERS_HEADER_CALLNAME);
+    // выбор колонки под заголовком  Ім'я та прізвище
     var values = sheet.getRange(2, searchColumnIndex + 1, sheet.getLastRow(), 1).getValues();
+    // выбор ячейки yegorka shalaiev
     var userRowIndex = values.findIndex(searchValue) + 1 /* +1 to skip header */ ;
 
     if (userRowIndex == 0) {
         return null;
     }
-
+    // выбор рядка со всеми данными для yegorka shalaiev
     var userDataValues = sheet.getRange(userRowIndex + 1, 1, 1, sheet.getLastColumn()).getValues()[0];
-
+    // объект, ключ=заголовок, значение = данные для yegorka shalaiev под заголовком
     var fields = {};
     for (var i = 0; i < userDataValues.length; i++) {
         fields[headerValues[i]] = userDataValues[i];
     }
-
+    
     var status = userDataValues[statusColumnIndex];
     var telegramId = userDataValues[telegramIdColumnIndex];
     var fullName = userDataValues[fullNameColumnIndex];
+    var callName = userDataValues[callNameColumnIndex];
 
     return {
         telegramId: telegramId,
         fullName: fullName,
+        callName: callName,
         fields: fields,
         status: status,
         statuses: status.split('___')
