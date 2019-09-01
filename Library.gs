@@ -4,7 +4,7 @@ var SHEET_LIBRARY_HISTORY = 'Бібліотека (Історія)';
 /* ОПЦІЇ */
 var LIBRARY_BOOK_FEE = 10; // 10грн
 var LIBRARY_RESERVATION_DAYS = 7; // 7днів
-var LIBRARY_DAYS_BEFORE_RETURN = 1 // 1 день
+var LIBRARY_DAYS_BEFORE_RETURN = 3 // 3 days
 
 /* МЕНЮ */
 var LIBRARY = '📚 Бібліотека';
@@ -549,6 +549,7 @@ function showLibraryBooks(userTelegramId, checkGenre, checkRating, showWhoReads)
 }
 
 
+
 /* РОБОТА З БАЗОЮ */
 
 function getLibraryBookInformation(code) {
@@ -707,7 +708,6 @@ function updateLibraryBook(code, status, givenBy, reader, readFrom, paidMortgage
     }
 }
 
-
 function remindReserveEnding() {
   var sheet = SpreadsheetApp.openById(databaseSpreadSheetId).getSheetByName(SHEET_LIBRARY);
   var headerValues = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
@@ -718,19 +718,19 @@ function remindReserveEnding() {
   var readerHeaderIndex = headerValues.findIndex(LIBRARY_HEADER_READER);
   var daysToReadHeaderIndex = headerValues.findIndex(LIBRARY_HEADER_DAYS_TO_READ);
   var values = sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn()).getValues();
-  var increasedDate = new Date().setDate(new Date().getDate() + LIBRARY_DAYS_BEFORE_RETURN);
-  
+  var now = new Date();
   for (var i = 0; i < values.length; i++) {
-        var row = values[i];
-        if (row[statusHeaderIndex] == LIBRARY_BOOK_STATUS_TAKEN) {
-            var freeFrom = parseDate(row[freeFromHeaderIndex]);
-            if (freeFrom <= increasedDate) {
-                var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, row[readerHeaderIndex]);
-                if (memberInfo) {
-                    showMenu(memberInfo.telegramId, format(LIBRARY_RETURN_REMINDER, memberInfo.callName || memberInfo.fullName, row[titleHeaderIndex], row[authorHeaderIndex], row[daysToReadHeaderIndex], formatDate(row[freeFromHeaderIndex])));                                                                                                                                                               
-                }
-            }
+    var row = values[i];
+    if (row[statusHeaderIndex] == LIBRARY_BOOK_STATUS_TAKEN) {
+      var freeFrom = parseDate(row[freeFromHeaderIndex]);
+      var daysLeft = Math.ceil((freeFrom - now)/86400000);
+      if (daysLeft == LIBRARY_DAYS_BEFORE_RETURN) {
+        var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, row[readerHeaderIndex]);
+        if (memberInfo) {
+          showMenu(memberInfo.telegramId, format(LIBRARY_RETURN_REMINDER, memberInfo.callName || memberInfo.fullName, row[titleHeaderIndex], row[authorHeaderIndex], row[daysToReadHeaderIndex], formatDate(row[freeFromHeaderIndex])));                                                                                                                                                               
         }
+      }
+    }
   }
 }
 
