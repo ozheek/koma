@@ -9,7 +9,6 @@ function ttt(data)
 
 function test()
 {
-  sendText('432298769', MEETING_EDIT_ABOUT, '{"inline_keyboard":[[ {"text": "ddd"}]]},{"inline_keyboard":[[ {"text": "' + MEETING_ABOUT_CURRENT_TEXT + '", "switch_inline_query_current_chat" : "' + TEMPLATE_TEXT_BELOW + '"}]] }');
   //                      showMenu('432298769', format(MEETING_ASSIGN_ROLE_BUSY_DATE, 'date', 'sss'), getAvailableRoleDates('12-09-2019'));
 
 //cancelMeeting('19-09-2019', 'xxx');

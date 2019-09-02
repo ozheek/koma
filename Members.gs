@@ -424,6 +424,7 @@ function getMemberInfo(searchHeader, searchValue) {
         telegramId: telegramId,
         fullName: fullName,
         callName: fields[MEMBERS_HEADER_CALLNAME],
+        name : fields[MEMBERS_HEADER_NAME],
         fields: fields,
         status: status,
         statuses: status.split('___')

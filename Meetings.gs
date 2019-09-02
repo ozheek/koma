@@ -78,7 +78,7 @@ var MEETING_ASSIGN_ROLE_SUCCESS_MEMBER = 'Привіт, {0}! ☺️ На зас�
 
 var MEETING_CANCEL_CHOOSE_DATE = 'Виберіть дату засідання, що хочете скасувати:';
 
-var MEETING_NOTIFICATION_TITLE = 'Привіт, {2}! ☺️ Нагадую, що на засіданні <b>{0}</b> ви будете виконувати роль <b>{1}</b> 😍.';
+var MEETING_NOTIFICATION_TITLE = '{2}, Привіт! ☺️ Нагадую, що на засіданні <b>{0}</b> ви будете виконувати роль <b>{1}</b> 😍.';
 
 var MEETING_SPEACH_NO_PROJECT = '📣 Для вашої промови в мене поки немає назви проекту. Повідомте якомога раніше мені проект промови, використовуйте кнопку нижче 👇🏻';
 var MEETING_SPEACH_NO_TITLE = '📣 Щоб сформувати програму, мені потрібна назва вашої промови. Чи знаєте ви вже назву промови? Якщо так, заповніть її використовуючи кнопку нижче 👇🏻';
@@ -281,7 +281,8 @@ function processAssignRole(userData, text) {
                     if (tryToUpdateMeetingInfo(userData.statuses[4], text, userData.statuses[5])) {
                         var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, userData.statuses[5]);
                         if (memberInfo) {
-                          sendText(memberInfo.telegramId, format(MEETING_ASSIGN_ROLE_SUCCESS_MEMBER, memberInfo.callName, userData.statuses[4], text));
+                          var callName = memberInfo.callName || memberInfo.name;
+                          sendText(memberInfo.telegramId, format(MEETING_ASSIGN_ROLE_SUCCESS_MEMBER, callName, userData.statuses[4], text));
                         }
                         showMenu(userData.telegramId, format(MEETING_ASSIGN_ROLE_SUCCESS, userData.statuses[5], text, userData.statuses[4]));
                     } else {
@@ -335,7 +336,9 @@ function processMeeting(userData, text) {
         if (userData.statuses[1] == MEETING_SIGN_UP_FOR_ROLE) {
             return processSignUpForRole(userData, text);
         } else if (userData.statuses[1] == MEETING_SHOW_PROGRAM) {
+          if (!userData.statuses[2]) {
             return processShowMeetingProgram(userData, text);
+          }
         }
     } else {
         if (text == MEETING_SIGN_UP_FOR_ROLE) {
@@ -497,8 +500,9 @@ function sendMeetingNotifications() {
             }
             var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, roleMember);
             if (!memberInfo) continue;
-            showMenu(memberInfo.telegramId, format(MEETING_NOTIFICATION_TITLE, formatDate(date), shortRoleName, memberInfo.fields[MEMBERS_HEADER_CALLNAME]));
-            showMenu(memberInfo.telegramId, MEETING_ROLE_INFO[shortRoleName]);
+            var callName = memberInfo.callName || memberInfo.name;
+            sendText(memberInfo.telegramId, format(MEETING_NOTIFICATION_TITLE, formatDate(date), shortRoleName, callName));
+            sendText(memberInfo.telegramId, MEETING_ROLE_INFO[shortRoleName]);
 
             if (isSpeach) {
                 if (!role.speachProject) {

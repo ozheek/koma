@@ -1,6 +1,6 @@
 // НАЛАШТУВАННЯ СКРИПТА
 // FILE -> Spreadsheet settings -> встановити потрібну локаль 
-// Поставити трігер на checkReservedBooks, виконання щодня
+// Поставити трігер на checkLibraryBooksStatusAndSendNotifications, виконання щодня
 
 /* БАЗА ДАННИХ */
 var databaseSpreadSheetId = '1SIWh9duMMiaz2UClVM1amuY-Qw29KZuaHm141qI7oaY';
@@ -9,6 +9,13 @@ var databaseSpreadSheetId = '1SIWh9duMMiaz2UClVM1amuY-Qw29KZuaHm141qI7oaY';
 var token = "835758828:AAEsPoQzA9qZpVyIZISNWBom2hIeAFJgh_s"; 
 var telegramUrl = "https://api.telegram.org/bot" + token;
 var webAppUrl = "https://script.google.com/macros/s/AKfycbwA_dXcVLm1-tK-lZKsHZt5eWzE9l57C1Rl_VjOtO5SA876-2og/exec";
+
+/* ЗАПУСТИТИ, ЩОБ ВСТАНОВИТИ ТРIГГЕР */
+
+function setRemindTriggers(){
+  var trigger = ScriptApp.newTrigger("checkLibraryBooksStatusAndSendNotifications").timeBased().atHour(16).everyDays(1).inTimezone("Europe/Kiev").create();
+  return trigger;
+}
 
 /* НАЛАШТУВАННЯ */
 
