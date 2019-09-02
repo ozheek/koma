@@ -53,6 +53,8 @@ var MEMBERS_SELECT_NEW_NAME = 'Введіть нове ім\'я для {0} (по
 var MEMBERS_SELECT_NEW_LASTNAME = 'Введіть нове прізвище для {0} (повне ім\'я буде змінено автоматично). {1}:';
 var MEMBERS_SUCCESS_ADDED = 'Дякую! Додав <b>{0} {1}</b> (<i>{2}</i>) до бази.\n☎️: {3}, 📧: {4}\n\n<b>Ви можете продовжити заповнення інших полей.</b>';
 
+var MEMBERS_CANCEL_ROLE = '{0}, привіт! 😊 На жаль, вашу роль <b>{1}</b> на засіданні <b>{2}</b> було скасовано 😌. Зверніться до віце-президента з освіти, щоб дізнатись деталі або перегляньте програму засідання.\n\nМожливо цього дня в клубі відбудеться конкурс або інший захід 😍';
+
 var MEMBERS_TYPE_NEW_VALUE = 'Введіть нові дані поля {0} для {1}. {1}:';
 var MEMBERS_CHOOSE_STATUS = 'Виберіть статус:';
 var MEMBERS_CHOOSE_EMAIL_ADDRESS = 'Введіть електронну пошту:';
@@ -284,6 +286,13 @@ function showMembers(userTelegramId, status) {
     }
 }
 
+function sendMemberCanceledRoleMessage(memberInfo, date, role)
+{
+    if (memberInfo && memberInfo.telegramId) {
+      sendText(memberInfo.telegramId, format(MEMBERS_CANCEL_ROLE, memberInfo.fields[MEMBERS_HEADER_CALLNAME], role, date));              
+    }       
+}
+
 /* РОБОТА З БАЗОЮ */
 
 function insertMembersData(name, lastname, callName, phoneNumber, email, status, club, telegramId, username) {
@@ -414,6 +423,7 @@ function getMemberInfo(searchHeader, searchValue) {
     return {
         telegramId: telegramId,
         fullName: fullName,
+        callName: fields[MEMBERS_HEADER_CALLNAME],
         fields: fields,
         status: status,
         statuses: status.split('___')

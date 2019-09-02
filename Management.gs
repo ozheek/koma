@@ -49,7 +49,7 @@ function processManagement(userData, text) {
     else if (text == MEETING)
     {
       showMenu(userData.telegramId, 'Яку операцію бажаєте виконати?', 
-               [MEETING_ASSIGN_ROLE, MEETING_SHOW_ROLES]);
+               [MEETING_ASSIGN_ROLE, MEETING_SHOW_ROLES, MEETING_CANCEL, MEETING_EDIT]);
       return true;
     }      
     else if (text == LIBRARY)

@@ -28,7 +28,7 @@ function getMenuKeyBoard(options, userTelegramId) {
 
     var HOME_MANY_ITEMS_IN_A_LINE = 2;
 
-    if (options) {
+    if (options && options.length > 0) {
         var keyBoard = '[';
         for (var i = 0; i < options.length; i++) {
             var element = options[i];

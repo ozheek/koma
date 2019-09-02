@@ -30,6 +30,7 @@ function processCallback(contents)
           {
             if (updateMeetingInfo(date, role, '', false))
             {
+              sendMemberCanceledRoleMessage(memberInfo, date, role)
               showMenu(callbackId, "Роль " + role + " " + " на засіданні " + date + " тепер вільна!" );
             }
           }

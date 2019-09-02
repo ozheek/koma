@@ -9,7 +9,10 @@ function ttt(data)
 
 function test()
 {
-          showMenu(432298769, CONTACTS_INFO);
+  sendText('432298769', MEETING_EDIT_ABOUT, '{"inline_keyboard":[[ {"text": "ddd"}]]},{"inline_keyboard":[[ {"text": "' + MEETING_ABOUT_CURRENT_TEXT + '", "switch_inline_query_current_chat" : "' + TEMPLATE_TEXT_BELOW + '"}]] }');
+  //                      showMenu('432298769', format(MEETING_ASSIGN_ROLE_BUSY_DATE, 'date', 'sss'), getAvailableRoleDates('12-09-2019'));
+
+//cancelMeeting('19-09-2019', 'xxx');
   //sendMeetingNotifications();
   
   
@@ -199,7 +202,7 @@ function processRequest(userData, text)
                 var date = userData.statuses[1];
                 var speachRole = userData.statuses[2];
                 var fullName = userData.statuses[3];
-                var projectRole = speachRole.replace(MEETING_SPEACH, MEETING_SPEACH_PROJECT);
+                var projectRole = speachRole.replace(MEETING_ROLE_SPEACH, MEETING_ROLE_SPEACH_PROJECT);
                 
                 if (updateMeetingInfo(date, projectRole, text, false))
                 {
@@ -214,7 +217,7 @@ function processRequest(userData, text)
                 var date = userData.statuses[1];
                 var speachRole = userData.statuses[2];
                 var fullName = userData.statuses[3];
-                var projectRole = speachRole.replace(MEETING_SPEACH, MEETING_SPEACH_TITLE);
+                var projectRole = speachRole.replace(MEETING_ROLE_SPEACH, MEETING_ROLE_SPEACH_TITLE);
                 
                 if (updateMeetingInfo(date, projectRole, text, false))
                 {
