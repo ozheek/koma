@@ -4,7 +4,8 @@ var SHEET_LIBRARY_HISTORY = 'Бібліотека (Історія)';
 /* ОПЦІЇ */
 var LIBRARY_BOOK_FEE = 10; // 10грн
 var LIBRARY_RESERVATION_DAYS = 7; // 7днів
-var LIBRARY_DAYS_BEFORE_RETURN = 3 // 3 days
+var LIBRARY_DAYS_BEFORE_RETURN = 3; // 3 дні
+var LIBRARY_REMIND_RETURN_FREQUENCY = 7; // 7 днів
 
 /* МЕНЮ */
 var LIBRARY = '📚 Бібліотека';
@@ -66,15 +67,28 @@ var LIBRARY_RETURN_NOT_READ = 'Книгу <b>{0}</b> (<i>{1}</i>) ніхто н�
 var LIBRARY_RETURN_CONFIRM = 'Вам повернули книгу <b>{0}</b> (<i>{1}</i>), а ви віддали заставу <b>{2}грн</b>?';
 var LIBRARY_RETURN_CANCEL = 'Книгу <b>{0}</b> (<i>{1}</i>) не було повернуто. Її досі читає <b>{2}</b>.';
 var LIBRARY_RETURN_SUCCESS = 'Від сьогоднішнього дня книга <b>{0}</b> (<i>{1}</i>) доступна для наступного читача 😍';
-var LIBRARY_RETURN_REMINDER = 'Привiт, {0}! \n\nВи взяли книгу <b>{1}</b> (<i>{2}</i>) на <b>{3}</b> днiв до <b>{4}</b>.\
+var LIBRARY_RETURN_REMINDER = '{0}, привiт! \n\nВи взяли книгу <b>{1}</b> (<i>{2}</i>) на <b>{3}</b> днiв до <b>{4}</b>.\
                                \n\nВ нас багато книг в бібліотеці, тож швиденько дочитуйте - і гайда брати нову! 😉';
+var LIBRARY_RESERVE_OVER = '{0}, привіт! \n\nЦе маленьке нагадування, що ви взяли книгу <b>{1}</b> (<i>{2}</i>) в бібліотеці на <b>{3}</b> днiв до <b>{4}</b>.\
+                               \n\nЧас вже повернути її, можливо її хтось вже чекає 😊\
+                               \n\nЯкщо вам потрібно більше часу ⁠— зверніться до нашого бібліотекаря, щоб продовжити час 😉';
 
 var LIBRARY_TAKE_START = 'Введіть код книги:';
 var LIBRARY_TAKE_REQUESTED = 'Ваш запит, щоб взяти книгу <b>{0}</b> (<i>{1}</i>) відправлено бібліотекарю. \n\nПрийдіть на наступне засідання клубу за книгою, інакше резерв буде скасовано.';
 var LIBRARY_TAKE_CONFIRM = 'Ви хочете взяти книгу <b>{0}</b> (<i>{1}</i>)?';
 var LIBRARY_TAKE_BUSY = 'На жаль, книга <b>{0}</b> (<i>{1}</i>) зараз зайнята. Вона може бути вільна з {2}. Оберіть інші книгу, у нас багато цікавих 😍.';
-var LIBRARY_TAKE_CANCELED = 'На жаль, ви не прийшли на засідання і  резерв книги <b>{0}</b> (<i>{1}</i>) було скасовано. Зарезервуйте будь ласка книгу ще раз.';
+var LIBRARY_TAKE_CANCELED = '{0}, привіт!\
+\n\nНа жаль, ви не забрали книгу <b>{1}</b> (<i>{2}</i>) і її резерв було скасовано.\
+\n\nЯкщо ви плануєте ще взяти цю книгу, зарезервуйте її, будь ласка, ще раз 😊';
 var LIBRARY_TAKE_REQUEST = 'Користувач <b>{0}</b> (<i>{1}, {2}</i>) хоче взяти книгу <b>{3}</b> (<i>{4}</i>), код книги: {5}.';
+
+/* ПРАВИЛА КОРИСТУВАННЯ БIБЛIОТЕКОЮ */
+var LIBRARY_RULES = 'Любий читачу! Книжок у нас багато, а правил їх читання всього лише 5:\
+                    \n\n1. Забронюйте книгу за допомогою меню кома-бота\
+                    \n2. Прийдіть за нею в четвер о 19:00 на наше щотижневе засідання\
+                    \n3. Залиште заставу за книгу (якщо ви не член клубу) та зробіть внесок на розвиток бібліотеки – <b>{0}грн</b>\
+                    \n4. Читайте та залишайте відгук на книгу у себе в соціальних мережах з тегом #комачитає. І не забудьте підписатися на нас в <a href="https://www.instagram.com/koma.club">instagram</a> та <a href="https://www.facebook.com/ToastmastersUkrainian/">facebook</a>\
+                    \n5. Повертайте книгу на поличку та переходьте до п.1\n\nПриємного читання! 📖';
 
 /* ЗАГОЛОВКИ БАЗИ ДАННИХ */
 var LIBRARY_HEADER_CODE = "Код";
@@ -116,13 +130,6 @@ var LIBRARY_HISTORY_RETURNED = 'Повернута';
 /* СПИСКИ */
 var LIBRARY_PLACE = 'Де знаходиться книга';
 
-/* ПРАВИЛА КОРИСТУВАННЯ БIБЛIОТЕКОЮ */
-var LIBRARY_RULES = 'Любий читачу! Книжок у нас багато, а правил їх читання всього лише 5:\
-                    \n\n1. Забронюйте книгу за допомогою меню кома-бота\
-                    \n2. Прийдіть за нею в четвер о 19:00 на наше щотижневе засідання\
-                    \n3. Залиште заставу за книгу (якщо ви не член клубу) та зробіть внесок на розвиток бібліотеки – <b>{0}грн</b>\
-                    \n4. Читайте та залишайте відгук на книгу у себе в соціальних мережах з тегом #комачитає. І не забудьте підписатися на нас в <a href="https://www.instagram.com/koma.club">instagram</a> та <a href="https://www.facebook.com/ToastmastersUkrainian/">facebook</a>\
-                    \n5. Повертайте книгу на поличку та переходьте до п.1\n\nПриємного читання! 📖';
 
 function processLibrary(userData, text) {
     if (userData.statuses[1] && text != LIBRARY_SHOW_LIST && text != LIBRARY_TAKE_BOOK && text != LIBRARY_SHOW_RULES) {
@@ -213,15 +220,21 @@ function processLibraryManagement(userData, text) {
     if (userData.statuses[2]) {
         if (userData.statuses[2] == LIBRARY_SHOW_LIST) {
             if (userData.statuses[3]) {
-                if (!userData.statuses[4]) {
-                    if (userData.statuses[3] == LIBRARY_LIST_FILTER_BY_GENRE) {
-                        showLibraryBooks(userData.telegramId, text, null, true);
-                        return true;
-                    } else if (userData.statuses[3] == LIBRARY_LIST_FILTER_BY_RATING) {
-                        showLibraryBooks(userData.telegramId, null, text, true);
-                        return true;
-                    }
+                if (text == LIBRARY_GIVE_BOOK) {
+                  userData.statuses = userData.statuses.slice(0, 2);
+                  userData.status = userData.statuses.join('___') + '___';
+                  showMenu(userData.telegramId, LIBRARY_READ_START);
+                  return true;
                 }
+                else if (!userData.statuses[4]) {
+                      if (userData.statuses[3] == LIBRARY_LIST_FILTER_BY_GENRE) {
+                          showLibraryBooks(userData.telegramId, text, null, true);
+                          return true;
+                      } else if (userData.statuses[3] == LIBRARY_LIST_FILTER_BY_RATING) {
+                          showLibraryBooks(userData.telegramId, null, text, true);
+                          return true;
+                      }
+                  }
             } else {
                 if (text == LIBRARY_LIST_FILTER_ALL) {
                     showLibraryBooks(userData.telegramId, null, null, true);
@@ -425,35 +438,6 @@ function processLibraryManagement(userData, text) {
 
 // ОПЕРАЦИИ
 
-function checkReservedBooks() {
-    var sheet = SpreadsheetApp.openById(databaseSpreadSheetId).getSheetByName(SHEET_LIBRARY);
-
-    var headerValues = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-
-    var codeHeaderIndex = headerValues.findIndex(LIBRARY_HEADER_CODE);
-    var authorHeaderIndex = headerValues.findIndex(LIBRARY_HEADER_AUTHOR);
-    var titleHeaderIndex = headerValues.findIndex(LIBRARY_HEADER_TITLE);
-    var statusHeaderIndex = headerValues.findIndex(LIBRARY_HEADER_STATUS);
-    var freeFromHeaderIndex = headerValues.findIndex(LIBRARY_HEADER_FREE_FROM);
-    var readerHeaderIndex = headerValues.findIndex(LIBRARY_HEADER_READER);
-
-    var values = sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn()).getValues();
-
-    for (var i = 0; i < values.length; i++) {
-        var row = values[i];
-
-        if (row && row[titleHeaderIndex]) {
-            if ((new Date()) >= parseDate(row[freeFromHeaderIndex])) {
-                updateLibraryBook(row[codeHeaderIndex], LIBRARY_BOOK_STATUS_FREE, '', '', '', '', '');
-                var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, row[readerHeaderIndex]);
-                if (memberInfo) {
-                    showMenu(memberInfo.telegramId, format(LIBRARY_TAKE_CANCELED, row[titleHeaderIndex], row[authorHeaderIndex]));
-                }
-            }
-        }
-    }
-}
-
 function showLibraryBooks(userTelegramId, checkGenre, checkRating, showWhoReads) {
     var sheet = SpreadsheetApp.openById(databaseSpreadSheetId).getSheetByName(SHEET_LIBRARY);
 
@@ -476,10 +460,14 @@ function showLibraryBooks(userTelegramId, checkGenre, checkRating, showWhoReads)
     var placeHeaderIndex = headerValues.findIndex(LIBRARY_HEADER_PLACE);
     var ownerByHeaderIndex = headerValues.findIndex(LIBRARY_HEADER_OWNER);
 
+    var userData = getMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userTelegramId);
+
     var values = sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn()).getValues();
 
     var message = LIBRARY_LIST;
     var number = 1;
+    
+   
 
     for (var i = 0; i < values.length; i++) {
         var row = values[i];
@@ -536,16 +524,30 @@ function showLibraryBooks(userTelegramId, checkGenre, checkRating, showWhoReads)
 
         if (message.length >= 4048) {
             if (message) {
-                showMenu(userTelegramId, message, [LIBRARY_TAKE_BOOK]);
-                message = '';
+               if (userData.statuses[0] == MANAGEMENT)
+               {
+                  showMenu(userTelegramId, message, [LIBRARY_GIVE_BOOK]);
+                  message = '';
+               } 
+               else {
+                  showMenu(userTelegramId, message, [LIBRARY_TAKE_BOOK]);
+                  message = '';
+               }
             }
         }
     }
 
     if (message) {
+      if (userData.statuses[0] == MANAGEMENT)
+      {
+        showMenu(userTelegramId, message, [LIBRARY_GIVE_BOOK]);
+        message = '';
+      } 
+      else {
         showMenu(userTelegramId, message, [LIBRARY_TAKE_BOOK]);
         message = '';
-    }
+      }
+   }
 }
 
 
@@ -708,35 +710,59 @@ function updateLibraryBook(code, status, givenBy, reader, readFrom, paidMortgage
     }
 }
 
-function remindReserveEnding() {
+function checkLibraryBooksStatusAndSendNotifications() {
   var sheet = SpreadsheetApp.openById(databaseSpreadSheetId).getSheetByName(SHEET_LIBRARY);
-  var headerValues = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+
+  var headerValues = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];  
   var authorHeaderIndex = headerValues.findIndex(LIBRARY_HEADER_AUTHOR); 
+  var codeHeaderIndex = headerValues.findIndex(LIBRARY_HEADER_CODE); 
   var titleHeaderIndex = headerValues.findIndex(LIBRARY_HEADER_TITLE); 
   var statusHeaderIndex = headerValues.findIndex(LIBRARY_HEADER_STATUS); 
   var freeFromHeaderIndex = headerValues.findIndex(LIBRARY_HEADER_FREE_FROM); 
   var readerHeaderIndex = headerValues.findIndex(LIBRARY_HEADER_READER);
   var daysToReadHeaderIndex = headerValues.findIndex(LIBRARY_HEADER_DAYS_TO_READ);
+  
   var values = sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn()).getValues();
-  var now = new Date();
+  var now = new Date();  
+  
   for (var i = 0; i < values.length; i++) {
     var row = values[i];
-    if (row[statusHeaderIndex] == LIBRARY_BOOK_STATUS_TAKEN) {
-      var freeFrom = parseDate(row[freeFromHeaderIndex]);
-      var daysLeft = Math.ceil((freeFrom - now)/86400000);
-      if (daysLeft == LIBRARY_DAYS_BEFORE_RETURN) {
+    var status = row[statusHeaderIndex];
+    
+    if (status == LIBRARY_BOOK_STATUS_TAKEN) { 
+      var date = row[freeFromHeaderIndex];
+      if (date) {
+        var freeFrom = parseDate(date);
+        var daysLeft = Math.ceil((freeFrom - now)/86400000);
+        
+        if (daysLeft == LIBRARY_DAYS_BEFORE_RETURN) {
+          var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, row[readerHeaderIndex]);
+          if (memberInfo) {
+            var callName = memberInfo.callName || memberInfo.name;
+            sendText(memberInfo.telegramId, format(LIBRARY_RETURN_REMINDER, callName, row[titleHeaderIndex], row[authorHeaderIndex], row[daysToReadHeaderIndex], formatDate(row[freeFromHeaderIndex])));                                                                                                                                                               
+          }
+        } 
+        else if (daysLeft < 0 && daysLeft % LIBRARY_REMIND_RETURN_FREQUENCY == 0) {
+          var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, row[readerHeaderIndex]);
+          if (memberInfo) {
+            var callName = memberInfo.callName || memberInfo.name;
+            sendText(memberInfo.telegramId, format(LIBRARY_RESERVE_OVER, callName, row[titleHeaderIndex], row[authorHeaderIndex], row[daysToReadHeaderIndex], formatDate(row[freeFromHeaderIndex])));                                                                                                                                                               
+          }
+        }        
+      }
+    }
+    else if (status == LIBRARY_BOOK_STATUS_RESERVED)
+    {
+      var date = row[freeFromHeaderIndex];
+      if (!date || parseDate(date) < new Date()) {
+        updateLibraryBook(row[codeHeaderIndex], LIBRARY_BOOK_STATUS_FREE, '', '', '', '', '');
         var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, row[readerHeaderIndex]);
         if (memberInfo) {
-          showMenu(memberInfo.telegramId, format(LIBRARY_RETURN_REMINDER, memberInfo.callName || memberInfo.fullName, row[titleHeaderIndex], row[authorHeaderIndex], row[daysToReadHeaderIndex], formatDate(row[freeFromHeaderIndex])));                                                                                                                                                               
+          var callName = memberInfo.callName || memberInfo.name;
+          sendText(memberInfo.telegramId, format(LIBRARY_TAKE_CANCELED, callName, row[titleHeaderIndex], row[authorHeaderIndex]));
         }
       }
     }
   }
 }
 
-/* ЗАПУСТИТИ, ЩОБ ВСТАНОВИТИ ТРIГГЕР */
-
-function setRemindTrigger(){
-  var trigger = ScriptApp.newTrigger("remindReserveEnding").timeBased().atHour(16).everyDays(1).inTimezone("Europe/Kiev").create();
-  return trigger;
-}
