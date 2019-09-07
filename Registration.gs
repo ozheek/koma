@@ -23,11 +23,19 @@ var REGISTRATION_SUCCESS = '<b>Вітаю, {0}! Ви успішно зареєс
 \n1. Записуватись на ролі\
 \n2. Отримувати нагадування\
 \nта багато іншого...\
-\n\nЯ постійно розвиваюсь і якщо раптом, ви помітили, що щось працює не правильно. Обов\'язково повідомне офіцерам ☺';
+\n\nЯ постійно розвиваюсь і якщо, раптом, ви помітили, що щось працює неправильно - обов\'язково повідомте офіцерам ☺';
 
+var REGISTRATION_INVALID_NAME = "Будь ласка, введiть iм'я кирилицею!";
+var REGISTRATION_INVALID_LASTNAME = 'Будь ласка, введiть прiзвище кирилицею!';
+var REGISTRATION_INVALID_EMAIL = 'Це не дуже схоже на e-mail...\nПеревiрте, будь ласка, чи правильно Ви записали адресу';
+var REGISTRATION_NOT_FINISHED = 'Привiт! Ваш номер є у базi, але ми, схоже, не познайомились як слiд';
+/*
 var REGISTRATION_PHONE_NUMBER_IS_NOT_FOUND = 'На жаль, <b>телефон {0}</b> не закріплено за жодним користувачем 😔\
 \n\n<b>Але не хвилюйтесь, я вас зареєстрував, тепер ви маєте доступ до основних функцій бота 😍</b>\
 \n\nНадайте, будь ласка, персональну інформацію, щоб я міг вірно до вас звертатись 😊';
+*/
+
+
 
 var REGISTRATION_STEP_1 = 'Введіть ваше прізвище:'; //3
 var REGISTRATION_STEP_2 = 'Як вас звати (Ім\'я)?'; //1
@@ -35,61 +43,105 @@ var REGISTRATION_STEP_3 = 'Введіть або виберіть кличний
 var REGISTRATION_STEP_4 = 'Введіть, будь ласка, електронну пошту:';
 
 
+
+
+
 function processRegistration(userData, text) {
     if (userData.statuses[1]) {
         if (userData.statuses[2]) {
             if (userData.statuses[3]) {
-                if (text != EMPTY) {
-                    updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userData.telegramId, MEMBERS_HEADER_EMAIL_ADDRESS, text);
-                }
-
-                //var memberInfo = getMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userData.telegramId);
-                var firstname = capitalizeFirstLetter(userData.statuses[2]); //memberInfo.fields[MEMBERS_HEADER_LASTNAME];
-                var lastname = capitalizeFirstLetter(userData.statuses[1]); //memberInfo.fields[MEMBERS_HEADER_NAME];
-                var fullname = (firstname + ' ' + lastname).trim();
-
-                updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userData.telegramId, MEMBERS_HEADER_FULLNAME, fullname);
-
-                sendWelcomeMessage(userData.telegramId);
-
-                return false;
-            } else {
+                if (text) {
+                    if(text == EMPTY || validateEmail(text)) {
+                      updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userData.telegramId, MEMBERS_HEADER_EMAIL_ADDRESS, text);
+                      
+                      var firstname = capitalizeFirstLetter(userData.statuses[2]); //memberInfo.fields[MEMBERS_HEADER_LASTNAME];
+                      var lastname = capitalizeFirstLetter(userData.statuses[1]); //memberInfo.fields[MEMBERS_HEADER_NAME];
+                      var fullname = (firstname + ' ' + lastname).trim();
+      
+                      updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userData.telegramId, MEMBERS_HEADER_FULLNAME, fullname);
+      
+                      sendWelcomeMessage(userData.telegramId);
+                      
+                      return false;
+                      
+                    } 
+                    else 
+                    {
+                      sendText(userData.telegramId, REGISTRATION_INVALID_EMAIL);
+                      showMenu(userData.telegramId, REGISTRATION_STEP_4, [EMPTY]);
+                    }
+                } 
+            } 
+            else 
+            {
                 updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userData.telegramId, MEMBERS_HEADER_CALLNAME, capitalizeFirstLetter(text));
 
                 var memberInfo = getMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userData.telegramId);
+                
                 showMenu(userData.telegramId, REGISTRATION_STEP_4, [EMPTY]);
 
                 return true;
             }
-        } else {
-            var name = capitalizeFirstLetter(text);
-            var fullName = name + ' ' + userData.statuses[1];
-            var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, fullName);
-            if (memberInfo) {
-
-                var newStatus = REGISTRATION + "___";
-                updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userData.telegramId, MEMBERS_HEADER_TELEGRAM_STATUS, newStatus);
-
-                showMenu(userData.telegramId, format(REGISTRATION_MEMBER_ALREADY_EXISTS, fullName));
-                showMenu(userData.telegramId, REGISTRATION_STEP_1, [memberInfo.fields[MEMBERS_HEADER_LASTNAME]]);
-
-            } else {
-                updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userData.telegramId, MEMBERS_HEADER_NAME, name);
-                var callname = getCallName(name);
-
-                showMenu(userData.telegramId, REGISTRATION_STEP_3, [callname]);
-            }
-            return true;
         }
-    } else {
+        else 
+        {
+            var name = capitalizeFirstLetter(text);
+            
+            if (isCyrillic(name)) 
+            {
+              var fullName = name + ' ' + userData.statuses[1];
+              var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, fullName);
+              
+              if (memberInfo) 
+              {
+                  var newStatus = REGISTRATION + "___";
+                  var userTelegramId = userData.telegramId;
+                  var phoneNumber = userData.fields[MEMBERS_HEADER_MOBILE_PHONE_NUMBER];
+                  
+                  updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userTelegramId, MEMBERS_HEADER_TELEGRAM_STATUS, newStatus);
+                  
+                  sendText(userTelegramId, format(REGISTRATION_MEMBER_ALREADY_EXISTS, fullName));
+                  sendText(userTelegramId, REGISTRATION_STEP_1);
+                  
+                  checkRegistration(userTelegramId, phoneNumber);
+              } 
+              else 
+              {
+                updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userData.telegramId, MEMBERS_HEADER_NAME, name);
+                    
+                var callname = getCallName(name);
+  
+                showMenu(userData.telegramId, REGISTRATION_STEP_3, [callname]);
+              }
+              return true;
+            } 
+            else 
+            {
+              sendText(userData.telegramId, REGISTRATION_INVALID_NAME);
+            }
+        }
+    } 
+    else 
+    {
         var memberInfo = getMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userData.telegramId);
         var lastname = capitalizeFirstLetter(text); //memberInfo.fields[MEMBERS_HEADER_NAME];
-        updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userData.telegramId, MEMBERS_HEADER_LASTNAME, lastname);
-
-        showMenu(userData.telegramId, REGISTRATION_STEP_2, [memberInfo.fields[MEMBERS_HEADER_NAME]]);
-        return true;
+        
+        if(isCyrillic(lastname))
+        {
+          updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userData.telegramId, MEMBERS_HEADER_LASTNAME, lastname);
+          sendText(userData.telegramId, REGISTRATION_STEP_2 /* [memberInfo.fields[MEMBERS_HEADER_NAME]] */);
+          return true;
+        }
+        else 
+        {
+          sendText(userData.telegramId, REGISTRATION_INVALID_LASTNAME);
+        } 
     }
 }
+
+
+
+
 
 function requestPhoneNumberForRegistration(userTelegramId) {
     var keyBoard = '{\
@@ -103,32 +155,53 @@ function requestPhoneNumberForRegistration(userTelegramId) {
     sendText(userTelegramId, format(REGISTRATION_USER_IS_NOT_REGISTERED, REGISTRATION_PHONE_BUTTON_TEXT), keyBoard);
 }
 
-function checkRegistration(userTelegramId, phoneNumber, username, firstname, lastname) {
+
+
+
+
+
+function checkRegistration(userTelegramId, phoneNumber/*, username, firstname, lastname */) {
     var phoneNumberWithoutPlus = phoneNumber.replace('+', '');
-
-    updateMemberInfo(MEMBERS_HEADER_MOBILE_PHONE_NUMBER, phoneNumberWithoutPlus, MEMBERS_HEADER_TELEGRAM_ID, userTelegramId);
-    updateMemberInfo(MEMBERS_HEADER_MOBILE_PHONE_NUMBER, phoneNumberWithoutPlus, MEMBERS_HEADER_TELEGRAM, username);
-
     var contactInfo = getMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userTelegramId);
-
-    if (contactInfo) {
-        sendWelcomeMessage(userTelegramId);
-    } else {
-        //sendMessageToOfficer(OFFICER_POSITION_PRESIDENT, 'Привіт! Користувач <b>' + fullName + '</b> з телефоном <b>' + phoneNumber + '</b> спробував зареєструватись, але його <b>не було знайдено</b>.');
-        var callname = '';
-        var email = '';
+    
+    if(!contactInfo) 
+    {
+      //sendMessageToOfficer(OFFICER_POSITION_PRESIDENT, 'Привіт! Користувач <b>' + fullName + '</b> з телефоном <b>' + phoneNumber + '</b> спробував зареєструватись, але його <b>не було знайдено</b>.');
+        //var callname = '';
+        //var email = '';
+        //var club = '';
+        //insertMembersData(firstname, lastname, callname, phoneNumberWithoutPlus,  email, status, club, userTelegramId, username);
         var status = MEMBERS_STATUS_GUEST;
-        var club = '';
-
-        insertMembersData(firstname, lastname, callname, phoneNumberWithoutPlus, email, status, club, userTelegramId, username);
-
         var newStatus = REGISTRATION + "___";
+        
+        insertMembersData('', '', '', phoneNumberWithoutPlus,  '', status, '', userTelegramId, '');
         updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userTelegramId, MEMBERS_HEADER_TELEGRAM_STATUS, newStatus);
 
-        showMenu(userTelegramId, format(REGISTRATION_PHONE_NUMBER_IS_NOT_FOUND, phoneNumber));
-        showMenu(userTelegramId, REGISTRATION_STEP_1, [lastname]);
+        //sendText(userTelegramId, format(REGISTRATION_PHONE_NUMBER_IS_NOT_FOUND, phoneNumber));
+        sendText(userTelegramId, REGISTRATION_STEP_1);
+    }
+    else
+    {
+        if (contactInfo && contactInfo.name) {
+          showMainMenu(userTelegramId);
+        } 
+        else
+        {
+          var status = MEMBERS_STATUS_GUEST;
+          var newStatus = REGISTRATION + "___";
+          
+          updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userTelegramId, MEMBERS_HEADER_TELEGRAM_STATUS, newStatus);
+          sendText(userTelegramId,REGISTRATION_NOT_FINISHED);
+          sendText(userTelegramId, REGISTRATION_STEP_1);
+        }
     }
 }
+
+
+
+
+
+
 
 function sendWelcomeMessage(userTelegramId) {
     var memberInfo = getMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userTelegramId);
