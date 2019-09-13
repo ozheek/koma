@@ -595,13 +595,10 @@ function insertLibraryNewBook(title, author, url, rating, mortgage, genre, about
 
     var lastRowIndex = sheet.getLastRow();
     var lastColumnIndex = sheet.getLastColumn();
-
+    
     var lastCode = sheet.getRange(lastRowIndex, codeHeaderIndex + 1).getValue();
     var code = lastCode + 1;
-
-    sheet.insertRowsAfter(lastRowIndex, 1);
-    var insertedRange = sheet.getRange(lastRowIndex + 1, 1, 1, lastColumnIndex);
-
+    
     var values = [
         []
     ];
@@ -620,8 +617,8 @@ function insertLibraryNewBook(title, author, url, rating, mortgage, genre, about
     values[0][mortgageHeaderIndex] = mortgage;
     values[0][placeHeaderIndex] = place;
     values[0][ownerHeaderIndex] = owner;
-
-    insertedRange.setValues(values);
+    
+    addRow(sheet, values);
 }
 
 function insertLibraryHistory(code, title, author, type, managedBy, reader) {
@@ -658,7 +655,7 @@ function insertLibraryHistory(code, title, author, type, managedBy, reader) {
     values[0][managedByHeaderIndex] = managedBy;
     values[0][readerHeaderIndex] = reader;
     values[0][dateHeaderIndex] = formatDate(new Date());
-
+  
     insertedRange.setValues(values);
 }
 

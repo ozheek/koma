@@ -43,15 +43,46 @@ function validateEmail(email) {
   return re.test(email);
 }
 
-function isCyrillic(str) {
-  var rforeign = /[^\u0000-\u007f]/;
-  
-  if (rforeign.test(str)) 
+
+function isCyrillic(str) 
+{
+  for (var i = 0; i < str.length; i++) 
   {
-    return true;
-  } 
-  else 
-  {
-    return false;    
+    var symbolCode = str.charCodeAt(i);
+    
+    if (!(symbolCode >= 1025 && symbolCode <= 1170 || symbolCode == 39 || symbolCode == 45 || symbolCode == 32)) 
+    {
+      return false;
+    }
   }
+  return true;
+}
+
+
+function addRow(sheet, values) 
+{
+  var lastRow = sheet.getLastRow(); 
+  var lastColumn = sheet.getLastColumn();
+  var lastRange = sheet.getRange(lastRow,1,1,lastColumn);
+  
+  sheet.insertRowsAfter(lastRow, 1);
+  
+  var insertedRange = sheet.getRange(lastRow + 1, 1, 1, lastColumn);
+  
+  lastRange.copyTo(insertedRange, {contentsOnly:false});
+  
+  var formulas = insertedRange.getFormulas();
+  
+  insertedRange.clearContent();
+  insertedRange.setValues(values);
+  
+  for(var i = 0; i < formulas[0].length; i++){
+    var formula = formulas[0][i];
+    
+    if(formula){
+      var cell = sheet.getRange(lastRow + 1, i + 1);
+      
+      cell.setFormula(formula);
+    }
+  } 
 }
