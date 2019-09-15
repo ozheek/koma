@@ -61,6 +61,9 @@ var LIBRARY_READ_MORTGAGE_NO = 'відсутня'
 var LIBRARY_READ_READER = 'Виберіть або введіть ім\'я читата:';
 var LIBRARY_READ_START = 'Введіть код книги, яку хочете видати:'; 
 var LIBRARY_READ_DAYS_WORD = ' днів'; 
+var LIBRARY_READ_WARNING = 'Книга <b>{0}</b> (<i>{1}</i>) наразі зарезервована іншою людиною (<b>{2}</b>).\
+                            \nБажаєте продовжити, і видати цю книгу користувачу <b>{3}</b>?';
+var LIBRARY_READ_CANCEL_RESERVE_CONTINUES = 'Операцію скасовано 😯 \nКнига <b>{0}</b> (<i>{1}</i>) залишається зарезервованою за читачем <b>{2}</b>';
  
 var LIBRARY_RETUTRN_START = 'Введіть код книги, яку хочете повернути:';
 var LIBRARY_RETURN_NOT_READ = 'Книгу <b>{0}</b> (<i>{1}</i>) ніхто не брав читати, її неможливо повернути.';
@@ -247,56 +250,93 @@ function processLibraryManagement(userData, text) {
                     return true;
                 }
             }
-        } else if (userData.statuses[2] == LIBRARY_GIVE_BOOK) {
-            if (userData.statuses[3]) {
-                if (userData.statuses[4]) {
-                    var mortgage = text.replace(LIBRARY_READ_MORTGAGE_ZERO, '0');
-                    mortgage = mortgage.replace(LIBRARY_READ_MORTGAGE_CURRENCY, '');
-                    mortgage = mortgage.trim();
-                    if (!isNaN(mortgage) || userData.statuses[5]) {
+        } else if (userData.statuses[2] == LIBRARY_GIVE_BOOK) 
+          {
+            if (userData.statuses[3]) 
+            {
+                if (userData.statuses[4]) 
+                {
+                    if (text == YES && !userData.statuses[5])  
+                    { 
+                      var bookInfo = getLibraryBookInformation(userData.statuses[3]);
+                      var mortgages = [];
+  
+                      if (bookInfo[LIBRARY_HEADER_MORTGAGE] && bookInfo[LIBRARY_HEADER_MORTGAGE] > 0) 
+                      {
+                        mortgages.push(bookInfo[LIBRARY_HEADER_MORTGAGE] + LIBRARY_READ_MORTGAGE_CURRENCY);
+                      }
+                      
+                      mortgages.push(LIBRARY_READ_MORTGAGE_ZERO);
+                      showMenu(userData.telegramId, LIBRARY_READ_MORTGAGE, mortgages);
+                      return false;
+                    } 
+                    else if(text == NO && !userData.statuses[5])
+                    {
+                      var bookInfo = getLibraryBookInformation(userData.statuses[3]);
+                      showMenu(userData.telegramId, format(LIBRARY_READ_CANCEL_RESERVE_CONTINUES, bookInfo[LIBRARY_HEADER_TITLE], bookInfo[LIBRARY_HEADER_AUTHOR], bookInfo[LIBRARY_HEADER_READER]));
+                    }  
+                    else
+                    {
+                      var mortgage = text.replace(LIBRARY_READ_MORTGAGE_ZERO, '0');
+                      mortgage = mortgage.replace(LIBRARY_READ_MORTGAGE_CURRENCY, '');
+                      mortgage = mortgage.trim();
+                      if (!isNaN(mortgage) || userData.statuses[5]) {
                         if (userData.statuses[5]) {
-                            var code = userData.statuses[3];
-                            var reader = userData.statuses[4];
-                            var mortgage = userData.statuses[5].replace(LIBRARY_READ_MORTGAGE_ZERO, '0');
-                            mortgage = mortgage.replace(LIBRARY_READ_MORTGAGE_CURRENCY, '');
-                            mortgage = mortgage.trim();
-                            var days = (userData.statuses[6] || text).replace(LIBRARY_READ_DAYS_WORD, '');
-                            var bookInfo = getLibraryBookInformation(code);
-                            var title = bookInfo[LIBRARY_HEADER_TITLE];
-                            var author = bookInfo[LIBRARY_HEADER_AUTHOR];
-
-                            if (userData.statuses[6]) {
-                                if (text == YES) {
-                                    if (true || !bookInfo[LIBRARY_HEADER_READER]) {
-                                        updateLibraryBook(code, LIBRARY_BOOK_STATUS_TAKEN, userData.fullName, reader, formatDate(new Date()), mortgage, days);
-                                        insertFinanceData(FINANCE_LISTS_TYPE_LIBRARY, reader, mortgage, userData.fullName, LIBRARY_FINANCE_MORTGAGE);
-                                        insertFinanceData(FINANCE_LISTS_TYPE_LIBRARY, reader, LIBRARY_BOOK_FEE, userData.fullName, LIBRARY_FINANCE_BOOK_FEE);
-                                        insertLibraryHistory(code, title, author, LIBRARY_HISTORY_TOOK, userData.fullName, reader);
-                                        showMenu(userData.telegramId, format(LIBRARY_READ_SUCCESSES, title, author, reader, days, mortgage, LIBRARY_BOOK_FEE));
-                                        showParentManagementMenu(userData);
-                                    } else {
-                                        showMenu(userData.telegramId, format(LIBRARY_READ_BUSY, title, author, bookInfo[LIBRARY_HEADER_READER]));
-                                    }
-                                } else if (text == NO) {
-                                    showMenu(userData.telegramId, LIBRARY_READ_CANCEL);
-                                }
-                            } else {
-                                showMenu(userData.telegramId, format(LIBRARY_READ_CONFIRM, title, author, reader, days, mortgage, LIBRARY_BOOK_FEE), [NO, YES]);
-                                return true;
+                          var code = userData.statuses[3];
+                          var reader = userData.statuses[4];
+                          var mortgage = userData.statuses[5].replace(LIBRARY_READ_MORTGAGE_ZERO, '0');
+                          mortgage = mortgage.replace(LIBRARY_READ_MORTGAGE_CURRENCY, '');
+                          mortgage = mortgage.trim();
+                          var days = (userData.statuses[6] || text).replace(LIBRARY_READ_DAYS_WORD, '');
+                          var bookInfo = getLibraryBookInformation(code);
+                          var title = bookInfo[LIBRARY_HEADER_TITLE];
+                          var author = bookInfo[LIBRARY_HEADER_AUTHOR];
+                          
+                          if (userData.statuses[6]) {
+                            if (text == YES) {
+                              if (true || !bookInfo[LIBRARY_HEADER_READER]) {
+                                updateLibraryBook(code, LIBRARY_BOOK_STATUS_TAKEN, userData.fullName, reader, formatDate(new Date()), mortgage, days);
+                                insertFinanceData(FINANCE_LISTS_TYPE_LIBRARY, reader, mortgage, userData.fullName, LIBRARY_FINANCE_MORTGAGE);
+                                insertFinanceData(FINANCE_LISTS_TYPE_LIBRARY, reader, LIBRARY_BOOK_FEE, userData.fullName, LIBRARY_FINANCE_BOOK_FEE);
+                                insertLibraryHistory(code, title, author, LIBRARY_HISTORY_TOOK, userData.fullName, reader);
+                                showMenu(userData.telegramId, format(LIBRARY_READ_SUCCESSES, title, author, reader, days, mortgage, LIBRARY_BOOK_FEE));
+                                showParentManagementMenu(userData);
+                              } else {
+                                showMenu(userData.telegramId, format(LIBRARY_READ_BUSY, title, author, bookInfo[LIBRARY_HEADER_READER]));
+                              }
+                            } else if (text == NO) {
+                              showMenu(userData.telegramId, LIBRARY_READ_CANCEL);
                             }
-                        } else {
-                            showMenu(userData.telegramId, LIBRARY_READ_DAYS, getListItemsByName(LIBRARY_HEADER_DAYS_TO_READ));
+                          } else {
+                            showMenu(userData.telegramId, format(LIBRARY_READ_CONFIRM, title, author, reader, days, mortgage, LIBRARY_BOOK_FEE), [NO, YES]);
                             return true;
+                          }
+                        } else {
+                          showMenu(userData.telegramId, LIBRARY_READ_DAYS, getListItemsByName(LIBRARY_HEADER_DAYS_TO_READ));
+                          return true;
                         }
-                    } else {
+                      } else {
                         showMenu(userData.telegramId, format(FINANCE_WRONG_AMOUNT, text));
                         return false;
-                    }
+                      }
+                   }  
                 } else {
                     var bookInfo = getLibraryBookInformation(userData.statuses[3]);
+                    
+                    if(bookInfo[LIBRARY_HEADER_STATUS] == LIBRARY_BOOK_STATUS_RESERVED) 
+                    {
+                        if(bookInfo[LIBRARY_HEADER_READER] != text) 
+                        {
+                          showMenu(userData.telegramId, format(LIBRARY_READ_WARNING, bookInfo[LIBRARY_HEADER_TITLE], bookInfo[LIBRARY_HEADER_AUTHOR], bookInfo[LIBRARY_HEADER_READER], text), [NO, YES]);
+                          return true;
+                        }
+                    }
+                    
                     var mortgages = [];
-                    if (bookInfo[LIBRARY_HEADER_MORTGAGE] && bookInfo[LIBRARY_HEADER_MORTGAGE] > 0) {
-                        mortgages.push(bookInfo[LIBRARY_HEADER_MORTGAGE] + LIBRARY_READ_MORTGAGE_CURRENCY);
+                    
+                    if (bookInfo[LIBRARY_HEADER_MORTGAGE] && bookInfo[LIBRARY_HEADER_MORTGAGE] > 0) 
+                    {
+                      mortgages.push(bookInfo[LIBRARY_HEADER_MORTGAGE] + LIBRARY_READ_MORTGAGE_CURRENCY);
                     }
                     mortgages.push(LIBRARY_READ_MORTGAGE_ZERO);
                     showMenu(userData.telegramId, LIBRARY_READ_MORTGAGE, mortgages);
