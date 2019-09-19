@@ -295,13 +295,14 @@ function sendMemberCanceledRoleMessage(memberInfo, date, role)
 
 /* РОБОТА З БАЗОЮ */
 
-function insertMembersData(name, lastname, callName, phoneNumber, email, status, club, telegramId, username) {
+function insertMembersData(name, lastname, callName, phoneNumber, email, status, club, telegramId, username, telegramStatus) {
     var sheet = SpreadsheetApp.openById(databaseSpreadSheetId).getSheetByName(SHEET_CONTACTS);
     var headerValues = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
 
     var fullNameColumnIndex = headerValues.findIndex(MEMBERS_HEADER_FULLNAME);
     
     var telegramIdColumnIndex = headerValues.findIndex(MEMBERS_HEADER_TELEGRAM_ID);
+    var telegramStatusColumnIndex = headerValues.findIndex(MEMBERS_HEADER_TELEGRAM_STATUS);
     var telegramColumnIndex = headerValues.findIndex(MEMBERS_HEADER_TELEGRAM);
    
     var nameColumnIndex = headerValues.findIndex(MEMBERS_HEADER_NAME);
@@ -330,13 +331,14 @@ function insertMembersData(name, lastname, callName, phoneNumber, email, status,
     lastname = capitalizeFirstLetter(lastname);
     callName = capitalizeFirstLetter(callName);
 
-    values[0][fullNameColumnIndex] = name + ' ' + lastname;
+    values[0][fullNameColumnIndex] = (name + ' ' + lastname).trim();
     values[0][nameColumnIndex] = name;
     values[0][lastnameColumnIndex] = lastname;
     values[0][callNameColumnIndex] = callName;
     values[0][phoneNumberColumnIndex] = phoneNumber.replace('+', '');;
     values[0][emailAddressColumnIndex] = email;
     values[0][statusColumnIndex] = status;
+    values[0][telegramStatusColumnIndex] = telegramStatus;
     values[0][telegramIdColumnIndex] = (telegramId ? telegramId : '');  
     values[0][telegramColumnIndex] = (username ? username : '');
     values[0][dateColumnIndex] = formatDate(new Date());
