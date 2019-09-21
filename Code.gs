@@ -6,32 +6,7 @@ function ttt(data) {
 
 
 function test() {
-    //showMenu('574381511', 'Чув ви перемогли у конкурсі гумористичних промов, шкодую, що не бачив ваш виступ, але впевнений, що це було бімба-бімбезна. Вітаю з перемогою!')    ;
-    //showMenu('432298769', format(MEETING_ASSIGN_ROLE_BUSY_DATE, 'date', 'sss'), getAvailableRoleDates('12-09-2019'));
-
-    //cancelMeeting('19-09-2019', 'xxx');
-    //sendMeetingNotifications();
-
-
-    //var roles = getMeetingProgramRoles('29-08-2019');
-    //Browser.msgBox(JSON.stringify(roles));  
-    //sendText('574381511', 'Привіт! :) Який в тебе нік в телеграмі?');
-
-    //Browser.msgBox(getListItemsByName(INVENTORY_LISTS_TYPE));
-    //Browser.msgBox(format('Виберіть нового ментору для {0}:', 'ffff'));
-    //showMenu('574381511', 'Це було надходження коштів чи витрати?', ['ddddd'])         
-    //confirmRolesOfLastMeeting();
-    //Browser.msgBox(getMemberInfo(MEMBERS_HEADER_FULLNAME, 'Олексій Петренко').fields['Мобільний телефон']);
-    //askToConfirmMeetingRoles('432298769', '27-06-2019');
-    //showMenu('432298769', 'Це було надходження коштів чи витрати?', getAllMembers());
-    //showMenu('432298769', 'Це було надходження коштів чи витрати?', getAllMembers());
-    //var userData = getUserData('432298769');
-    //Browser.msgBox(JSON.stringify(userData));
-    //    var newStatus = userData.status + "DDD" + "___";
-    //    updateUserStatus('432298769', newStatus);
-
-    //showMainMenu('432298769');
-    //showMenu('432298769');
+confirmRolesOfLastMeeting();
 }
 
 function getMe() {
@@ -40,15 +15,11 @@ function getMe() {
 }
 
 function doGet(e) {
-    //{"parameter":{"ddd":"333"},"contextPath":"","contentLength":-1,"queryString":"ddd=333","parameters":{"ddd":["333"]}}
     return HtmlService.createHtmlOutput("Hello from KOMA");
 }
 
 function doPost(e) {
     var contents = JSON.parse(e.postData.contents);
-    //ttt(contents);
-
-    //parse user data
     if (contents.callback_query) {
         processCallback(contents);
     } else if (contents.message) {
@@ -219,10 +190,5 @@ function processRequest(userData, text) {
     if (isContinue) {
         var newStatus = userData.status + text + "___";
         updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userData.telegramId, MEMBERS_HEADER_TELEGRAM_STATUS, newStatus);
-    } else {
-        sendMessageToOfficer(OFFICER_POSITION_VP_EDUCATION, REPLY_SYMBOL +
-            ' ' + userData.fullName +
-            ' (' + userData.telegramId + ') ' +
-            REPLY_SYMBOL + '\n\n' + text);
     }
 }
