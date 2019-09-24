@@ -86,3 +86,75 @@ function addRow(sheet, values)
     }
   } 
 }
+
+
+function searchMemberInDatabase(text, telegramId, message, buttons) {
+
+  var checkResult = checkMembersName(text);
+                   
+  if (!checkResult) {
+    sendText(telegramId, MEMBER_SEARCH_FAILED);
+    return false;
+  } else if (typeof checkResult == "object"){
+    showMenu(telegramId, SEVERAL_MEMBERS_FOUND, checkResult);
+    return false;
+  } else {
+    sendText(telegramId, format(MEMBER_SEARCH_SUCCESS, checkResult));
+    showMenu(telegramId, message, buttons);
+    return true;
+  }
+}
+
+function checkMembersName(text) {
+
+  var sheet = SpreadsheetApp.openById(databaseSpreadSheetId).getSheetByName(SHEET_CONTACTS);
+  var headerValues = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  var fullNameColumnIndex = headerValues.findIndex(MEMBERS_HEADER_FULLNAME);
+  var values = sheet.getRange(2, fullNameColumnIndex + 1, sheet.getLastRow() - 1, 1).getValues();
+  var members = {};
+  var textAtLowerCase = text.trim().toLowerCase();
+  
+  for (var i = 0; i < values.length; i++) {
+  
+    var fullName = values[i][0];
+    var fullNameToLowerCase = values[i][0].toLowerCase();
+    
+    if ((fullNameToLowerCase == textAtLowerCase)) {
+    
+        return fullName;  
+        
+    } else if(~fullNameToLowerCase.indexOf(textAtLowerCase)) {
+    
+        members[fullName] = fullName; 
+        
+    } else {
+    
+       if (~textAtLowerCase.indexOf(' ')) {
+       
+          var splittedText = textAtLowerCase.split(' ');
+          var switchedText = (splittedText[1] + ' ' + splittedText[0]).trim();
+
+          if(fullNameToLowerCase == switchedText) {
+          
+            return fullName;
+            
+          } else if (~fullNameToLowerCase.indexOf(splittedText[0]) || ~fullNameToLowerCase.indexOf(splittedText[1])) {
+          
+            members[fullName] = fullName;
+          }  
+       } 
+    } 
+  }
+  
+  if(Object.keys(members).length) {
+  const sortedMembers = [];
+  
+  Object.keys(members).sort().forEach(function(key) {
+    sortedMembers.push(members[key]);
+  });
+    
+  return sortedMembers;
+  }
+  
+  return false;
+}

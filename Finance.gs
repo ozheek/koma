@@ -48,6 +48,7 @@ var FINANCE_IN_MEMBERSHIP = 'Оберіть члена клубу, що спла
 var FINANCE_IN_DESCRIPTION = 'Вкажіть опис операції, якщо потрібен:';
 var FINANCE_IN_START = 'За що було отримано гроші (виберіть з меню або введіть текст)?';
 
+
 var FINANCE_BALANCE_TITLE = "В кого гроші клубу:\r\n\r\n";
 var FINANCE_BALANCE_TOTAL = '\r\n<b>Загальний баланс:</b> {0}грн';
 var FINANCE_BALANCE_RECORD = '<b>{0}:</b> {1}грн\n';
@@ -150,8 +151,11 @@ function processFinance(userData, text) {
                       if (!userData.statuses[5]) {
                         if(!isNaN(text)) {
                           var description = '';
+                          
                           insertFinanceData(userData.statuses[3], userData.statuses[4], text, userData.fullName, description);
+                          updateMemberInfo(MEMBERS_HEADER_FULLNAME, userData.statuses[4], MEMBERS_HEADER_STATUS, MEMBERS_STATUS_MEMBER);
                           showMenu(userData.telegramId, format(FINANCE_IN_SUCCESS, text, userData.statuses[3]));
+                          
                           return true;
                         }
                         else {
@@ -160,8 +164,7 @@ function processFinance(userData, text) {
                         }
                       }
                     } else {
-                      showMenu(userData.telegramId, format(FINANCE_IN_AMOUNT, text));
-                        return true;
+                       return searchMemberInDatabase(text, userData.telegramId, format(FINANCE_IN_AMOUNT, text), null)
                     }
                 } else {
                     if (userData.statuses[4]) {
