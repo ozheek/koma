@@ -62,7 +62,7 @@ function isCyrillic(str)
   return true;
 }
 
-function addRow(sheet, values) 
+function addNewRowAndKeepFormulas(sheet, values) 
 {
   var lastRow = sheet.getLastRow(); 
   var lastColumn = sheet.getLastColumn();

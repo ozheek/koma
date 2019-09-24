@@ -386,52 +386,14 @@ function processMeetingManagement(userData, text) {
             return processAssignRole(userData, text);
         } else if (userData.statuses[2] == MEETING_CANCEL) {
             return processCancelMeeting(userData, text);
+        } else if (userData.statuses[2] == MEETING_SHOW_PROGRAM) {
+           if (userData.statuses[3] && userData.statuses[3] == MEETING_EDIT) {
+             return processEditMeeting(userData, text);
+           } else {
+             return processShowMeetingProgram(userData, text);      
+           } 
         } else if (userData.statuses[2] == MEETING_EDIT) {
-            if (userData.statuses[3]) {
-              if (userData.statuses[4]) {
-                if (!userData.statuses[5]) {
-                  var date = userData.statuses[3];
-                  var field = userData.statuses[4];
-                  var value = text;
-                  if (value[0] == '@') { 
-                    var spaceIndex = value.indexOf(' ');
-                    if (spaceIndex > -1) {
-                      value = value.replace(TEMPLATE_TEXT_BELOW, '');
-                      value = value.substring(spaceIndex + 1).trim();
-                    }
-                  }
-                  if (updateMeetingInfo(date, field, value, false))
-                  {
-                    showMenu(userData.telegramId, MEETING_EDIT_SUCCESS);
-                  }
-                  else {
-                    showMenu(userData.telegramId, MEETING_EDIT_FAILED);
-                  }
-                }
-              }
-              else
-              {
-                if (text == MEETING_ABOUT) {
-                  var text = getMeetingInfo(userData.statuses[3], MEETING_ABOUT).escapeSpecialChars();
-                  showMenu(userData.telegramId, MEETING_EDIT_ABOUT_1);
-                  sendText(userData.telegramId, MEETING_EDIT_ABOUT_2, '{"inline_keyboard":[[ {"text": "' + MEETING_ABOUT_CURRENT_TEXT + '", "switch_inline_query_current_chat" : "' + TEMPLATE_TEXT_BELOW + text + '"}]] }');
-                  return true;
-                }
-                else if (text == MEETING_THEME) {
-                  showMenu(userData.telegramId, MEETING_EDIT_THEME);
-                  return true;
-                }
-                else if (text == MEETING_WORD_OF_THE_DAY) {
-                  showMenu(userData.telegramId, MEETING_EDIT_WORD_OF_THE_DAY);
-                  return true;
-                }
-              }
-            }
-          else
-          {
-            showMenu(userData.telegramId, MEETING_EDIT_SELECT, [MEETING_ABOUT, MEETING_THEME, MEETING_WORD_OF_THE_DAY]);
-            return true;
-          }
+             return processEditMeeting(userData, text);
         }
     } else {
         if (text == MEETING_ASSIGN_ROLE) {
@@ -446,8 +408,60 @@ function processMeetingManagement(userData, text) {
         } else if (text == MEETING_EDIT) {
             showMenu(userData.telegramId, MEETING_EDIT_CHOOSE_DATE, getNextMeetingDates(SIGN_UP_FOR_NEXT_MEETINGS_AMOUNT));
             return true;
+        } else if(text == MEETING_SHOW_PROGRAM) {
+            showMenu(userData.telegramId, MEETING_PROGRAM_CHOOSE_DATE, getNextMeetingDates(SIGN_UP_FOR_NEXT_MEETINGS_AMOUNT));
+            return true;
         }
     }
+}
+
+function processEditMeeting(userData, text) {
+   const dateIndexInStatuses = 3;
+   var statusesIndexToStart = (userData.statuses[2] == MEETING_SHOW_PROGRAM) ? dateIndexInStatuses + 1 : dateIndexInStatuses;
+   var fieldIndexInStatuses = statusesIndexToStart + 1;
+   
+   if (userData.statuses[statusesIndexToStart]) {
+     if (userData.statuses[statusesIndexToStart + 1]) {
+       if (!userData.statuses[statusesIndexToStart + 2]) {
+         var date = userData.statuses[dateIndexInStatuses];
+         var field = userData.statuses[fieldIndexInStatuses];
+         var value = text;
+         if (value[0] == '@') { 
+           var spaceIndex = value.indexOf(' ');
+           if (spaceIndex > -1) {
+             value = value.replace(TEMPLATE_TEXT_BELOW, '');
+             value = value.substring(spaceIndex + 1).trim();
+           }
+         }
+         if (updateMeetingInfo(date, field, value, false))
+         {
+           showMenu(userData.telegramId, MEETING_EDIT_SUCCESS);
+         }
+         else {
+           showMenu(userData.telegramId, MEETING_EDIT_FAILED);
+         }
+       }
+     } else {
+       if (text == MEETING_ABOUT) {
+         var text = getMeetingInfo(userData.statuses[dateIndexInStatuses], MEETING_ABOUT);
+         showMenu(userData.telegramId, MEETING_EDIT_ABOUT_1);
+         sendText(userData.telegramId, MEETING_EDIT_ABOUT_2, '{"inline_keyboard":[[ {"text": "' + MEETING_ABOUT_CURRENT_TEXT + '", "switch_inline_query_current_chat" : "' + TEMPLATE_TEXT_BELOW + text + '"}]] }');
+         return true;
+       }
+       else if (text == MEETING_THEME) {
+         showMenu(userData.telegramId, MEETING_EDIT_THEME);
+         return true;
+       }
+       else if (text == MEETING_WORD_OF_THE_DAY) {
+         showMenu(userData.telegramId, MEETING_EDIT_WORD_OF_THE_DAY);
+         return true;
+       }
+     }
+   }
+  else {
+    showMenu(userData.telegramId, MEETING_EDIT_SELECT, [MEETING_ABOUT, MEETING_THEME, MEETING_WORD_OF_THE_DAY]);
+    return true;
+  } 
 }
 
 /* ФУНКЦІЇ */
