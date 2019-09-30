@@ -6,7 +6,9 @@ function ttt(data) {
 
 
 function test() {
-confirmRolesOfLastMeeting();
+//confirmRolesOfLastMeeting();
+  showMeetingProgramAndCallbacks('432298769', '26-09-2019');
+  //showMeetingProgramAndCallbacks('432298769', '26-09-2019', 'ffff')
 }
 
 function getMe() {

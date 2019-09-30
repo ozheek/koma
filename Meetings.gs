@@ -24,8 +24,9 @@ var MEETING_SIGN_UP_DATE = "Вибрати засідання (дату)";
 var MEETING_SIGN_UP_ROLE = "Вибрати роль";
 
 var MEETING_ROLE_REJECT = '❗ Звільнити';
-var MEETING_ROLE_CHANGE = '❗ Змінити';
+var MEETING_ROLE_CHANGE = '📝 Змінити';
 var MEETING_ROLE_CLEAN = 'Ніхто';
+var MEETING_ROLE_EMPTY = '❗ Скасувати';
 var MEETING_ROLE_NOBODY = 'Ніхто не виконував';
 var MEETING_ROLE_REJECT_CALLBACK = 'unsign_role';
 var MEETING_ROLE_CHANGE_CALLBACK = 'change_role';
@@ -93,6 +94,7 @@ var MEETING_PROGRAM_TITLE = '<b>Програма засідання \n\n📆 {0}
 var MEETING_PROGRAM_ROLE_INFO = '<b>{0}</b>:\n{1}\n\n';
 var MEETING_PROGRAM_ROLE_SPEACH_INFO = '<b>{0}:</b>\n{2} ⁠— <i>"{1}"</i>\n\n';
 var MEETING_PROGRAM_ROLE_NO_MEMBER = '⇨ <i>Роль вільна</i>';
+var MEETING_PROGRAM_ROLE_EMPTY = '⇨ <i>Не вказано</i>';
 
 var MEETING_SIGN_UP_SUCCESS = 'Вітаю! Ви будете виконувати роль <b>{0}</b> на засіданні <b>{1}</b>! 😍';
 var MEETING_SIGN_UP_ROLES_BUSY = 'На жаль, роль {0} на засіданні {1} вже зайнята. Спробуйте іншу роль.';
@@ -152,6 +154,8 @@ var MEETING_HEADER_DATE = "Дата";
 
 var MEETING_ROLE_ICONS = [];
 MEETING_ROLE_ICONS[MEETING_ROLE_SPEACH] = "‍🎤";
+MEETING_ROLE_ICONS[MEETING_ROLE_SPEACH_TITLE] = "📰";
+MEETING_ROLE_ICONS[MEETING_ROLE_SPEACH_PROJECT] = "📑";
 MEETING_ROLE_ICONS[MEETING_ROLE_EVALUATION] = "🍬";
 MEETING_ROLE_ICONS[MEETING_ROLE_TOASTMASTER] = "🤵";
 MEETING_ROLE_ICONS[MEETING_ROLE_AH_COUNTER] = "🐞";
@@ -163,6 +167,9 @@ MEETING_ROLE_ICONS[MEETING_ROLE_TABLE_TOPIC_MASTER] = "🕺";
 MEETING_ROLE_ICONS[MEETING_ROLE_TABLE_TOPIC_EVALUATOR] = "🍭";
 MEETING_ROLE_ICONS[MEETING_ROLE_GENERAL_EVALUATOR] = "🏀";
 
+MEETING_ROLE_ICONS[MEETING_WORD_OF_THE_DAY] = "💬";
+MEETING_ROLE_ICONS[MEETING_THEME] = "💡";
+ 
                    
 function processShowMeetingProgram(userData, text) {
     var roles = getMeetingProgramRoles(text);

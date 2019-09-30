@@ -13,8 +13,12 @@ var MEMBERS_POSITIONS = "Посади";
 var MEMBERS_PROGRAMS = "Програми";
 var MEMBERS_CLUBS = "Клуби";
 
+var MEMBERS_PROGRAM_KOMA = 'КОМА';
+var MEMBERS_PROGRAM_TOASTMASTERS = 'Toastmasters';
+
 /* СТАТУСИ */
 var MEMBERS_STATUS_GUEST = 'Гість';
+var MEMBERS_STATUS_MEMBER = 'Дійсний член';
 
 /* ЗАГОЛОВКИ БАЗИ ДАННИХ */
 var MEMBERS_HEADER_FULLNAME = "Ім'я та прізвище";
@@ -31,6 +35,13 @@ var MEMBERS_HEADER_DATE = 'Дата реєстрації';
 var MEMBERS_HEADER_MENTOR = 'Наставник';
 var MEMBERS_HEADER_FACEBOOK = 'Facebook';
 var MEMBERS_HEADER_TELEGRAM = 'Телеграм';
+
+/*ПОШУК ПО БАЗI*/
+var MEMBER_SEARCH_FAILED = 'На жаль, члена клубу з таким iменем не було знайдено в базi...\
+                        \n\nПеревiрте, будь ласка, чи правильно ви ввели iм\'я і прiзвище та спробуйте знову!';
+var SEVERAL_MEMBERS_FOUND = 'За вашим запитом я знайшов декiлька членiв клубу.\
+                             \n\nБудь ласка, оберiть когось iз них або повторiть пошук!';
+var MEMBER_SEARCH_SUCCESS = 'Я знайшов члена клубу з iменем <b>{0}</b> у своїй базi, i ми можемо продовжувати далi!'
 
 /* РОБОЧІ ЗАГОЛОВКИ */
 var MEMBERS_HEADER_TELEGRAM_ID = "telegram_id";
@@ -366,31 +377,35 @@ function getAllMembers(searchHeader, searchValue) {
     var sheet = SpreadsheetApp.openById(databaseSpreadSheetId).getSheetByName(SHEET_CONTACTS);
     var headerValues = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
 
-    var fullNameColumnIndex = headerValues.findIndex(MEMBERS_HEADER_FULLNAME);
+    //var fullNameColumnIndex = headerValues.findIndex(MEMBERS_HEADER_FULLNAME); 
     var lastNameColumnIndex = headerValues.findIndex(MEMBERS_HEADER_LASTNAME);
+    var firstNameColumnIndex = headerValues.findIndex(MEMBERS_HEADER_NAME);
     var searchColumnIndex = headerValues.findIndex(searchHeader);
-
+    
     var members = {};
 
-    var range = sheet.getRange(2, 1, sheet.getLastRow(), sheet.getLastColumn());
+    var range = sheet.getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn());
     var values = range.getValues();
 
     for (var i = 0; i < values.length; i++) {
         if (!searchHeader || searchHeader && (!searchValue && values[i][searchColumnIndex] || values[i][searchColumnIndex] == searchValue)) {
-            var fullName = values[i][fullNameColumnIndex];
-
+            //var fullName = values[i][fullNameColumnIndex];
             // Сортування за прізвищем
             var lastName = values[i][lastNameColumnIndex];
+            var firstName = values[i][firstNameColumnIndex];
+            if (!lastName || !firstName) continue;
+            //var fullName = lastName + ' ' + firstName;
+            var fullName = firstName + ' ' + lastName;
             members[fullName] = fullName;
             // щоб сортувати за ім'ям: members[fullName] = fullName;
-        }
+        } 
     }
 
     const sortedMembers = [];
     Object.keys(members).sort().forEach(function(key) {
         sortedMembers.push(members[key]);
     });
-
+    
     return sortedMembers;
 }
 

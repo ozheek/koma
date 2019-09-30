@@ -30,21 +30,21 @@ var FINANCE_WRONG_AMOUNT = "Введена вами сума '{0}' не є чи�
 var FINANCE_TRANSFER_DESCRIPTION = 'Передача кошти від члена клубу {0} члену клуба {1}';
 var FINANCE_TRANSFER_SUCCESS = 'Дякую, записав, що ви передали {0}грн {1}! 😍';
 var FINANCE_TRANSFER_AMOUNT = 'Яку суму (грн) ви передаєте {0}?';
-var FINANCE_TRANSFER_START = 'Оберіть члена клубу, якому ви передаєте кошти?';
+var FINANCE_TRANSFER_START = 'Оберіть члена клубу (або введіть ім\'я для пошуку), якому ви передаєте кошти?';
 
 var FINANCE_OUT_TM_SUCCESS = 'Дякую, записав, що витрачено на сплату в ТМ {0}грн за {1}! 😉';
 var FINANCE_OUT_TM_AMOUNT = 'Яка сума (грн) сплачена в ТМ за {0}?';
 
 var FINANCE_OUT_SUCCESS = 'Дякую, записав, що витрачено {0}грн на {1}! 😉';
 var FINANCE_OUT_AMOUNT = 'Яка сума (грн)?';
-var FINANCE_OUT_MEMBERSHIP = 'Оберіть члена клубу, за якого сплачено членський внесок?';
+var FINANCE_OUT_MEMBERSHIP = 'Оберіть члена клубу (або введіть ім\'я для пошуку), за якого сплачено членський внесок?';
 var FINANCE_OUT_DESCRIPTION = 'Вкажіть опис операції, якщо потрібен:';
 var FINANCE_OUT_START= 'На що було потрачено гроші (виберіть з меню або введіть текст)?';
 
 var FINANCE_IN_TM_SUCCESS = 'Дякую, записав, що отримано членський внесок {0}грн від {1}! 😉';
 var FINANCE_IN_SUCCESS = 'Дякую, записав, що отримано {0}грн за {1}! 😉';
 var FINANCE_IN_AMOUNT = 'Яка сума (грн)?';
-var FINANCE_IN_MEMBERSHIP = 'Оберіть члена клубу, що сплатив членський внесок?';
+var FINANCE_IN_MEMBERSHIP = 'Оберіть члена клубу (або введіть ім\'я для пошуку), що сплатив членський внесок?';
 var FINANCE_IN_DESCRIPTION = 'Вкажіть опис операції, якщо потрібен:';
 var FINANCE_IN_START = 'За що було отримано гроші (виберіть з меню або введіть текст)?';
 
@@ -150,8 +150,13 @@ function processFinance(userData, text) {
                       if (!userData.statuses[5]) {
                         if(!isNaN(text)) {
                           var description = '';
+                          
                           insertFinanceData(userData.statuses[3], userData.statuses[4], text, userData.fullName, description);
+                          var program = userData.statuses[3] == FINANCE_LISTS_TYPE_MEMBERSHIP_TM ? MEMBERS_PROGRAM_TOASTMASTERS : MEMBERS_PROGRAM_KOMA;
+                          updateMemberInfo(MEMBERS_HEADER_FULLNAME, userData.statuses[4], MEMBERS_HEADER_PROGRAM, program);         
+                          updateMemberInfo(MEMBERS_HEADER_FULLNAME, userData.statuses[4], MEMBERS_HEADER_STATUS, MEMBERS_STATUS_MEMBER);                 
                           showMenu(userData.telegramId, format(FINANCE_IN_SUCCESS, text, userData.statuses[3]));
+                          
                           return true;
                         }
                         else {
