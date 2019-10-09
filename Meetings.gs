@@ -115,7 +115,7 @@ var MEETING_SIGN_UP_ROLES_AVAILABLE = 'Доступні ролі на засід
 
 var MEETING_SIGN_UP_DATE_BUSY = 'На жаль, роль {0} на засіданні {1} вже зайнята. Спробуйте іншу дату.';
 
-var MEETING_SIGN_UP_DATE_AVAILABLE = 'Доступні засідання для виконання ролі {0}:';
+var MEETING_SIGN_UP_DATE_AVAILABLE = 'Доступні засідання для виконання ролі <b>{0}</b>:';
 var MEETING_SIGN_UP_ROLE_REQUEST = 'Яку роль ви хочете виконати?';
 var MEETING_SIGN_UP_DATE_REQUEST = 'На яке засідання ви хочете взяти роль?';
 var MEETING_SIGN_UP_SELECT_ROLE_OR_DATE = 'Хочете вибрати спочатку засідання чи роль?';
@@ -264,7 +264,7 @@ function processSignUpForRole(userData, text) {
                     var listOfSignedRoles = "";
 
                     for (var key in foundRoles) {
-                      listOfSignedRoles += key + ', ';
+                        listOfSignedRoles += key + ', ';
                     }
                     listOfSignedRoles = listOfSignedRoles.substring(0, listOfSignedRoles.length - 2);
 
@@ -289,11 +289,11 @@ function processSignUpForRole(userData, text) {
                         var listOfSignedRoles = "";
 
                         for (var key in foundRoles) {
-                            listOfSignedRoles += '<i>' + key + '</i>: \n' + '<b>' + foundRoles[key] + '</b> \n\n';
+                            listOfSignedRoles += key + ', ';
                         }
+                        listOfSignedRoles = listOfSignedRoles.substring(0, listOfSignedRoles.length - 2);
 
-                        sendText(userData.telegramId, MEETING_SIGN_UP_ROLE_REJECTED);
-                        sendText(userData.telegramId, listOfSignedRoles);
+                        sendText(userData.telegramId, format(MEETING_SIGN_UP_ROLE_REJECTED, formatDate(parseDate(text)), listOfSignedRoles));
                         return false;
                     } else {
                         if (tryToUpdateMeetingInfo(text, userData.statuses[3], userData.fullName)) {
@@ -547,11 +547,10 @@ function sendMeetingNotifications() {
     const diffTime = Math.abs(date - currentDate);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) - 1;
 
-    if (diffDays != 1 && diffDays != 6)
-    {
-      return;
+    if (diffDays != 1 && diffDays != 6) {
+        return;
     }
-  
+
     var meetingTheme = '';
 
     for (var i = 0; i < roles.length; i++) {
@@ -882,7 +881,6 @@ function getAvailableRoleDates(role, showCanceledRoles) {
 
     var availableDates = [];
 
-
     var roleSpeachHeaderIndexes = [];
 
     for (var i = 0; i < headerValues.length; i++) {
@@ -896,6 +894,8 @@ function getAvailableRoleDates(role, showCanceledRoles) {
     }
 
     for (var i = values.length - 1; i >= 0; i--) {
+        if (!values[i][0]) continue;
+      
         var date = parseDate(values[i][0]);
         date = new Date(date.getTime() + ((MEETING_TIME * 60 + MEETING_DURATION_MINUTES) * 60000));
 
@@ -908,7 +908,8 @@ function getAvailableRoleDates(role, showCanceledRoles) {
                     break;
                 }
             }
-        } else {
+        }
+        else {
             break;
         }
     }
