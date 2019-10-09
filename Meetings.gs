@@ -183,14 +183,14 @@ MEETING_ROLE_ICONS[MEETING_ROLE_GENERAL_EVALUATOR] = "🏀";
 MEETING_ROLE_ICONS[MEETING_WORD_OF_THE_DAY] = "💬";
 MEETING_ROLE_ICONS[MEETING_THEME] = "💡";
 
-function processShowMeetingProgram(userData, text) {
-    var roles = getMeetingProgramRoles(text);
+function showMeetingProgram(userTelegramId, date) {
+    var roles = getMeetingProgramRoles(date);
 
     var about = '';
     var theme = '';
     var wordOfTheDay = '';
 
-    var message = format(MEETING_PROGRAM_TITLE, text);
+    var message = MEETING_PROGRAM_TITLE_1 + '\n\n' + format(MEETING_PROGRAM_TITLE_2, date) + '\n\n';
 
     for (var i = 0; i < roles.length; i++) {
         var role = roles[i];
@@ -235,7 +235,7 @@ function processShowMeetingProgram(userData, text) {
         message += format('<b>{0}:</b> {1}', MEETING_WORD_OF_THE_DAY, wordOfTheDay);
     }
 
-    showMenu(userData.telegramId, message);
+    showMenu(userTelegramId, message);
     return true;
 }
 
@@ -385,7 +385,7 @@ function processMeeting(userData, text) {
             return processSignUpForRole(userData, text);
         } else if (userData.statuses[1] == MEETING_SHOW_PROGRAM) {
             if (!userData.statuses[2]) {
-                return processShowMeetingProgram(userData, text);
+                return showMeetingProgram(userData.telegramId, text);
             }
         }
     } else {
