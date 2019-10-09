@@ -1,7 +1,3 @@
-function test() {
-       
-}
-
 function getMe() {
     var url = telegramUrl + "/getMe";
     var response = UrlFetchApp.fetch(url);

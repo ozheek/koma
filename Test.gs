@@ -3,3 +3,7 @@ function ttt(data) {
     var sheet = spreadsheet.getSheetByName('Sheet1');
     sheet.appendRow([data]);
 }
+
+function test() {
+       
+}
