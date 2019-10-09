@@ -313,7 +313,6 @@ function insertMembersData(name, lastname, callName, phoneNumber, email, status,
     var fullNameColumnIndex = headerValues.findIndex(MEMBERS_HEADER_FULLNAME);
     
     var telegramIdColumnIndex = headerValues.findIndex(MEMBERS_HEADER_TELEGRAM_ID);
-    var telegramStatusColumnIndex = headerValues.findIndex(MEMBERS_HEADER_TELEGRAM_STATUS);
     var telegramColumnIndex = headerValues.findIndex(MEMBERS_HEADER_TELEGRAM);
    
     var nameColumnIndex = headerValues.findIndex(MEMBERS_HEADER_NAME);
@@ -324,7 +323,8 @@ function insertMembersData(name, lastname, callName, phoneNumber, email, status,
     var emailAddressColumnIndex = headerValues.findIndex(MEMBERS_HEADER_EMAIL_ADDRESS);
     var clubColumnIndex = headerValues.findIndex(MEMBERS_HEADER_CLUB);
     var dateColumnIndex = headerValues.findIndex(MEMBERS_HEADER_DATE);
-
+    var telegramStatusColumnIndex = headerValues.findIndex(MEMBERS_HEADER_TELEGRAM_STATUS);
+    
     var lastRowIndex = sheet.getLastRow();
     var lastColumnIndex = sheet.getLastColumn();
 
@@ -349,10 +349,10 @@ function insertMembersData(name, lastname, callName, phoneNumber, email, status,
     values[0][phoneNumberColumnIndex] = phoneNumber.replace('+', '');;
     values[0][emailAddressColumnIndex] = email;
     values[0][statusColumnIndex] = status;
-    values[0][telegramStatusColumnIndex] = telegramStatus;
     values[0][telegramIdColumnIndex] = (telegramId ? telegramId : '');  
     values[0][telegramColumnIndex] = (username ? username : '');
     values[0][dateColumnIndex] = formatDate(new Date());
+    values[0][telegramStatusColumnIndex] = telegramStatus;
 
     insertedRange.setValues(values);
 }
@@ -377,9 +377,9 @@ function getAllMembers(searchHeader, searchValue) {
     var sheet = SpreadsheetApp.openById(databaseSpreadSheetId).getSheetByName(SHEET_CONTACTS);
     var headerValues = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
 
-    //var fullNameColumnIndex = headerValues.findIndex(MEMBERS_HEADER_FULLNAME); 
-    var lastNameColumnIndex = headerValues.findIndex(MEMBERS_HEADER_LASTNAME);
-    var firstNameColumnIndex = headerValues.findIndex(MEMBERS_HEADER_NAME);
+    var fullNameColumnIndex = headerValues.findIndex(MEMBERS_HEADER_FULLNAME); 
+//    var lastNameColumnIndex = headerValues.findIndex(MEMBERS_HEADER_LASTNAME);
+//    var firstNameColumnIndex = headerValues.findIndex(MEMBERS_HEADER_NAME);
     var searchColumnIndex = headerValues.findIndex(searchHeader);
     
     var members = {};
@@ -389,13 +389,12 @@ function getAllMembers(searchHeader, searchValue) {
 
     for (var i = 0; i < values.length; i++) {
         if (!searchHeader || searchHeader && (!searchValue && values[i][searchColumnIndex] || values[i][searchColumnIndex] == searchValue)) {
-            //var fullName = values[i][fullNameColumnIndex];
+            var fullName = values[i][fullNameColumnIndex];
             // Сортування за прізвищем
-            var lastName = values[i][lastNameColumnIndex];
-            var firstName = values[i][firstNameColumnIndex];
-            if (!lastName || !firstName) continue;
-            //var fullName = lastName + ' ' + firstName;
-            var fullName = firstName + ' ' + lastName;
+//            var lastName = values[i][lastNameColumnIndex];
+//            var firstName = values[i][firstNameColumnIndex];          
+//            if (!lastName || !firstName) continue;
+//            var fullName =  firstName + ' ' + lastName;
             members[fullName] = fullName;
             // щоб сортувати за ім'ям: members[fullName] = fullName;
         } 
@@ -420,7 +419,7 @@ function getMemberInfo(searchHeader, searchValue) {
     var fullNameColumnIndex = headerValues.findIndex(MEMBERS_HEADER_FULLNAME);
 
     var values = sheet.getRange(2, searchColumnIndex + 1, sheet.getLastRow(), 1).getValues();
-    var userRowIndex = values.findIndex(searchValue) + 1 /* +1 to skip header */ ;
+    var userRowIndex = values.findIndex(searchValue) + 1;
 
     if (userRowIndex == 0) {
         return null;
@@ -440,7 +439,7 @@ function getMemberInfo(searchHeader, searchValue) {
     return {
         telegramId: telegramId,
         fullName: fullName,
-        callName: fields[MEMBERS_HEADER_CALLNAME],
+        callName: fields[MEMBERS_HEADER_CALLNAME] || fields[MEMBERS_HEADER_NAME],
         name : fields[MEMBERS_HEADER_NAME],
         fields: fields,
         status: status,
@@ -461,7 +460,7 @@ function updateMemberInfo(searchHeader, searchValue, setHeader, setValue) {
     if (userRowIndex == 0) {
         return null;
     }
-
+    
     sheet.getRange(userRowIndex + 1, setColumnIndex + 1).setValue(setValue);
 }
 
@@ -471,6 +470,89 @@ function continueEditMember(userData, fullName) {
     userData.status = userData.statuses.join('___') + '___';
     processRequest(userData, fullName);
 }
+
+
+function searchMemberInDatabase(text, telegramId, data, buttons) {
+
+  var checkResult = checkMembersName(text);              
+  if (!checkResult) {
+    sendText(telegramId, MEMBER_SEARCH_FAILED);
+    return false;
+  } else if (typeof checkResult == "object"){
+    showMenu(telegramId, SEVERAL_MEMBERS_FOUND, checkResult);
+    return false;
+  } else {
+    sendText(telegramId, format(MEMBER_SEARCH_SUCCESS, checkResult));
+    if (data) {
+      showMenu(telegramId, data, buttons);
+      return true;
+    } 
+    return true;
+  }
+}
+
+function checkMembersName(text) {
+
+  var sheet = SpreadsheetApp.openById(databaseSpreadSheetId).getSheetByName(SHEET_CONTACTS);
+  var headerValues = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  var fullNameColumnIndex = headerValues.findIndex(MEMBERS_HEADER_FULLNAME);
+  var values = sheet.getRange(2, fullNameColumnIndex + 1, sheet.getLastRow() - 1, 1).getValues();
+  var members = {};
+  var textAtLowerCase = text.trim().toLowerCase();
+  
+  for (var i = 0; i < values.length; i++) {
+  
+    var fullName = values[i][0];
+    var fullNameToLowerCase = values[i][0].toLowerCase();
+    
+    if ((fullNameToLowerCase == textAtLowerCase)) {
+    
+        return fullName;  
+        
+    } else if(~fullNameToLowerCase.indexOf(textAtLowerCase)) {
+    
+        members[fullName] = fullName; 
+        
+    } else {
+    
+       if (~textAtLowerCase.indexOf(' ')) {
+       
+          var splittedText = textAtLowerCase.split(' ');
+          var switchedText = (splittedText[1] + ' ' + splittedText[0]).trim();
+
+          if(fullNameToLowerCase == switchedText) {
+          
+            return fullName;
+            
+          } else if (~fullNameToLowerCase.indexOf(splittedText[0]) || ~fullNameToLowerCase.indexOf(splittedText[1])) {
+          
+            members[fullName] = fullName;
+          }  
+       } 
+    } 
+  }
+  
+  if(Object.keys(members).length) {
+  const sortedMembers = [];
+  
+  Object.keys(members).sort(function(a, b){return a.localeCompare(b,'ua')}).forEach(function(key) {
+    sortedMembers.push(members[key]);
+  });
+    
+  return sortedMembers;
+  }
+  
+  return false;
+}
+
+function test_checkMembersName() {
+   try{
+      ttt(JSON.stringify(checkMembersName('е')));
+   } catch(err){
+     ttt(err);
+   }
+}
+
 
 /* ТЕЛЕГРАМ СТАТУС */
 

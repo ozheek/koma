@@ -48,6 +48,7 @@ function validateEmail(email) {
   return re.test(email);
 }
 
+
 function isCyrillic(str) 
 {
   for (var i = 0; i < str.length; i++) 
@@ -61,6 +62,7 @@ function isCyrillic(str)
   }
   return true;
 }
+
 
 function addNewRowAndKeepFormulas(sheet, values) 
 {
@@ -89,3 +91,5 @@ function addNewRowAndKeepFormulas(sheet, values)
     }
   } 
 }
+
+

@@ -54,6 +54,12 @@ function processCallback(contents) {
             } else if (statuses[0] == MEETING_SPEACH_CHANGE_TITLE_CALLBACK) {
                 updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, callbackId, MEMBERS_HEADER_TELEGRAM_STATUS, callback);
                 showMenu(callbackId, MEETING_SPEACH_CHOOSE_TITLE);
+            } else if (statuses[0] == MEETING_CHANGE_WORD_OF_THE_DAY_CALLBACK) {
+                updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, callbackId, MEMBERS_HEADER_TELEGRAM_STATUS, callback);
+                showMenu(callbackId, MEETING_CHOOSE_WORD_OF_THE_DAY);
+            } else if (statuses[0] == MEETING_CHANGE_THEME_CALLBACK) {
+                updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, callbackId, MEMBERS_HEADER_TELEGRAM_STATUS, callback);
+                showMenu(callbackId, MEETING_CHOOSE_THEME);
             } else if (statuses[0] == MEETING_ROLE_CHANGE_CALLBACK) {
                 var date = statuses[1];
                 var role = statuses[2];

@@ -124,9 +124,10 @@ function confirmRolesOfLastMeeting() {
 function findOfficerToConfirmMeetingRoles(date, currentOfficerFullName, userTelegramId) {
     var isNextOfficerFound = false;
     var officers = getAllMembers(MEMBERS_HEADER_POSITION);
-
+//ttt(JSON.stringify(officers));
     for (var i = 0; i < officers.length; i++) {
         var officer = officers[i];
+ //     ttt(officer + ':'+ currentOfficerFullName);
         if (!currentOfficerFullName || officer == currentOfficerFullName) {
             if (i + 1 < officers.length) {
                 // Пропускаємо першого офіцера - це повинен бути президент
@@ -191,4 +192,40 @@ function getSignedRoles(fullName) {
     }
 
     return roles;
+}
+
+function getSignedRolesInSelectedMeeting(fullName, date, telegramId) {
+    
+    var sheet = SpreadsheetApp.openById(databaseSpreadSheetId).getSheetByName(SHEET_MEETINGS);
+    var headerValues = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    var dateColumnIndex = headerValues.findIndex(HEADER_DATE) + 1;
+    headerValues = sheet.getRange(1, dateColumnIndex, 1, sheet.getLastColumn()).getValues()[0];
+    var values = sheet.getRange(2, dateColumnIndex, sheet.getLastRow(), sheet.getLastColumn()).getValues();
+    var meetingDate = parseDate(date);
+    var meetingRow;
+    
+    for ( var i = 0; i < values.length; i++ ) {
+        var currentDate = parseDate(values[i][0]);
+
+        if ( meetingDate - currentDate == 0 ) {
+           meetingRow = values[i];
+           break;
+        }
+    }
+    
+    if ( !meetingRow ) {
+      return null;
+    }
+      
+    var rolesOnCurrentMeeting = {};
+      
+    for ( var j = 0; j < meetingRow.length; j++ ) {
+      if ( meetingRow[j] == fullName ) {
+        rolesOnCurrentMeeting[headerValues[j]] = meetingRow[j];
+      }
+    }
+    
+    if ( Object.keys(rolesOnCurrentMeeting).length ) {
+      return rolesOnCurrentMeeting;
+    } else { return false; }
 }

@@ -1,14 +1,5 @@
-function ttt(data) {
-    var spreadsheet = SpreadsheetApp.openById('1De09vO4YHLGzPpy8Xfzqg2YExEZ_5si0wvam3wagt1w');
-    var sheet = spreadsheet.getSheetByName('Sheet1');
-    sheet.appendRow([data]);
-}
-
-
 function test() {
-//confirmRolesOfLastMeeting();
-  showMeetingProgramAndCallbacks('432298769', '26-09-2019');
-  //showMeetingProgramAndCallbacks('432298769', '26-09-2019', 'ffff')
+       
 }
 
 function getMe() {
@@ -114,7 +105,7 @@ function processRequest(userData, text) {
             isContinue = processRegistration(userData, text);
         } else if (userData.statuses[0] == MEETING_ROLES_CONFIRM) {
             if (text == YES) {
-                isContinue = confirmMeetingRoles(userData.telegramId, userData.statuses[1]);
+                isContinue = confirmMeetingRoles(userData.telegramId, userData.statuses[1], format(MEETING_ROLES_CONFIRM_TITLE, userData.statuses[1]));
             } else {
                 // Знайти іншого члена, що може підтвердити
                 findOfficerToConfirmMeetingRoles(userData.statuses[1], userData.fullName, userData.telegramId);
@@ -141,6 +132,28 @@ function processRequest(userData, text) {
 
                 if (updateMeetingInfo(date, projectRole, text, false)) {
                     showMenu(userData.telegramId, format('Дякую, записав, що назва вашої промови <b>"{0}"</b> на засіданні <b>{1}</b>.', text, date));
+                    return true;
+                }
+            }
+          } else if (userData.statuses[0] == MEETING_CHANGE_THEME_CALLBACK) {
+            if (!userData.statuses[4]) {
+                var date = userData.statuses[1];
+                var role = MEETING_THEME;
+                var fullName = userData.statuses[3];
+              
+                if (updateMeetingInfo(date, role, text, false)) {
+                    showMenu(userData.telegramId, format('Дякую, записав, що тема засідання <b>"{0}"</b> на засіданні <b>{1}</b>.', text, date));
+                    return true;
+                }
+            }
+          } else if (userData.statuses[0] == MEETING_CHANGE_WORD_OF_THE_DAY_CALLBACK) {
+            if (!userData.statuses[4]) {
+                var date = userData.statuses[1];
+                var role = MEETING_WORD_OF_THE_DAY;
+                var fullName = userData.statuses[3];
+              
+                if (updateMeetingInfo(date, role, text, false)) {
+                    showMenu(userData.telegramId, format('Дякую, записав, що слово дня <b>"{0}"</b> на засіданні <b>{1}</b>.', text, date));
                     return true;
                 }
             }

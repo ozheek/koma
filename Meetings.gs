@@ -22,6 +22,7 @@ var MEETING_CANCEL = 'Скасувати засідання';
 
 var MEETING_SIGN_UP_DATE = "Вибрати засідання (дату)";
 var MEETING_SIGN_UP_ROLE = "Вибрати роль";
+var MEETING_SIGN_UP_ROLE_REJECTED = "На жаль, Ви не можете записатись на роль, бо вже записанi на ролi:";
 
 var MEETING_ROLE_REJECT = '❗ Звільнити';
 var MEETING_ROLE_CHANGE = '📝 Змінити';
@@ -33,10 +34,13 @@ var MEETING_ROLE_CHANGE_CALLBACK = 'change_role';
 var MEETING_ROLE_CLEAN_CALLBACK = 'clean_role';
 var MEETING_SPEACH_CHANGE_PROJECT_CALLBACK = 'change_speach_project';
 var MEETING_SPEACH_CHANGE_TITLE_CALLBACK = 'change_speach_title';
+var MEETING_CHANGE_WORD_OF_THE_DAY_CALLBACK = 'change_meeting_word';
+var MEETING_CHANGE_THEME_CALLBACK = 'change_meeting_theme';
 
 var MEETING_SPEACH_CHANGE_PROJECT = '✏️ Вказати проект промови';
 var MEETING_SPEACH_CHANGE_TITLE = '✏️ Вказати назву промови';
-
+var MEETING_CHANGE_WORD_OF_THE_DAY = '✏️ Вказати слово дня';
+var MEETING_CHANGE_THEME = '✏️ Вказати тему засідання';
 
 var MEETING_EDIT = 'Редагувати';
 
@@ -46,7 +50,7 @@ var MEETING_ABOUT = 'Про засідання';
 var MEETING_ROLE_SPEACH = "Промова";
 var MEETING_ROLE_SPEACH_PROJECT = "Проект промови";
 var MEETING_ROLE_SPEACH_TITLE = "Назва промови";
-var MEETING_ROLE_EVALUATION = "Відгук на промову"; 
+var MEETING_ROLE_EVALUATION = "Відгук на промову";
 var MEETING_ROLE_TOASTMASTER = "Голова";
 var MEETING_ROLE_AH_COUNTER = "Мисливець за словами-паразитами";
 var MEETING_ROLE_TIMER = "Контролер часу";
@@ -64,7 +68,7 @@ var MEETING_THEME = "Тема засідання";
 
 var MEETING_ABOUT_CURRENT_TEXT = 'Вставити поточний текст';
 var MEETING_EDIT_SUCCESS = 'Інформацію було успішно змінено! 😎';
-var MEETING_EDIT_FAILED= 'Не вдалось змінити інформацію про засідання 😟';
+var MEETING_EDIT_FAILED = 'Не вдалось змінити інформацію про засідання 😟';
 var MEETING_EDIT_CHOOSE_DATE = 'Виберіть засідання, що хочете змінити:';
 var MEETING_EDIT_SELECT = 'Яку інформацію про засідання хочете змінити?';
 var MEETING_EDIT_ABOUT_1 = 'Відправте мені нову інформацію про засідання. Наприклад, це може бути інформація про конкурс (головний суддя, учасники) або інформація про неформальне засідання.\
@@ -73,24 +77,33 @@ var MEETING_EDIT_ABOUT_1 = 'Відправте мені нову інформа�
 var MEETING_EDIT_ABOUT_2 = 'За допомогою кнопки нижче, можна вставити поточний опис засідання в поле для набору тексту і відредагувати його.';
 var MEETING_EDIT_WORD_OF_THE_DAY = 'Введіть слово дня на засіданні:';
 var MEETING_EDIT_THEME = 'Введіть тему засідання:';
-
+var MEETING_NOT_FOUND = 'На жаль, засідання <b>{0}</b> не було знайдено...\
+                         \n\nПеревірте, будь ласка, чи правильно Ви вибрали дату!';
 
 var MEETING_ASSIGN_ROLE_SUCCESS_MEMBER = 'Привіт, {0}! ☺️ На засіданні <b>{1}</b> ви будете виконувати роль <b>{2}</b> 😍.';
 
 var MEETING_CANCEL_CHOOSE_DATE = 'Виберіть дату засідання, що хочете скасувати:';
 
-var MEETING_NOTIFICATION_TITLE = '{2}, Привіт! ☺️ Нагадую, що на засіданні <b>{0}</b> ви будете виконувати роль <b>{1}</b> 😍.';
+var MEETING_SPEACH_NO_PROJECT = '🗂 <b>Назва проекту</b>\
+\n\nПовідомте якомога раніше мені проект промови, використовуйте кнопку нижче 👇🏻';
+var MEETING_SPEACH_NO_TITLE = '📰 <b>Назва вашої промови</b>\
+\n\nЧи знаєте ви вже назву промови? Якщо так, то натисніть кнопку нижче і вкажіть його 👇🏻';
 
-var MEETING_SPEACH_NO_PROJECT = '📣 Для вашої промови в мене поки немає назви проекту. Повідомте якомога раніше мені проект промови, використовуйте кнопку нижче 👇🏻';
-var MEETING_SPEACH_NO_TITLE = '📣 Щоб сформувати програму, мені потрібна назва вашої промови. Чи знаєте ви вже назву промови? Якщо так, заповніть її використовуючи кнопку нижче 👇🏻';
+var MEETING_NO_WORD_OF_THE_DAY = '💬 <b>Слово дня</b>\
+\n\nВи вже придумали слово дня? Якщо так, вкажіть його, використовуючи кнопку нижче 👇🏻';
+var MEETING_NO_THEME = '💡 <b>Тема засідання</b>\
+\n\nЧи знаєте ви вже тему засідання? Якщо так, заповніть її використовуючи кнопку нижче 👇🏻';
 
 var MEETING_SPEACH_PROJECT_EMPTY = 'Без проекту';
 
 var MEETING_SPEACH_CHOOSE_PROJECT = 'Вкажіть проект вашої промови:';
 var MEETING_SPEACH_CHOOSE_TITLE = 'Вкажіть назву вашої промови:';
+var MEETING_CHOOSE_WORD_OF_THE_DAY = 'Вкажіть слово дня:';
+var MEETING_CHOOSE_THEME = 'Вкажіть тему засідання:';
 
 var MEETING_PROGRAM_CHOOSE_DATE = 'Виберіть дату засідання:';
-var MEETING_PROGRAM_TITLE = '<b>Програма засідання \n\n📆 {0}</b>\n\n';
+var MEETING_PROGRAM_TITLE_1 = '<b>Програма засідання</b>';
+var MEETING_PROGRAM_TITLE_2 = '<b>📆 {0}</b>';
 var MEETING_PROGRAM_ROLE_INFO = '<b>{0}</b>:\n{1}\n\n';
 var MEETING_PROGRAM_ROLE_SPEACH_INFO = '<b>{0}:</b>\n{2} ⁠— <i>"{1}"</i>\n\n';
 var MEETING_PROGRAM_ROLE_NO_MEMBER = '⇨ <i>Роль вільна</i>';
@@ -112,7 +125,7 @@ var MEETING_ASSIGN_ROLE_BUSY_ROLE = 'На жаль, роль {0} на засід
 var MEETING_ASSIGN_ROLE_BUSY_DATE = 'На жаль, роль {0} на засіданні {1} вже зайнята. Спробуйте іншу дату:';
 var MEETING_ASSIGN_ROLE_AVAILABLE_ROLES = 'Доступні ролі на засідання {0}:';
 var MEETING_ASSIGN_ROLE_AVAILABLE_DATES = 'Доступні засідання для виконання ролі {0}:';
-var MEETING_ASSIGN_ROLE_SELECT_MEMBER = 'Оберіть члена клубу, якого хочете записати на роль?';
+var MEETING_ASSIGN_ROLE_SELECT_MEMBER = 'Оберіть члена клубу (або введіть ім\'я для пошуку), якого хочете записати на роль?';
 var MEETING_ASSIGN_ROLE_SELECT_DATE = 'На яке засідання необхідно записати?';
 var MEETING_ASSIGN_ROLE_SELECT_ROLE = 'Яку роль необхідно виконати?';
 var MEETING_ASSIGN_ROLE_SELECT_ROLE_OR_DATE = 'Хочете вибрати спочатку засідання чи роль?';
@@ -169,67 +182,59 @@ MEETING_ROLE_ICONS[MEETING_ROLE_GENERAL_EVALUATOR] = "🏀";
 
 MEETING_ROLE_ICONS[MEETING_WORD_OF_THE_DAY] = "💬";
 MEETING_ROLE_ICONS[MEETING_THEME] = "💡";
- 
-                   
+
 function processShowMeetingProgram(userData, text) {
     var roles = getMeetingProgramRoles(text);
 
     var about = '';
     var theme = '';
     var wordOfTheDay = '';
-  
+
     var message = format(MEETING_PROGRAM_TITLE, text);
-    
+
     for (var i = 0; i < roles.length; i++) {
         var role = roles[i];
         var member = (role.member) ? role.member : MEETING_PROGRAM_ROLE_NO_MEMBER;
-        if (member && member[0] == MEETING_CANCEL_SYMBOL)
-        {
-        }
-        else
-        {   
-          if (role.name.indexOf(MEETING_ABOUT) >-1)
-          {
-            about = role.member;
-            continue;
-          }
-          
-          if (role.name.indexOf(MEETING_THEME) >-1)
-          {
-            theme = role.member;
-            continue;
-          }
-          
-          if (role.name.indexOf(MEETING_WORD_OF_THE_DAY) >-1)
-          {
-            wordOfTheDay = role.member;
-            continue;
-          }
-          
-          if (!role.speachTitle) {
-            var icon = MEETING_ROLE_ICONS[role.name];
-            if (role.name.indexOf(MEETING_ROLE_SPEACH) > -1) icon = MEETING_ROLE_ICONS[MEETING_ROLE_SPEACH];
-            if (role.name.indexOf(MEETING_ROLE_EVALUATION) > -1) icon = MEETING_ROLE_ICONS[MEETING_ROLE_EVALUATION];
-            message += icon + " " + format(MEETING_PROGRAM_ROLE_INFO, role.name, member);
-          } else {
-            var icon = MEETING_ROLE_ICONS[MEETING_ROLE_SPEACH];
-            message += icon + " " + format(MEETING_PROGRAM_ROLE_SPEACH_INFO, role.name, role.speachTitle, role.member);
-          }
+        if (member && member[0] == MEETING_CANCEL_SYMBOL) {} else {
+            if (role.name.indexOf(MEETING_ABOUT) > -1) {
+                about = role.member;
+                continue;
+            }
+
+            if (role.name.indexOf(MEETING_THEME) > -1) {
+                theme = role.member;
+                continue;
+            }
+
+            if (role.name.indexOf(MEETING_WORD_OF_THE_DAY) > -1) {
+                wordOfTheDay = role.member;
+                continue;
+            }
+
+            if (!role.speachTitle) {
+                var icon = MEETING_ROLE_ICONS[role.name];
+                if (role.name.indexOf(MEETING_ROLE_SPEACH) > -1) icon = MEETING_ROLE_ICONS[MEETING_ROLE_SPEACH];
+                if (role.name.indexOf(MEETING_ROLE_EVALUATION) > -1) icon = MEETING_ROLE_ICONS[MEETING_ROLE_EVALUATION];
+                message += icon + " " + format(MEETING_PROGRAM_ROLE_INFO, role.name, member);
+            } else {
+                var icon = MEETING_ROLE_ICONS[MEETING_ROLE_SPEACH];
+                message += icon + " " + format(MEETING_PROGRAM_ROLE_SPEACH_INFO, role.name, role.speachTitle, role.member);
+            }
         }
     }
-  
+
     if (about) {
-      message += format('{0}\n\n', about);
+        message += format('{0}\n\n', about);
     }
-  
+
     if (theme) {
-      message += format('<b>{0}:</b> {1}\n', MEETING_THEME, theme);
+        message += format('<b>{0}:</b> {1}\n', MEETING_THEME, theme);
     }
-  
+
     if (wordOfTheDay) {
-      message += format('<b>{0}:</b> {1}', MEETING_WORD_OF_THE_DAY, wordOfTheDay);
+        message += format('<b>{0}:</b> {1}', MEETING_WORD_OF_THE_DAY, wordOfTheDay);
     }
-  
+
     showMenu(userData.telegramId, message);
     return true;
 }
@@ -238,29 +243,67 @@ function processSignUpForRole(userData, text) {
     if (userData.statuses[2]) {
         if (userData.statuses[2] == MEETING_SIGN_UP_DATE) {
             if (userData.statuses[3]) {
-              if (!userData.statuses[4]) {
-                if (tryToUpdateMeetingInfo(userData.statuses[3], text, userData.fullName)) {
-                    showMenu(userData.telegramId, format(MEETING_SIGN_UP_SUCCESS, text, userData.statuses[3]));
-                } else {
+                if (!userData.statuses[4]) {
+                    if (tryToUpdateMeetingInfo(userData.statuses[3], text, userData.fullName)) {
+                        showMenu(userData.telegramId, format(MEETING_SIGN_UP_SUCCESS, text, userData.statuses[3]));
+                    } else {
 
-                    showMenu(userData.telegramId, format(MEETING_SIGN_UP_ROLES_BUSY, text, userData.statuses[3]), getMeetingRoles(userData.statuses[3]));
+                        showMenu(userData.telegramId, format(MEETING_SIGN_UP_ROLES_BUSY, text, userData.statuses[3]), getMeetingRoles(userData.statuses[3]));
+                    }
+                    return true;
                 }
-                return true;
-              }
             } else {
-                showMenu(userData.telegramId, format(MEETING_SIGN_UP_ROLES_AVAILABLE, text), getMeetingRoles(text));
-                return true;
+                var foundRoles = getSignedRolesInSelectedMeeting(userData.fullName, text);
+
+                if (foundRoles == null) {
+                    sendText(userData.telegramId, format(MEETING_NOT_FOUND, formatDate(text)));
+                    return false;
+                }
+
+                if (foundRoles) {
+                    var listOfSignedRoles = "";
+
+                    for (var key in foundRoles) {
+                        listOfSignedRoles += '<i>' + key + '</i>: \n' + '<b>' + foundRoles[key] + '</b> \n\n';
+                    }
+
+                    sendText(userData.telegramId, MEETING_SIGN_UP_ROLE_REJECTED);
+                    sendText(userData.telegramId, listOfSignedRoles);
+                    return false;
+                } else {
+                    showMenu(userData.telegramId, format(MEETING_SIGN_UP_ROLES_AVAILABLE, text), getMeetingRoles(text));
+                    return true;
+                }
             }
         } else if (userData.statuses[2] == MEETING_SIGN_UP_ROLE) {
             if (userData.statuses[3]) {
-              if (!userData.statuses[4]) {
-                if (tryToUpdateMeetingInfo(text, userData.statuses[3], userData.fullName)) {
-                    showMenu(userData.telegramId, format(MEETING_SIGN_UP_SUCCESS, userData.statuses[3], text));
-                } else {
-                    showMenu(userData.telegramId, format(MEETING_SIGN_UP_DATE_BUSY, userData.statuses[3], text), getAvailableRoleDates(userData.statuses[3]));
+                if (!userData.statuses[4]) {
+                    var foundRoles = getSignedRolesInSelectedMeeting(userData.fullName, text);
+
+                    if (foundRoles == null) {
+                        sendText(userData.telegramId, format(MEETING_NOT_FOUND, formatDate(text)));
+                        return false;
+                    }
+
+                    if (foundRoles) {
+                        var listOfSignedRoles = "";
+
+                        for (var key in foundRoles) {
+                            listOfSignedRoles += '<i>' + key + '</i>: \n' + '<b>' + foundRoles[key] + '</b> \n\n';
+                        }
+
+                        sendText(userData.telegramId, MEETING_SIGN_UP_ROLE_REJECTED);
+                        sendText(userData.telegramId, listOfSignedRoles);
+                        return false;
+                    } else {
+                        if (tryToUpdateMeetingInfo(text, userData.statuses[3], userData.fullName)) {
+                            showMenu(userData.telegramId, format(MEETING_SIGN_UP_SUCCESS, userData.statuses[3], text));
+                        } else {
+                            showMenu(userData.telegramId, format(MEETING_SIGN_UP_DATE_BUSY, userData.statuses[3], text), getAvailableRoleDates(userData.statuses[3]));
+                        }
+                        return true;
+                    }
                 }
-                return true;
-              }
             } else {
                 showMenu(userData.telegramId, format(MEETING_SIGN_UP_DATE_AVAILABLE, text), getAvailableRoleDates(text));
                 return true;
@@ -284,22 +327,21 @@ function processAssignRole(userData, text) {
         if (userData.statuses[3] == MEETING_SIGN_UP_DATE) {
             if (userData.statuses[4]) {
                 if (userData.statuses[5]) {
-                  if (!userData.statuses[6]) {
-                    if (tryToUpdateMeetingInfo(userData.statuses[4], text, userData.statuses[5])) {
-                        var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, userData.statuses[5]);
-                        if (memberInfo) {
-                          var callName = memberInfo.callName || memberInfo.name;
-                          sendText(memberInfo.telegramId, format(MEETING_ASSIGN_ROLE_SUCCESS_MEMBER, callName, userData.statuses[4], text));
+                    if (!userData.statuses[6]) {
+                        if (tryToUpdateMeetingInfo(userData.statuses[4], text, userData.statuses[5])) {
+                            var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, userData.statuses[5]);
+                            if (memberInfo) {
+                                var callName = memberInfo.callName || memberInfo.name;
+                                sendText(memberInfo.telegramId, format(MEETING_ASSIGN_ROLE_SUCCESS_MEMBER, callName, userData.statuses[4], text));
+                            }
+                            showMenu(userData.telegramId, format(MEETING_ASSIGN_ROLE_SUCCESS, userData.statuses[5], text, userData.statuses[4]));
+                        } else {
+                            showMenu(userData.telegramId, format(MEETING_ASSIGN_ROLE_BUSY_ROLE, text, userData.statuses[4]), getMeetingRoles(userData.statuses[4], true));
                         }
-                        showMenu(userData.telegramId, format(MEETING_ASSIGN_ROLE_SUCCESS, userData.statuses[5], text, userData.statuses[4]));
-                    } else {
-                        showMenu(userData.telegramId, format(MEETING_ASSIGN_ROLE_BUSY_ROLE, text, userData.statuses[4]), getMeetingRoles(userData.statuses[4], true));
+                        return true;
                     }
-                    return true;
-                  }
                 } else {
-                    showMenu(userData.telegramId, format(MEETING_ASSIGN_ROLE_AVAILABLE_ROLES, userData.statuses[4]), getMeetingRoles(userData.statuses[4], true));
-                    return true;
+                    return searchMemberInDatabase(text, userData.telegramId, format(MEETING_ASSIGN_ROLE_AVAILABLE_ROLES, userData.statuses[4]), getMeetingRoles(userData.statuses[4], true));
                 }
             } else {
                 showMenu(userData.telegramId, MEETING_ASSIGN_ROLE_SELECT_MEMBER, getAllMembers());
@@ -308,17 +350,16 @@ function processAssignRole(userData, text) {
         } else if (userData.statuses[3] == MEETING_SIGN_UP_ROLE) {
             if (userData.statuses[4]) {
                 if (userData.statuses[5]) {
-                  if (!userData.statuses[6]) {
-                    if (tryToUpdateMeetingInfo(text, userData.statuses[4], userData.statuses[5])) {
-                        showMenu(userData.telegramId, format(MEETING_ASSIGN_ROLE_SUCCESS, userData.statuses[5], userData.statuses[4], text));
-                    } else {
-                        showMenu(userData.telegramId, format(MEETING_ASSIGN_ROLE_BUSY_DATE, userData.statuses[4], text), getAvailableRoleDates(userData.statuses[4], true));
+                    if (!userData.statuses[6]) {
+                        if (tryToUpdateMeetingInfo(text, userData.statuses[4], userData.statuses[5])) {
+                            showMenu(userData.telegramId, format(MEETING_ASSIGN_ROLE_SUCCESS, userData.statuses[5], userData.statuses[4], text));
+                        } else {
+                            showMenu(userData.telegramId, format(MEETING_ASSIGN_ROLE_BUSY_DATE, userData.statuses[4], text), getAvailableRoleDates(userData.statuses[4], true));
+                        }
+                        return true;
                     }
-                    return true;
-                  }
-                } else {                  
-                    showMenu(userData.telegramId, format(MEETING_ASSIGN_ROLE_AVAILABLE_DATES, userData.statuses[4]), getAvailableRoleDates(userData.statuses[4], true));
-                    return true;
+                } else {
+                    return searchMemberInDatabase(text, userData.telegramId, format(MEETING_ASSIGN_ROLE_AVAILABLE_DATES, userData.statuses[4]), getAvailableRoleDates(userData.statuses[4], true));
                 }
             } else {
                 showMenu(userData.telegramId, MEETING_ASSIGN_ROLE_SELECT_MEMBER, getAllMembers());
@@ -343,9 +384,9 @@ function processMeeting(userData, text) {
         if (userData.statuses[1] == MEETING_SIGN_UP_FOR_ROLE) {
             return processSignUpForRole(userData, text);
         } else if (userData.statuses[1] == MEETING_SHOW_PROGRAM) {
-          if (!userData.statuses[2]) {
-            return processShowMeetingProgram(userData, text);
-          }
+            if (!userData.statuses[2]) {
+                return processShowMeetingProgram(userData, text);
+            }
         }
     } else {
         if (text == MEETING_SIGN_UP_FOR_ROLE) {
@@ -364,17 +405,17 @@ function processMeeting(userData, text) {
 function processCancelMeeting(userData, text) {
     if (userData.statuses[3]) {
         if (userData.statuses[4]) {
-          if (!userData.statuses[5]) {
-            var date = userData.statuses[3];
-            var reasonShort = (userData.statuses[4] != EMPTY) ? userData.statuses[4] : '';
-            var reasonDetailed = (text != EMPTY) ? text : '';
+            if (!userData.statuses[5]) {
+                var date = userData.statuses[3];
+                var reasonShort = (userData.statuses[4] != EMPTY) ? userData.statuses[4] : '';
+                var reasonDetailed = (text != EMPTY) ? text : '';
 
-            cancelMeeting(date, reasonShort);
-            tryToUpdateMeetingInfo(date, MEETING_ABOUT, reasonDetailed);
-            showMenu(userData.telegramId, MEETING_CANCEL_SUCCESS);
-            
-            return true;
-          }
+                cancelMeeting(date, reasonShort);
+                tryToUpdateMeetingInfo(date, MEETING_ABOUT, reasonDetailed);
+                showMenu(userData.telegramId, MEETING_CANCEL_SUCCESS);
+
+                return true;
+            }
         } else {
             showMenu(userData.telegramId, MEETING_CANCEL_REASON_DETAILED, [EMPTY]);
             return true;
@@ -388,19 +429,21 @@ function processCancelMeeting(userData, text) {
 function processMeetingManagement(userData, text) {
     if (userData.statuses[2]) {
         if (userData.statuses[2] == MEETING_SHOW_ROLES) {
-            return showSignedRoles(userData.telegramId, text, false);
+            var result = searchMemberInDatabase(text, userData.telegramId, null, null);
+            if (result) {
+                return showSignedRoles(userData.telegramId, text, false);
+            } else {
+                return false;
+            }
         } else if (userData.statuses[2] == MEETING_ASSIGN_ROLE) {
             return processAssignRole(userData, text);
         } else if (userData.statuses[2] == MEETING_CANCEL) {
             return processCancelMeeting(userData, text);
-        } else if (userData.statuses[2] == MEETING_SHOW_PROGRAM) {
-           if (userData.statuses[3] && userData.statuses[3] == MEETING_EDIT) {
-             return processEditMeeting(userData, text);
-           } else {
-             return processShowMeetingProgram(userData, text);      
-           } 
+        } else if (userData.statuses[2] == MEETING_SHOW_PROGRAM && !userData.statuses[3]) {
+            showMeetingProgramAndCallbacks(userData.telegramId, text);
+            return true;
         } else if (userData.statuses[2] == MEETING_EDIT) {
-             return processEditMeeting(userData, text);
+            return processEditMeeting(userData, text);
         }
     } else {
         if (text == MEETING_ASSIGN_ROLE) {
@@ -415,7 +458,7 @@ function processMeetingManagement(userData, text) {
         } else if (text == MEETING_EDIT) {
             showMenu(userData.telegramId, MEETING_EDIT_CHOOSE_DATE, getNextMeetingDates(SIGN_UP_FOR_NEXT_MEETINGS_AMOUNT));
             return true;
-        } else if(text == MEETING_SHOW_PROGRAM) {
+        } else if (text == MEETING_SHOW_PROGRAM) {
             showMenu(userData.telegramId, MEETING_PROGRAM_CHOOSE_DATE, getNextMeetingDates(SIGN_UP_FOR_NEXT_MEETINGS_AMOUNT));
             return true;
         }
@@ -423,52 +466,47 @@ function processMeetingManagement(userData, text) {
 }
 
 function processEditMeeting(userData, text) {
-   const dateIndexInStatuses = 3;
-   var statusesIndexToStart = (userData.statuses[2] == MEETING_SHOW_PROGRAM) ? dateIndexInStatuses + 1 : dateIndexInStatuses;
-   var fieldIndexInStatuses = statusesIndexToStart + 1;
-   
-   if (userData.statuses[statusesIndexToStart]) {
-     if (userData.statuses[statusesIndexToStart + 1]) {
-       if (!userData.statuses[statusesIndexToStart + 2]) {
-         var date = userData.statuses[dateIndexInStatuses];
-         var field = userData.statuses[fieldIndexInStatuses];
-         var value = text;
-         if (value[0] == '@') { 
-           var spaceIndex = value.indexOf(' ');
-           if (spaceIndex > -1) {
-             value = value.replace(TEMPLATE_TEXT_BELOW, '');
-             value = value.substring(spaceIndex + 1).trim();
-           }
-         }
-         if (updateMeetingInfo(date, field, value, false))
-         {
-           showMenu(userData.telegramId, MEETING_EDIT_SUCCESS);
-         }
-         else {
-           showMenu(userData.telegramId, MEETING_EDIT_FAILED);
-         }
-       }
-     } else {
-       if (text == MEETING_ABOUT) {
-         var text = getMeetingInfo(userData.statuses[dateIndexInStatuses], MEETING_ABOUT);
-         showMenu(userData.telegramId, MEETING_EDIT_ABOUT_1);
-         sendText(userData.telegramId, MEETING_EDIT_ABOUT_2, '{"inline_keyboard":[[ {"text": "' + MEETING_ABOUT_CURRENT_TEXT + '", "switch_inline_query_current_chat" : "' + TEMPLATE_TEXT_BELOW + text + '"}]] }');
-         return true;
-       }
-       else if (text == MEETING_THEME) {
-         showMenu(userData.telegramId, MEETING_EDIT_THEME);
-         return true;
-       }
-       else if (text == MEETING_WORD_OF_THE_DAY) {
-         showMenu(userData.telegramId, MEETING_EDIT_WORD_OF_THE_DAY);
-         return true;
-       }
-     }
-   }
-  else {
-    showMenu(userData.telegramId, MEETING_EDIT_SELECT, [MEETING_ABOUT, MEETING_THEME, MEETING_WORD_OF_THE_DAY]);
-    return true;
-  } 
+    const dateIndexInStatuses = 3;
+    var statusesIndexToStart = (userData.statuses[2] == MEETING_SHOW_PROGRAM) ? dateIndexInStatuses + 1 : dateIndexInStatuses;
+    var fieldIndexInStatuses = statusesIndexToStart + 1;
+
+    if (userData.statuses[statusesIndexToStart]) {
+        if (userData.statuses[statusesIndexToStart + 1]) {
+            if (!userData.statuses[statusesIndexToStart + 2]) {
+                var date = userData.statuses[dateIndexInStatuses];
+                var field = userData.statuses[fieldIndexInStatuses];
+                var value = text;
+                if (value[0] == '@') {
+                    var spaceIndex = value.indexOf(' ');
+                    if (spaceIndex > -1) {
+                        value = value.replace(TEMPLATE_TEXT_BELOW, '');
+                        value = value.substring(spaceIndex + 1).trim();
+                    }
+                }
+                if (updateMeetingInfo(date, field, value, false)) {
+                    showMenu(userData.telegramId, MEETING_EDIT_SUCCESS);
+                } else {
+                    showMenu(userData.telegramId, MEETING_EDIT_FAILED);
+                }
+            }
+        } else {
+            if (text == MEETING_ABOUT) {
+                var text = getMeetingInfo(userData.statuses[dateIndexInStatuses], MEETING_ABOUT);
+                showMenu(userData.telegramId, MEETING_EDIT_ABOUT_1);
+                sendText(userData.telegramId, MEETING_EDIT_ABOUT_2, '{"inline_keyboard":[[ {"text": "' + MEETING_ABOUT_CURRENT_TEXT + '", "switch_inline_query_current_chat" : "' + TEMPLATE_TEXT_BELOW + text + '"}]] }');
+                return true;
+            } else if (text == MEETING_THEME) {
+                showMenu(userData.telegramId, MEETING_EDIT_THEME);
+                return true;
+            } else if (text == MEETING_WORD_OF_THE_DAY) {
+                showMenu(userData.telegramId, MEETING_EDIT_WORD_OF_THE_DAY);
+                return true;
+            }
+        }
+    } else {
+        showMenu(userData.telegramId, MEETING_EDIT_SELECT, [MEETING_ABOUT, MEETING_THEME, MEETING_WORD_OF_THE_DAY]);
+        return true;
+    }
 }
 
 /* ФУНКЦІЇ */
@@ -485,25 +523,36 @@ function getLastMeetingDate() {
 
 // day: 0=Sunday, 1=Monday...4=Thursday...
 function getNextMeetingDate() {
-    var now = new Date();
+    var now = new Date;
     var result = new Date(
         now.getFullYear(),
         now.getMonth(),
         now.getDate() + (7 + MEETING_ON_WEEK_DAY - now.getDay()) % 7, MEETING_TIME, 0);
 
     result = new Date(result.getTime() + MEETING_DURATION_MINUTES * 60000);
-  
-    if (result <= now)
-        result.setDate(result.getDate() + 7)
 
-    return result
+    if (result <= now) {
+        result.setDate(result.getDate() + 7)
+    }
+    return result;
 }
 
 /* СПОВІЩЕННЯ */
 
 function sendMeetingNotifications() {
+    var currentDate = parseDate(formatDate(new Date()));
     var date = getNextMeetingDate();
     var roles = getMeetingProgramRoles(date);
+
+    const diffTime = Math.abs(date - currentDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) - 1;
+
+    if (diffDays != 1 && diffDays != 6)
+    {
+      return;
+    }
+  
+    var meetingTheme = '';
 
     for (var i = 0; i < roles.length; i++) {
         var role = roles[i];
@@ -511,6 +560,10 @@ function sendMeetingNotifications() {
         var roleName = role.name;
         var shortRoleName = roleName;
         var isSpeach = false;
+
+        if (role.name.indexOf(MEETING_ROLE_TOASTMASTER) > -1) {
+            meetingTheme = role.theme;
+        }
 
         if (roleMember) {
             if (roleName.indexOf(MEETING_ROLE_SPEACH) > -1) {
@@ -520,36 +573,54 @@ function sendMeetingNotifications() {
                 shortRoleName = MEETING_ROLE_EVALUATION;
             }
             var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, roleMember);
-            if (!memberInfo) continue;
+            if (!memberInfo || !memberInfo.telegramId) continue;
             var callName = memberInfo.callName || memberInfo.name;
-            sendText(memberInfo.telegramId, format(MEETING_NOTIFICATION_TITLE, formatDate(date), shortRoleName, callName));
-            sendText(memberInfo.telegramId, MEETING_ROLE_INFO[shortRoleName]);
+
+            var notificationText = diffDays > 1 ? MEETING_ROLE_INFO_7_DAY[shortRoleName] : MEETING_ROLE_INFO_1_DAY[shortRoleName];
+            sendText(memberInfo.telegramId, format(notificationText, callName, formatDate(date), shortRoleName));
 
             if (isSpeach) {
                 if (!role.speachProject) {
-                    var callbackData = MEETING_SPEACH_CHANGE_PROJECT_CALLBACK + '___' + formatDate(date) + '___' + roleName + '___' + roleMember;
-                    var callbackId = inseertCallback(callbackData);
-                    var keyBoard = [{
-                        text: MEETING_SPEACH_CHANGE_PROJECT,
-                        callback: callbackId
-                    }];
-
-                    sendText(memberInfo.telegramId, MEETING_SPEACH_NO_PROJECT, getMenuInlineKeyBoardMultiline(keyBoard));
+                    askForRoleDetails(memberInfo.telegramId, MEETING_SPEACH_CHANGE_PROJECT_CALLBACK, MEETING_SPEACH_CHANGE_PROJECT, MEETING_SPEACH_NO_PROJECT,
+                        date, roleName, roleMember);
                 }
 
                 if (!role.speachTitle) {
-                    var callbackData = MEETING_SPEACH_CHANGE_TITLE_CALLBACK + '___' + formatDate(date) + '___' + roleName + '___' + roleMember;
-                    var callbackId = inseertCallback(callbackData);
-                    var keyBoard = [{
-                        text: MEETING_SPEACH_CHANGE_TITLE,
-                        callback: callbackId
-                    }];
-
-                    sendText(memberInfo.telegramId, MEETING_SPEACH_NO_TITLE, getMenuInlineKeyBoardMultiline(keyBoard));
+                    askForRoleDetails(memberInfo.telegramId, MEETING_SPEACH_CHANGE_TITLE_CALLBACK, MEETING_SPEACH_CHANGE_TITLE, MEETING_SPEACH_NO_TITLE,
+                        date, roleName, roleMember);
+                }
+            } else if (roleName.indexOf(MEETING_ROLE_TOASTMASTER) > -1) {
+                if (role.theme) {
+                    sendText(memberInfo.telegramId, format('{0} <b>{1}</b>: {2}', MEETING_ROLE_ICONS[MEETING_THEME], MEETING_THEME, role.theme));
+                } else {
+                    askForRoleDetails(memberInfo.telegramId, MEETING_CHANGE_THEME_CALLBACK, MEETING_CHANGE_THEME, MEETING_NO_THEME,
+                        date, roleName, roleMember);
+                }
+            } else if (roleName.indexOf(MEETING_ROLE_GRAMMARIAN) > -1) {
+                if (role.wordOfTheDay) {
+                    sendText(memberInfo.telegramId, format('{0} <b>{1}</b>: {2}', MEETING_ROLE_ICONS[MEETING_WORD_OF_THE_DAY], MEETING_WORD_OF_THE_DAY, role.wordOfTheDay));
+                } else {
+                    askForRoleDetails(memberInfo.telegramId, MEETING_CHANGE_WORD_OF_THE_DAY_CALLBACK, MEETING_CHANGE_WORD_OF_THE_DAY, MEETING_NO_WORD_OF_THE_DAY,
+                        date, roleName, roleMember);
+                }
+            } else if (roleName.indexOf(MEETING_ROLE_TABLE_TOPIC_MASTER) > -1) {
+                if (meetingTheme) {
+                    sendText(memberInfo.telegramId, format('{0} <b>{1}</b>: {2}', MEETING_ROLE_ICONS[MEETING_THEME], MEETING_THEME, meetingTheme));
                 }
             }
         }
     }
+}
+
+function askForRoleDetails(telegramId, callbackName, callbackText, callbackMessage, date, roleName, roleMember) {
+    var callbackData = callbackName + '___' + formatDate(date) + '___' + roleName + '___' + roleMember;
+    var callbackId = inseertCallback(callbackData);
+    var keyBoard = [{
+        text: callbackText,
+        callback: callbackId
+    }];
+
+    sendText(telegramId, callbackMessage, getMenuInlineKeyBoardMultiline(keyBoard));
 }
 
 /* РОБОТА З БАЗОЮ */
@@ -591,26 +662,25 @@ function cancelMeeting(date, reason) {
     }
 
     if (dateRowIndex > -1) {
-      var lastColumnIndex = sheet.getLastColumn();
-      for (var i = toastmasterColumnIndex; i < headerValues.length; i++) {
-        var columnIndex = i + 1;
-        var memberFullName = sheet.getRange(dateRowIndex + 2, columnIndex).getValue();        
-        var role = headerValues[i];
-        
-        if (role.indexOf(MEETING_ROLE_SPEACH_TITLE) > -1
-            || role.indexOf(MEETING_ROLE_SPEACH_PROJECT) > -1
-            || role.indexOf(MEETING_WORD_OF_THE_DAY) > -1
-            || role.indexOf(MEETING_THEME) > -1) {
-          sheet.getRange(dateRowIndex + 2, columnIndex).setValue('');    
+        var lastColumnIndex = sheet.getLastColumn();
+        for (var i = toastmasterColumnIndex; i < headerValues.length; i++) {
+            var columnIndex = i + 1;
+            var memberFullName = sheet.getRange(dateRowIndex + 2, columnIndex).getValue();
+            var role = headerValues[i];
+
+            if (role.indexOf(MEETING_ROLE_SPEACH_TITLE) > -1 ||
+                role.indexOf(MEETING_ROLE_SPEACH_PROJECT) > -1 ||
+                role.indexOf(MEETING_WORD_OF_THE_DAY) > -1 ||
+                role.indexOf(MEETING_THEME) > -1) {
+                sheet.getRange(dateRowIndex + 2, columnIndex).setValue('');
+            } else {
+                if (memberFullName) {
+                    var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, memberFullName);
+                    sendMemberCanceledRoleMessage(memberInfo, date, role);
+                }
+                sheet.getRange(dateRowIndex + 2, columnIndex).setValue(MEETING_CANCEL_SYMBOL + reason);
+            }
         }
-        else {
-          if (memberFullName) {
-            var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, memberFullName);
-            sendMemberCanceledRoleMessage(memberInfo, date, role);                
-          }
-          sheet.getRange(dateRowIndex + 2, columnIndex).setValue(MEETING_CANCEL_SYMBOL + reason);
-        }
-      }
     }
 }
 
@@ -670,11 +740,14 @@ function getMeetingProgramRoles(date) {
     var values = sheet.getRange(1, dateColumnIndex, sheet.getLastRow(), sheet.getLastColumn()).getValues();
     var meetingDate = parseDate(date);
     var roles = [];
-    
+
     var wordOfTheDay = '';
     var meetingTheme = '';
     var meetingAbout = '';
-  
+
+    var toastmasterRole = null;
+    var grammarianRole = null;
+
     for (var i = 0; i < values.length; i++) {
         var row = values[i];
 
@@ -689,12 +762,28 @@ function getMeetingProgramRoles(date) {
                 role.name = values[0][k];
                 role.member = row[k] ? row[k] : '';
 
-                if (role.name.indexOf(MEETING_ROLE_SPEACH_PROJECT) > -1 
-                    || role.name.indexOf(MEETING_ROLE_SPEACH_TITLE) > -1) {
-                  //MEETING_ABOUT
-                  //MEETING_WORD_OF_THE_DAY
-                  //MEETING_THEME
+                if (role.name.indexOf(MEETING_ROLE_SPEACH_PROJECT) > -1 ||
+                    role.name.indexOf(MEETING_ROLE_SPEACH_TITLE) > -1) {
+                    //MEETING_ABOUT
+                    //MEETING_WORD_OF_THE_DAY
+                    //MEETING_THEME
                     continue;
+                }
+
+                if (role.name.indexOf(MEETING_ROLE_TOASTMASTER) > -1) {
+                    toastmasterRole = role;
+                }
+
+                if (role.name.indexOf(MEETING_ROLE_GRAMMARIAN) > -1) {
+                    grammarianRole = role;
+                }
+
+                if (role.name.indexOf(MEETING_THEME) > -1) {
+                    toastmasterRole.theme = role.member;
+                }
+
+                if (role.name.indexOf(MEETING_WORD_OF_THE_DAY) > -1) {
+                    grammarianRole.wordOfTheDay = role.member;
                 }
 
                 if (role.name.indexOf(MEETING_ROLE_SPEACH) > -1) {
@@ -710,7 +799,7 @@ function getMeetingProgramRoles(date) {
             break;
         }
     }
- 
+
     return roles;
 }
 
@@ -771,44 +860,71 @@ function getMeetingRoles(date, showCanceledRoles) {
 }
 
 function getAvailableRoleDates(role, showCanceledRoles) {
-    getNextMeetingDates(SIGN_UP_FOR_NEXT_MEETINGS_AMOUNT);
 
     var sheet = SpreadsheetApp.openById(databaseSpreadSheetId).getSheetByName(SHEET_MEETINGS);
 
     var headerValues = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-    var toastmasterColumnIndex = headerValues.findIndex(MEETING_ROLE_TOASTMASTER) + 1;
     var dateColumnIndex = headerValues.findIndex(MEETING_HEADER_DATE) + 1;
+    headerValues = sheet.getRange(1, dateColumnIndex, 1, sheet.getLastColumn()).getValues()[0];
+    var nextMeetingDate = getNextMeetingDate();
+    var values = sheet.getRange(2, dateColumnIndex, sheet.getLastRow(), sheet.getLastColumn()).getValues();
 
-    var dateValues = sheet.getRange(2, dateColumnIndex, sheet.getLastRow(), 1).getValues();
+    if (sheet.getLastRow() > SIGN_UP_FOR_NEXT_MEETINGS_AMOUNT) {
+        var dateToCheck = sheet.getRange((sheet.getLastRow() + 1) - SIGN_UP_FOR_NEXT_MEETINGS_AMOUNT, dateColumnIndex).getValue();
+        dateToCheck = new Date(dateToCheck.getTime() + ((MEETING_TIME * 60 + MEETING_DURATION_MINUTES) * 60000));
+
+        if (dateToCheck - nextMeetingDate != 0) {
+            getNextMeetingDates(SIGN_UP_FOR_NEXT_MEETINGS_AMOUNT);
+        }
+    } else {
+        getNextMeetingDates(SIGN_UP_FOR_NEXT_MEETINGS_AMOUNT);
+    }
 
     var availableDates = [];
 
-    for (var i = 0; i < dateValues.length; i++) {
-        var date = typeof dateValues[i].getMonth === 'function' ? dateValues[i] : new Date(dateValues[i]);
-        var now = new Date();
 
-        if (date >= now) {
-            var availbleRoles = getMeetingRoles(date, showCanceledRoles);
-            if (availbleRoles.indexOf(role) > -1) {
-                availableDates.push(formatDate(date));
-            }
+    var roleSpeachHeaderIndexes = [];
+
+    for (var i = 0; i < headerValues.length; i++) {
+        if (headerValues[i].indexOf(role) > -1) {
+            roleSpeachHeaderIndexes.push(i);
         }
     }
+
+    if (!roleSpeachHeaderIndexes.length) {
+        return;
+    }
+
+    for (var i = values.length - 1; i >= 0; i--) {
+        var date = parseDate(values[i][0]);
+        date = new Date(date.getTime() + ((MEETING_TIME * 60 + MEETING_DURATION_MINUTES) * 60000));
+
+        if (date >= nextMeetingDate) {
+            for (var j = 0; j < roleSpeachHeaderIndexes.length; j++) {
+                var roleSpeachIndex = roleSpeachHeaderIndexes[j];
+
+                if (!values[i][roleSpeachIndex] || values[i][roleSpeachIndex] && (showCanceledRoles && values[i][roleSpeachIndex][0] == MEETING_CANCEL_SYMBOL)) {
+                    availableDates.unshift(formatDate(date));
+                    break;
+                }
+            }
+        } else {
+            break;
+        }
+    }
+
     return availableDates;
 }
 
-function getMeetingInfo(date, header)
-{
-  var roles = getMeetingProgramRoles(parseDate(date));
-  var about = '';
-  for(var i = 0; i < roles.length; i++)
-  {
-    var role = roles[i];    
-    if (role.name == header)
-    {
-      return role.member;
+function getMeetingInfo(date, header) {
+    var roles = getMeetingProgramRoles(parseDate(date));
+    var about = '';
+    for (var i = 0; i < roles.length; i++) {
+        var role = roles[i];
+        if (role.name == header) {
+            return role.member;
+        }
     }
-  }
 }
 
 function getNextMeetingDates(amount) {
@@ -819,10 +935,12 @@ function getNextMeetingDates(amount) {
     var dateColumnIndex = headerValues.findIndex(MEETING_HEADER_DATE) + 1;
 
     var lastDate = sheet.getRange(sheet.getLastRow(), dateColumnIndex).getValue();
-
-    var meetings = [];
-
+    lastDate = new Date(lastDate.getTime() + ((MEETING_TIME * 60 + MEETING_DURATION_MINUTES) * 60000));
     var nextMeetingDate = getNextMeetingDate();
+
+    var meetings = []
+    var meetingsToInsert = [];
+
     meetings.push(formatDate(nextMeetingDate));
 
     for (var i = 0; i < amount - 1; i++) {
@@ -830,9 +948,13 @@ function getNextMeetingDates(amount) {
         meetings.push(formatDate(date));
 
         if (date > lastDate) {
-            sheet.insertRowsAfter(sheet.getLastRow(), 1);
-            sheet.getRange(sheet.getLastRow() + 1, dateColumnIndex).setValue(formatDate(date));
+            meetingsToInsert.push([formatDate(date)]);
         }
+    }
+
+    if (meetingsToInsert.length) {
+        sheet.insertRowsAfter(sheet.getLastRow(), meetingsToInsert.length);
+        sheet.getRange(sheet.getLastRow() + 1, dateColumnIndex, meetingsToInsert.length, 1).setValues(meetingsToInsert);
     }
 
     return meetings;

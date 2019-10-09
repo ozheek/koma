@@ -65,7 +65,7 @@ var LIBRARY_READ_BOOK_IS_RESERVED_WARNING = 'Книга <b>{0}</b> (<i>{1}</i>) 
                             \nБажаєте продовжити, і видати цю книгу користувачу <b>{3}</b>?';
 var LIBRARY_READ_KEEP_RESERVED = 'Операцію скасовано 😯 \nКнига <b>{0}</b> (<i>{1}</i>) залишається зарезервованою за читачем <b>{2}</b>';
  
-var LIBRARY_RETUTRN_START = 'Введіть код книги, яку хочете повернути:';
+var LIBRARY_RETURN_START = 'Введіть код книги, яку хочете повернути:';
 var LIBRARY_RETURN_NOT_READ = 'Книгу <b>{0}</b> (<i>{1}</i>) ніхто не брав читати, її неможливо повернути.';
 var LIBRARY_RETURN_CONFIRM = 'Вам повернули книгу <b>{0}</b> (<i>{1}</i>), а ви віддали заставу <b>{2}грн</b>?';
 var LIBRARY_RETURN_CANCEL = 'Книгу <b>{0}</b> (<i>{1}</i>) не було повернуто. Її досі читає <b>{2}</b>.';
@@ -341,19 +341,30 @@ function processLibraryManagement(userData, text) {
                     return true;
                 }
             } else {
-                var bookInfo = getLibraryBookInformation(text);
-
-                if (bookInfo[LIBRARY_HEADER_STATUS] == LIBRARY_BOOK_STATUS_FREE
-                   || bookInfo[LIBRARY_HEADER_STATUS] == LIBRARY_BOOK_STATUS_RESERVED) {
-                    sendText(userData.telegramId, format(LIBRARY_READ_INFO,
-                        bookInfo[LIBRARY_HEADER_TITLE],
-                        bookInfo[LIBRARY_HEADER_AUTHOR],
-                        (bookInfo[LIBRARY_HEADER_MORTGAGE] ? bookInfo[LIBRARY_HEADER_MORTGAGE] + LIBRARY_READ_MORTGAGE_CURRENCY : LIBRARY_READ_MORTGAGE_NO)));
-                    showMenu(userData.telegramId, LIBRARY_READ_READER, getAllMembers());
-                    return true;
-                } else {
-                    showMenu(userData.telegramId, format(LIBRARY_READ_BUSY, bookInfo[LIBRARY_HEADER_TITLE], bookInfo[LIBRARY_HEADER_AUTHOR], bookInfo[LIBRARY_HEADER_READER]));
-                    return true;
+               if(text == LIBRARY_SHOW_LIST) {
+                  userData.statuses = userData.statuses.slice(0, 2);
+                  userData.statuses.push(LIBRARY_SHOW_LIST);
+                  userData.status = userData.statuses.join('___') + '___';
+                  
+                  updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userData.telegramId, MEMBERS_HEADER_TELEGRAM_STATUS, userData.status);
+                  showMenu(userData.telegramId, LIBRARY_LIST_FILTER_TYPE, [LIBRARY_LIST_FILTER_ALL, LIBRARY_LIST_FILTER_BY_GENRE, LIBRARY_LIST_FILTER_BY_RATING]);
+                  
+                  return false;
+               } else {
+                    var bookInfo = getLibraryBookInformation(text);
+    
+                    if (bookInfo[LIBRARY_HEADER_STATUS] == LIBRARY_BOOK_STATUS_FREE
+                       || bookInfo[LIBRARY_HEADER_STATUS] == LIBRARY_BOOK_STATUS_RESERVED) {
+                        sendText(userData.telegramId, format(LIBRARY_READ_INFO,
+                            bookInfo[LIBRARY_HEADER_TITLE],
+                            bookInfo[LIBRARY_HEADER_AUTHOR],
+                            (bookInfo[LIBRARY_HEADER_MORTGAGE] ? bookInfo[LIBRARY_HEADER_MORTGAGE] + LIBRARY_READ_MORTGAGE_CURRENCY : LIBRARY_READ_MORTGAGE_NO)));
+                        showMenu(userData.telegramId, LIBRARY_READ_READER, getAllMembers());
+                        return true;
+                    } else {
+                        showMenu(userData.telegramId, format(LIBRARY_READ_BUSY, bookInfo[LIBRARY_HEADER_TITLE], bookInfo[LIBRARY_HEADER_AUTHOR], bookInfo[LIBRARY_HEADER_READER]));
+                        return false;
+                    }
                 }
             }
         } else if (userData.statuses[2] == LIBRARY_RETURN_BOOK) {
@@ -458,10 +469,10 @@ function processLibraryManagement(userData, text) {
         }
     } else {
         if (text == LIBRARY_GIVE_BOOK) {
-            showMenu(userData.telegramId, LIBRARY_READ_START);
+            showMenu(userData.telegramId, LIBRARY_READ_START, [LIBRARY_SHOW_LIST]);
             return true;
         } else if (text == LIBRARY_RETURN_BOOK) {
-            showMenu(userData.telegramId, LIBRARY_RETUTRN_START);
+            showMenu(userData.telegramId, LIBRARY_RETURN_START);
             return true;
         } else if (text == LIBRARY_ADD_BOOK) {
             showMenu(userData.telegramId, LIBRARY_ADD_TITLE);
