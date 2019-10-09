@@ -934,7 +934,7 @@ function getNextMeetingDates(amount) {
     var headerValues = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
     var dateColumnIndex = headerValues.findIndex(MEETING_HEADER_DATE) + 1;
 
-    var lastDate = sheet.getRange(sheet.getLastRow(), dateColumnIndex).getValue();
+    var lastDate = parseDate(sheet.getRange(sheet.getLastRow(), dateColumnIndex).getValue());
     lastDate = new Date(lastDate.getTime() + ((MEETING_TIME * 60 + MEETING_DURATION_MINUTES) * 60000));
     var nextMeetingDate = getNextMeetingDate();
 

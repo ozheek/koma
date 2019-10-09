@@ -2,14 +2,6 @@
 // FILE -> Spreadsheet settings -> встановити потрібну локаль 
 // Поставити трігер на checkLibraryBooksStatusAndSendNotifications, виконання щодня
 
-/* БАЗА ДАННИХ */
-var databaseSpreadSheetId = '1SIWh9duMMiaz2UClVM1amuY-Qw29KZuaHm141qI7oaY';
-
-/* TELEGRAM */
-var token = "835758828:AAEsPoQzA9qZpVyIZISNWBom2hIeAFJgh_s"; 
-var telegramUrl = "https://api.telegram.org/bot" + token;
-var webAppUrl = "https://script.google.com/macros/s/AKfycbwA_dXcVLm1-tK-lZKsHZt5eWzE9l57C1Rl_VjOtO5SA876-2og/exec";
-
 /* ЗАПУСТИТИ, ЩОБ ВСТАНОВИТИ ТРIГГЕР */
 
 function setRemindTriggers(){
@@ -50,3 +42,7 @@ var OFFICER_POSITION_SECRETARY = "Секретар";
 var OFFICER_POSITION_TREASURE = "Скарбник";
 var OFFICER_POSITION_STEWARD = "Розпорядник";
 var OFFICER_POSITION_LIBRARIAN = "Бібліотекар";
+
+// ВІЦЕ-ПРЕЗИДЕНТ З ОСВІТИ
+
+var VPO_TELEGRAM = "@teb01";

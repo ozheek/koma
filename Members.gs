@@ -535,7 +535,7 @@ function checkMembersName(text) {
   if(Object.keys(members).length) {
   const sortedMembers = [];
   
-  Object.keys(members).sort(function(a, b){return a.localeCompare(b,'ua')}).forEach(function(key) {
+  Object.keys(members).sort().forEach(function(key) {
     sortedMembers.push(members[key]);
   });
     
