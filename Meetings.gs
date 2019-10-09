@@ -22,7 +22,7 @@ var MEETING_CANCEL = 'Скасувати засідання';
 
 var MEETING_SIGN_UP_DATE = "Вибрати засідання (дату)";
 var MEETING_SIGN_UP_ROLE = "Вибрати роль";
-var MEETING_SIGN_UP_ROLE_REJECTED = "На жаль, Ви не можете записатись на роль, бо вже записанi на ролi:";
+var MEETING_SIGN_UP_ROLE_REJECTED = "На жаль, ви не можете записатись на роль на засіданні <b>{0}</b>, бо <b>вже записанi на ролi</b>: <i>{1}</i>";
 
 var MEETING_ROLE_REJECT = '❗ Звільнити';
 var MEETING_ROLE_CHANGE = '📝 Змінити';
@@ -256,7 +256,7 @@ function processSignUpForRole(userData, text) {
                 var foundRoles = getSignedRolesInSelectedMeeting(userData.fullName, text);
 
                 if (foundRoles == null) {
-                    sendText(userData.telegramId, format(MEETING_NOT_FOUND, formatDate(text)));
+                    sendText(userData.telegramId, format(MEETING_NOT_FOUND, formatDate(parseDate(text))));
                     return false;
                 }
 
@@ -264,11 +264,11 @@ function processSignUpForRole(userData, text) {
                     var listOfSignedRoles = "";
 
                     for (var key in foundRoles) {
-                        listOfSignedRoles += '<i>' + key + '</i>: \n' + '<b>' + foundRoles[key] + '</b> \n\n';
+                      listOfSignedRoles += key + ', ';
                     }
+                    listOfSignedRoles = listOfSignedRoles.substring(0, listOfSignedRoles.length - 2);
 
-                    sendText(userData.telegramId, MEETING_SIGN_UP_ROLE_REJECTED);
-                    sendText(userData.telegramId, listOfSignedRoles);
+                    sendText(userData.telegramId, format(MEETING_SIGN_UP_ROLE_REJECTED, formatDate(parseDate(text)), listOfSignedRoles));
                     return false;
                 } else {
                     showMenu(userData.telegramId, format(MEETING_SIGN_UP_ROLES_AVAILABLE, text), getMeetingRoles(text));
