@@ -244,13 +244,20 @@ function processSignUpForRole(userData, text) {
         if (userData.statuses[2] == MEETING_SIGN_UP_DATE) {
             if (userData.statuses[3]) {
                 if (!userData.statuses[4]) {
-                    if (tryToUpdateMeetingInfo(userData.statuses[3], text, userData.fullName)) {
-                        showMenu(userData.telegramId, format(MEETING_SIGN_UP_SUCCESS, text, userData.statuses[3]));
-                    } else {
-
-                        showMenu(userData.telegramId, format(MEETING_SIGN_UP_ROLES_BUSY, text, userData.statuses[3]), getMeetingRoles(userData.statuses[3]));
-                    }
-                    return true;
+                    var checkRoleDuplication = checkIsRoleDuplicated(userData.fullName, parseDate(userData.statuses[3]), text);
+                   
+                   if(checkRoleDuplication) {
+                     if (tryToUpdateMeetingInfo(userData.statuses[3], text, userData.fullName)) {
+                       showMenu(userData.telegramId, format(MEETING_SIGN_UP_SUCCESS, text, userData.statuses[3]));
+                     } else {
+                       
+                       showMenu(userData.telegramId, format(MEETING_SIGN_UP_ROLES_BUSY, text, userData.statuses[3]), getMeetingRoles(userData.statuses[3]));
+                     }
+                     return true;
+                   } else {
+                     showMenu(userData.telegramId, format(MEETING_ROLE_DUPLICATES, text, userData.statuses[3], MEETINGS_AMOUNT_WHERE_ROLE_NOT_DUPLICATES), getMeetingRoles(userData.statuses[3]));
+                     return false;
+                   }
                 }
             } else {
                 var foundRoles = getSignedRolesInSelectedMeeting(userData.fullName, text);
@@ -296,12 +303,19 @@ function processSignUpForRole(userData, text) {
                         sendText(userData.telegramId, format(MEETING_SIGN_UP_ROLE_REJECTED, formatDate(parseDate(text)), listOfSignedRoles));
                         return false;
                     } else {
+                      var checkRoleDuplication = checkIsRoleDuplicated(userData.fullName, text, parseDate(userData.statuses[3]));
+                   
+                      if(checkRoleDuplication) {
                         if (tryToUpdateMeetingInfo(text, userData.statuses[3], userData.fullName)) {
                             showMenu(userData.telegramId, format(MEETING_SIGN_UP_SUCCESS, userData.statuses[3], text));
                         } else {
                             showMenu(userData.telegramId, format(MEETING_SIGN_UP_DATE_BUSY, userData.statuses[3], text), getAvailableRoleDates(userData.statuses[3]));
                         }
                         return true;
+                      } else {
+                          showMenu(userData.telegramId, format(MEETING_ROLE_DUPLICATES, userData.statuses[3], text, MEETINGS_AMOUNT_WHERE_ROLE_NOT_DUPLICATES), getMeetingRoles(userData.statuses[3]));
+                          return false;
+                        } 
                     }
                 }
             } else {
@@ -908,8 +922,7 @@ function getAvailableRoleDates(role, showCanceledRoles) {
                     break;
                 }
             }
-        }
-        else {
+        } else {
             break;
         }
     }
