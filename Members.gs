@@ -348,7 +348,7 @@ function insertMembersData(name, lastname, callName, phoneNumber, email, status,
     values[0][callNameColumnIndex] = callName;
     values[0][phoneNumberColumnIndex] = phoneNumber.replace('+', '');;
     values[0][emailAddressColumnIndex] = email;
-    values[0][statusColumnIndex] = status;
+    values[0][statusColumnIndex] = (status ? status : '');
     values[0][telegramIdColumnIndex] = (telegramId ? telegramId : '');  
     values[0][telegramColumnIndex] = (username ? username : '');
     values[0][dateColumnIndex] = formatDate(new Date());

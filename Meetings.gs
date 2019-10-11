@@ -159,6 +159,11 @@ var MEETING_CANCEL_REASON_2 = 'Конкурс гумористичних про�
 var MEETING_CANCEL_REASON_3 = 'Конкурс експромт-промов';
 var MEETING_CANCEL_KEEP_ROLE = 'Вкажіть роль, яку ви хочете залишити на засідання:';
 
+var MEETING_ROLE_IS_DUPLICATED = 'На жаль, ви не можете записатися на роль <b>{0}</b> на засідання <b>{1}</b>, тому що ви її виконували на попередньому засіданні <b>{2}</b>.\
+\n\nВи можете записатися на іншу роль або на <b>{3}</b> засідання.';
+var MEETING_ROLE_IS_DUPLICATED_FUTURE = 'На жаль, ви не можете записатися на роль <b>{0}</b> на засідання <b>{1}</b>, тому що ви будете її виконувати на засіданні <b>{2}</b>.\
+\n\nВи можете записатися на іншу роль або на <b>{3}</b> засідання.';
+                               
 /* ЗАГОЛОВКИ БАЗИ ДАННИХ */
 
 var MEETING_HEADER_DATE = "Дата";
@@ -244,9 +249,9 @@ function processSignUpForRole(userData, text) {
         if (userData.statuses[2] == MEETING_SIGN_UP_DATE) {
             if (userData.statuses[3]) {
                 if (!userData.statuses[4]) {
-                    var checkRoleDuplication = checkIsRoleDuplicated(userData.fullName, parseDate(userData.statuses[3]), text);
+                    var roleDuplicatesInfo = isRoleDuplicated(userData.fullName, parseDate(userData.statuses[3]), text);
                    
-                   if(checkRoleDuplication) {
+                   if(!roleDuplicatesInfo) {
                      if (tryToUpdateMeetingInfo(userData.statuses[3], text, userData.fullName)) {
                        showMenu(userData.telegramId, format(MEETING_SIGN_UP_SUCCESS, text, userData.statuses[3]));
                      } else {
@@ -255,7 +260,11 @@ function processSignUpForRole(userData, text) {
                      }
                      return true;
                    } else {
-                     showMenu(userData.telegramId, format(MEETING_ROLE_DUPLICATES, text, userData.statuses[3], MEETINGS_AMOUNT_WHERE_ROLE_NOT_DUPLICATES), getMeetingRoles(userData.statuses[3]));
+                     var message = roleDuplicatesInfo.isFuture 
+                              ? format(MEETING_ROLE_IS_DUPLICATED_FUTURE, text, userData.statuses[3], roleDuplicatesInfo.date, roleDuplicatesInfo.availableDate)
+                              : format(MEETING_ROLE_IS_DUPLICATED, text, userData.statuses[3], roleDuplicatesInfo.date, roleDuplicatesInfo.availableDate);
+                              
+                     showMenu(userData.telegramId, message, getMeetingRoles(userData.statuses[3]));
                      return false;
                    }
                 }
@@ -303,9 +312,9 @@ function processSignUpForRole(userData, text) {
                         sendText(userData.telegramId, format(MEETING_SIGN_UP_ROLE_REJECTED, formatDate(parseDate(text)), listOfSignedRoles));
                         return false;
                     } else {
-                      var checkRoleDuplication = checkIsRoleDuplicated(userData.fullName, text, parseDate(userData.statuses[3]));
+                      var roleDuplicatesInfo = isRoleDuplicated(userData.fullName, parseDate(userData.statuses[3]), text);
                    
-                      if(checkRoleDuplication) {
+                      if(!roleDuplicatesInfo) {
                         if (tryToUpdateMeetingInfo(text, userData.statuses[3], userData.fullName)) {
                             showMenu(userData.telegramId, format(MEETING_SIGN_UP_SUCCESS, userData.statuses[3], text));
                         } else {
@@ -313,7 +322,11 @@ function processSignUpForRole(userData, text) {
                         }
                         return true;
                       } else {
-                          showMenu(userData.telegramId, format(MEETING_ROLE_DUPLICATES, userData.statuses[3], text, MEETINGS_AMOUNT_WHERE_ROLE_NOT_DUPLICATES), getMeetingRoles(userData.statuses[3]));
+                          var message = roleDuplicatesInfo.isFuture 
+                              ? format(MEETING_ROLE_IS_DUPLICATED_FUTURE, text, userData.statuses[3], roleDuplicatesInfo.date, roleDuplicatesInfo.availableDate)
+                              : format(MEETING_ROLE_IS_DUPLICATED, text, userData.statuses[3], roleDuplicatesInfo.date, roleDuplicatesInfo.availableDate);
+                        
+                          showMenu(userData.telegramId, message, getMeetingRoles(userData.statuses[3]));
                           return false;
                         } 
                     }
@@ -972,4 +985,55 @@ function getNextMeetingDates(amount) {
     }
 
     return meetings;
+}
+
+function isRoleDuplicated(fullName, meetingDate, role) {
+  var sheet = SpreadsheetApp.openById(databaseSpreadSheetId).getSheetByName(SHEET_MEETINGS);
+  var headerValues = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  var dateColumnIndex = headerValues.findIndex(MEETING_HEADER_DATE) + 1;
+  var lastRow = sheet.getLastRow() - 1;
+  var values = sheet.getRange(2, dateColumnIndex, lastRow, sheet.getLastColumn()).getValues();
+  var roleColumnIndexes = [];
+  var meetingRowIndex = 0;
+  
+  for (var i = values.length - 1; i > 0; i--) {
+     if (!(parseDate(values[i][0]) - parseDate(meetingDate))) {
+       meetingRowIndex = lastRow - (values.length - i);
+       break;
+     }
+  }
+   
+  for (var i = 0; i < headerValues.length; i++) {
+     if (headerValues[i].indexOf(role) > -1) {
+        roleColumnIndexes.push(i - dateColumnIndex + 1);
+     }
+  }
+  
+  if(!meetingRowIndex || !roleColumnIndexes.length) {
+     return null;
+  }
+  
+  for (var i = 0; i < roleColumnIndexes.length; i++) {
+    for (var j = 1; j <= +MEETINGS_AMOUNT_WHERE_ROLE_NOT_DUPLICATES; j++) {
+      if(values[meetingRowIndex - j][roleColumnIndexes[i]].indexOf(fullName) > -1){
+        var nextAvailableDate = formatDate(parseDate(formatDate(meetingDate)).addDays((MEETINGS_AMOUNT_WHERE_ROLE_NOT_DUPLICATES - j + 1) * 7));
+        var duplicate = {
+          date: formatDate(values[meetingRowIndex - j][0]),
+          availableDate: nextAvailableDate,
+          isFuture: false
+        };
+        return duplicate;
+      } else if(values[meetingRowIndex + j][roleColumnIndexes[i]].indexOf(fullName) > -1){
+        var nextAvailableDate = formatDate(parseDate(formatDate(values[meetingRowIndex + j][0])).addDays((MEETINGS_AMOUNT_WHERE_ROLE_NOT_DUPLICATES + 1) * 7));
+        var duplicate = {
+          date: formatDate(values[meetingRowIndex + j][0]),
+          availableDate: nextAvailableDate,
+          isFuture: true
+        };
+        return duplicate;
+      }
+    }
+  }
+  
+  return false;
 }

@@ -14,11 +14,12 @@ function setRemindTriggers(){
 var CLUB_NAME = 'КОМА';
 var FULL_CLUB_NAME = 'Клуб ораторської майстерності "КОМА"';
 
-var MEETING_ON_WEEK_DAY = 4;                  /* Четвер */; // 0 - Неділя, 6 - Субота
+var MEETING_ON_WEEK_DAY = 4;                          /* Четвер */; // 0 - Неділя, 6 - Субота
 var MEETING_TIME = 19;
 var MEETING_DURATION_MINUTES = 90;
-var TIMEZONE_OFFSET = 180;                    /* 3 години, Київ */; 
-var SIGN_UP_FOR_NEXT_MEETINGS_AMOUNT = "12";  /* Можна записатись на наступні 12 засідань */
+var TIMEZONE_OFFSET = 180;                            /* 3 години, Київ */; 
+var SIGN_UP_FOR_NEXT_MEETINGS_AMOUNT = 12;            /* Можна записатись на наступні 12 засідань */
+var MEETINGS_AMOUNT_WHERE_ROLE_NOT_DUPLICATES = 1;    /* Скільки засідань не можна записувати на одну й ту ж саму роль, якщо 1, то на попередньому засіданні користувач не повинен був виконувати таку ж роль */
 
 /* ТЕКСТИ */
 
