@@ -5,8 +5,8 @@
 /* ЗАПУСТИТИ, ЩОБ ВСТАНОВИТИ ТРIГГЕР */
 
 function setRemindTriggers(){
-  var trigger = ScriptApp.newTrigger("checkLibraryBooksStatusAndSendNotifications").timeBased().atHour(16).everyDays(1).inTimezone("Europe/Kiev").create();
-  return trigger;
+  ScriptApp.newTrigger("checkLibraryBooksStatusAndSendNotifications").timeBased().atHour(16).everyDays(1).inTimezone("Europe/Kiev").create();  
+  ScriptApp.newTrigger("sendMeetingNotifications").timeBased().atHour(16).everyDays(1).inTimezone("Europe/Kiev").create();  
 }
 
 /* НАЛАШТУВАННЯ */
