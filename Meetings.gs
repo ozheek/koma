@@ -86,8 +86,14 @@ var MEETING_CANCEL_CHOOSE_DATE = 'Виберіть дату засідання, 
 
 var MEETING_SPEACH_NO_PROJECT = '🗂 <b>Назва проекту</b>\
 \n\nПовідомте якомога раніше мені проект промови, використовуйте кнопку нижче 👇🏻';
+var MEETING_SPEACH_CONFIRM_PROJECT = '🗂 <b>Назва проекту</b>\
+\n\nВ мене записано, що проект вашої промови: <b>{0}</b>.\
+\n\nЯкщо щось змінилось, то натисніть кнопку нижче і вкажіть новий проект 👇🏻';
 var MEETING_SPEACH_NO_TITLE = '📰 <b>Назва вашої промови</b>\
-\n\nЧи знаєте ви вже назву промови? Якщо так, то натисніть кнопку нижче і вкажіть його 👇🏻';
+\n\nЧи знаєте ви вже назву промови? Якщо так, то натисніть кнопку нижче і вкажіть її 👇🏻';
+var MEETING_SPEACH_CONFIRM_TITLE = '📰 <b>Назва вашої промови</b>\
+\n\nВ мене записано, що назва вашої промови: <b>{0}</b>.\
+\n\nЯкщо назва змінилась, то натисніть кнопку нижче і вкажіть нову назву 👇🏻';
 
 var MEETING_NO_WORD_OF_THE_DAY = '💬 <b>Слово дня</b>\
 \n\nВи вже придумали слово дня? Якщо так, вкажіть його, використовуючи кнопку нижче 👇🏻';
@@ -609,10 +615,17 @@ function sendMeetingNotifications() {
                 if (!role.speachProject) {
                     askForRoleDetails(memberInfo.telegramId, MEETING_SPEACH_CHANGE_PROJECT_CALLBACK, MEETING_SPEACH_CHANGE_PROJECT, MEETING_SPEACH_NO_PROJECT,
                         date, roleName, roleMember);
+                } else {
+                  askForRoleDetails(memberInfo.telegramId, MEETING_SPEACH_CHANGE_PROJECT_CALLBACK, MEETING_SPEACH_CHANGE_PROJECT, format(MEETING_SPEACH_CONFIRM_PROJECT, role.speachProject),
+                        date, roleName, roleMember);
                 }
 
                 if (!role.speachTitle) {
                     askForRoleDetails(memberInfo.telegramId, MEETING_SPEACH_CHANGE_TITLE_CALLBACK, MEETING_SPEACH_CHANGE_TITLE, MEETING_SPEACH_NO_TITLE,
+                        date, roleName, roleMember);
+                }
+                else {
+                  askForRoleDetails(memberInfo.telegramId, MEETING_SPEACH_CHANGE_TITLE_CALLBACK, MEETING_SPEACH_CHANGE_TITLE, format(MEETING_SPEACH_CONFIRM_TITLE, role.speachTitle),
                         date, roleName, roleMember);
                 }
             } else if (roleName.indexOf(MEETING_ROLE_TOASTMASTER) > -1) {
