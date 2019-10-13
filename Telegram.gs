@@ -6,7 +6,7 @@ function setWebhook() {
 }
 
 function sendText(chatId, text, replyMarkup) {
-  //try {
+  try {
     var data = {
       method: "post",
       payload: {
@@ -20,6 +20,9 @@ function sendText(chatId, text, replyMarkup) {
     };
     //Browser.msgBox(JSON.stringify(data));
     UrlFetchApp.fetch('https://api.telegram.org/bot' + token + '/', data);
-  //}
-  //catch(ex) {}
+  }
+  catch(ex) 
+  {
+    ttt(JSON.stringify(ex));
+  }
 }
