@@ -66,7 +66,24 @@ function processCallback(contents) {
 
                 updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, callbackId, MEMBERS_HEADER_TELEGRAM_STATUS, callback);
                 showMenu(callbackId, format(CALLBACK_ROLE_VALUE_NEW, role, date), getAllMembers());
-            }
+            } else if (statuses[0] == MEETING_ROLE_REQUEST_CONFIRM_CALLBACK) {
+                var date = statuses[1];
+                var role = statuses[2];
+                var fullName = statuses[3];
+                
+                if (updateMeetingInfo(date, role, fullName, true)) {
+                    sendText(callbackId, format(MEETING_ROLE_REQUEST_CONFIRMED, fullName, date, role));
+                }
+            } else if (statuses[0] == MEETING_ROLE_REQUEST_REJECT_CALLBACK) {
+                var date = statuses[1];
+                var role = statuses[2];
+                var fullName = statuses[3];
+                
+                sendText(callbackId, format(MEETING_ROLE_REQUEST_REJECTED, fullName, role, date));
+            } else if (statuses[0] == MEMBERS_SEND_GREETING_CONFIRM_CALLBACK) {
+//                var newMember = getMemberInfo(MEMBERS_HEADER_FULLNAME, fullName);
+//                GmailApp.sendEmail(ne
+            }   
         }
     }
 }
@@ -111,4 +128,23 @@ function findCallback(id) {
             return values[i][2];
         }
     }
+}
+
+function deleteExpiredCallbacks() {
+
+  var sheet = SpreadsheetApp.openById(databaseSpreadSheetId).getSheetByName(SHEET_CALLBACK);
+  var timeValues = sheet.getRange(1, 1, sheet.getLastRow(), 1).getValues();
+  var now = new Date();
+  var oneWeekAgo = now.setDate(now.getDate() - 7);
+  var lastExpiredCallback = 0;
+    
+  for (var i = 0; i < timeValues.length; i++) {
+    if (timeValues[i][0] <= oneWeekAgo) {
+      lastExpiredCallback = i + 1;
+    }
+  }
+  
+  if (lastExpiredCallback) {
+    sheet.deleteRows(1, lastExpiredCallback);
+  }
 }

@@ -8,6 +8,7 @@ function doGet(e) {
 }
 
 function doPost(e) {
+  try {
     var contents = JSON.parse(e.postData.contents);
     if (contents.callback_query) {
         processCallback(contents);
@@ -65,6 +66,7 @@ function doPost(e) {
             }
         }
     }
+  }catch(ex){ttt(JSON.stringify(ex));}
 }
 
 function goBack(userData, text) {

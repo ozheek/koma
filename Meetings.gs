@@ -169,7 +169,24 @@ var MEETING_ROLE_IS_DUPLICATED = 'На жаль, ви не можете запи
 \n\nВи можете записатися на іншу роль або на <b>{3}</b> засідання.';
 var MEETING_ROLE_IS_DUPLICATED_FUTURE = 'На жаль, ви не можете записатися на роль <b>{0}</b> на засідання <b>{1}</b>, тому що ви будете її виконувати на засіданні <b>{2}</b>.\
 \n\nВи можете записатися на іншу роль або на <b>{3}</b> засідання.';
-                               
+
+var MEETING_ROLE_REQUEST_SENT = "Ваш запит на запит на виконання ролі відправлено віце-президенту з освіти!\
+                                 \n\nЯк тільки він підтвердить вашу участь у засіданні - ви отримаєте повідомлення 😊";
+
+var MEETING_ROLE_REQUEST_BUSY = "На жаль, роль <b>{0}</b> на засіданні <b>{1}</b> вже зайнята. Ви не можете записати <b>{2}</b> на цю роль.";                                    
+var MEETING_ROLE_REQUEST_FAILED_NO_MEMBER = "На жаль, не змогли підтвердити виконання ролі, тому що не знайшли користувача <b>{0}</b> в базі.";
+                                                                    
+var MEETING_ROLE_REQUEST_CONFIRM_MESSAGE = 'Вітаю, {0}!\n\nГість <b>{1}</b> просить вас підтвердити його запит на виконання ролі <b>{2}</b> на засіданні <b>{3}</b>'; 
+
+var MEETING_ROLE_REQUEST_CONFIRM_CALLBACK = 'confirm_guest_to_sign_up_to_role';
+var MEETING_ROLE_REQUEST_REJECT_CALLBACK = 'reject_guest_to_sign_up_to_role';
+
+var MEETING_ROLE_REQUEST_CONFIRM = '👍 Підтвердити';
+var MEETING_ROLE_REQUEST_REJECT = '👎 Відмовити';
+
+var MEETING_ROLE_REQUEST_CONFIRMED = 'Вітаю, {0}!\n\nВіце-президент з освіти підтвердив ваш запит! 😊\n\nНа засіданні <b>{1}</b> ви будете виконувати роль <b>{2}</b>.';
+var MEETING_ROLE_REQUEST_REJECTED = 'Вітаю, {0}!\n\nНа жаль, віце-президент з освіти не підтвердив вам у виконанні ролі <b>{1}</b> на засіданні <b>{2}</b>. Можливо, на цю роль вже записаний член клубу. За деталями зверніться до віце-президента клубу.';
+       
 /* ЗАГОЛОВКИ БАЗИ ДАННИХ */
 
 var MEETING_HEADER_DATE = "Дата";
@@ -258,13 +275,19 @@ function processSignUpForRole(userData, text) {
                     var roleDuplicatesInfo = isRoleDuplicated(userData.fullName, parseDate(userData.statuses[3]), text);
                    
                    if(!roleDuplicatesInfo) {
-                     if (tryToUpdateMeetingInfo(userData.statuses[3], text, userData.fullName)) {
-                       showMenu(userData.telegramId, format(MEETING_SIGN_UP_SUCCESS, text, userData.statuses[3]));
-                     } else {
-                       
-                       showMenu(userData.telegramId, format(MEETING_SIGN_UP_ROLES_BUSY, text, userData.statuses[3]), getMeetingRoles(userData.statuses[3]));
-                     }
-                     return true;
+                     var isUserAGuest = (userData.fields[MEMBERS_HEADER_STATUS] == MEMBERS_STATUS_GUEST) ? true : false;
+                       if (!isUserAGuest) {
+                         if (tryToUpdateMeetingInfo(userData.statuses[3], text, userData.fullName)) {
+                           showMenu(userData.telegramId, format(MEETING_SIGN_UP_SUCCESS, text, userData.statuses[3]));
+                         } else {
+                           showMenu(userData.telegramId, format(MEETING_SIGN_UP_ROLES_BUSY, text, userData.statuses[3]), getMeetingRoles(userData.statuses[3]));
+                         }
+                         return true;
+                       } else {
+                         showMenu(userData.telegramId, MEETING_ROLE_REQUEST_SENT);
+                         askVPEducationToConfirmRole(userData, userData.statuses[3], text);
+                         return false;
+                       }
                    } else {
                      var message = roleDuplicatesInfo.isFuture 
                               ? format(MEETING_ROLE_IS_DUPLICATED_FUTURE, text, userData.statuses[3], roleDuplicatesInfo.date, roleDuplicatesInfo.availableDate)
@@ -321,12 +344,19 @@ function processSignUpForRole(userData, text) {
                       var roleDuplicatesInfo = isRoleDuplicated(userData.fullName, parseDate(userData.statuses[3]), text);
                    
                       if(!roleDuplicatesInfo) {
-                        if (tryToUpdateMeetingInfo(text, userData.statuses[3], userData.fullName)) {
-                            showMenu(userData.telegramId, format(MEETING_SIGN_UP_SUCCESS, userData.statuses[3], text));
+                        var isUserAGuest = (userData.fields[MEMBERS_HEADER_STATUS] == MEMBERS_STATUS_GUEST) ? true : false;
+                        if (!isUserAGuest) {
+                          if (tryToUpdateMeetingInfo(text, userData.statuses[3], userData.fullName)) {
+                              showMenu(userData.telegramId, format(MEETING_SIGN_UP_SUCCESS, userData.statuses[3], text));
+                          } else {
+                              showMenu(userData.telegramId, format(MEETING_SIGN_UP_DATE_BUSY, userData.statuses[3], text), getAvailableRoleDates(userData.statuses[3]));
+                          }
+                          return true;
                         } else {
-                            showMenu(userData.telegramId, format(MEETING_SIGN_UP_DATE_BUSY, userData.statuses[3], text), getAvailableRoleDates(userData.statuses[3]));
-                        }
-                        return true;
+                           showMenu(userData.telegramId, MEETING_ROLE_REQUEST_SENT);
+                           askVPEducationToConfirmRole(userData, text, userData.statuses[3]);
+                           return false;
+                         }
                       } else {
                           var message = roleDuplicatesInfo.isFuture 
                               ? format(MEETING_ROLE_IS_DUPLICATED_FUTURE, text, userData.statuses[3], roleDuplicatesInfo.date, roleDuplicatesInfo.availableDate)
@@ -542,6 +572,39 @@ function processEditMeeting(userData, text) {
     }
 }
 
+/* ОПЕРАЦІЇ */
+
+function askVPEducationToConfirmRole(userData, meetingDate, roleName) {
+
+  var vpEducation = getMemberInfo(MEMBERS_HEADER_POSITION, OFFICER_POSITION_VP_EDUCATION);
+  var roleMember = userData.fullName;
+  var callbacksToInsert = [];
+  
+  var callbackData = MEETING_ROLE_REQUEST_CONFIRM_CALLBACK + '___' + meetingDate + '___' + roleName + '___' + roleMember;
+  var callbackId = (new Date()).getTime();
+  var time = callbackId;
+  var keyBoard = [{
+    text: MEETING_ROLE_REQUEST_CONFIRM,
+    callback: callbackId
+  }];
+  
+  callbacksToInsert.push([callbackId, time, callbackData]);
+  
+  callbackData = MEETING_ROLE_REQUEST_REJECT_CALLBACK + '___' + meetingDate + '___' + roleName + '___' + roleMember;
+  callbackId = (new Date()).getTime() + 3;
+  time = callbackId;
+  
+  callbacksToInsert.push([callbackId, time, callbackData]);
+  
+  keyBoard.push({
+    text: MEETING_ROLE_REQUEST_REJECT,
+    callback: callbackId
+  });
+  
+  sendText(vpEducation.telegramId, format(MEETING_ROLE_REQUEST_CONFIRM_MESSAGE, vpEducation.callName, roleMember, roleName, meetingDate), getMenuInlineKeyBoardMultiline(keyBoard));
+  insertCallbacks(callbacksToInsert);
+}
+
 /* ФУНКЦІЇ */
 
 function getLastMeetingDate() {
@@ -623,8 +686,7 @@ function sendMeetingNotifications() {
                 if (!role.speachTitle) {
                     askForRoleDetails(memberInfo.telegramId, MEETING_SPEACH_CHANGE_TITLE_CALLBACK, MEETING_SPEACH_CHANGE_TITLE, MEETING_SPEACH_NO_TITLE,
                         date, roleName, roleMember);
-                }
-                else {
+                } else {
                   askForRoleDetails(memberInfo.telegramId, MEETING_SPEACH_CHANGE_TITLE_CALLBACK, MEETING_SPEACH_CHANGE_TITLE, format(MEETING_SPEACH_CONFIRM_TITLE, role.speachTitle),
                         date, roleName, roleMember);
                 }

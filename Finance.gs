@@ -48,9 +48,8 @@ var FINANCE_IN_MEMBERSHIP = 'Оберіть члена клубу (або вве
 var FINANCE_IN_DESCRIPTION = 'Вкажіть опис операції, якщо потрібен:';
 var FINANCE_IN_START = 'За що було отримано гроші (виберіть з меню або введіть текст)?';
 
-
-var FINANCE_BALANCE_TITLE = "В кого гроші клубу:\r\n\r\n";
-var FINANCE_BALANCE_TOTAL = '\r\n<b>Загальний баланс:</b> {0}грн';
+var FINANCE_BALANCE_TITLE = "💰 <b>В кого гроші клубу:</b>\n\n";
+var FINANCE_BALANCE_TOTAL = '\n<b>Загальний баланс:</b> {0}грн';
 var FINANCE_BALANCE_RECORD = '<b>{0}:</b> {1}грн\n';
 
 function showBalancesByMembers(userTelegramId) {
