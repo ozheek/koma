@@ -74,6 +74,7 @@ function processCallback(contents) {
                 var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, fullName);
                 if (updateMeetingInfo(date, role, fullName, true)) {
                     sendText(memberInfo.telegramId, format(MEETING_ROLE_REQUEST_CONFIRMED, memberInfo.callName, date, role));
+                    sendText(callbackId, format(MEETING_ROLE_REQUEST_CONFIRMED_INFO, fullName, role, date));
                 } else {
                     sendText(callbackId, format(MEETING_ROLE_REQUEST_BUSY, role, date, fullName));
                 }
@@ -84,6 +85,7 @@ function processCallback(contents) {
                 
                 var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, fullName);
                 sendText(memberInfo.telegramId, format(MEETING_ROLE_REQUEST_REJECTED, memberInfo.callName, role, date));
+                sendText(callbackId, format(MEETING_ROLE_REQUEST_REJECTED_INFO, fullName, role, date));
             } else if (statuses[0] == MEMBERS_SEND_GREETING_CONFIRM_CALLBACK) {
 //                var newMember = getMemberInfo(MEMBERS_HEADER_FULLNAME, fullName);
 //                GmailApp.sendEmail(ne

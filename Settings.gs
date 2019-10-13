@@ -6,7 +6,8 @@
 
 function setRemindTriggers(){
   ScriptApp.newTrigger("checkLibraryBooksStatusAndSendNotifications").timeBased().atHour(16).everyDays(1).inTimezone("Europe/Kiev").create();  
-  ScriptApp.newTrigger("sendMeetingNotifications").timeBased().atHour(16).everyDays(1).inTimezone("Europe/Kiev").create();  
+  ScriptApp.newTrigger("sendMeetingNotifications").timeBased().atHour(16).everyDays(1).inTimezone("Europe/Kiev").create();   
+  ScriptApp.newTrigger("deleteExpiredCallbacks").timeBased().atHour(05).everyDays(7).inTimezone("Europe/Kiev").create();  
 }
 
 /* НАЛАШТУВАННЯ */
