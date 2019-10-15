@@ -474,6 +474,7 @@ function processCancelMeeting(userData, text) {
                 var date = userData.statuses[3];
                 var reasonShort = (userData.statuses[4] != EMPTY) ? userData.statuses[4] : '';
                 var reasonDetailed = (text != EMPTY) ? text : '';
+                if (!reasonDetailed) reasonDetailed = reasonShort;
 
                 cancelMeeting(date, reasonShort);
                 tryToUpdateMeetingInfo(date, MEETING_ABOUT, reasonDetailed);
