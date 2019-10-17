@@ -173,7 +173,7 @@ function getSignedRoles(fullName) {
     var isFoundRole = false;
 
     for (var i = 0; i < values.length; i++) {
-        if (values[i][0] >= now) {
+        if (parseDate(values[i][0]) >= parseDate(formatDate(now))) {
             var dateRoles = [];
             for (var k = 1; k < values[i].length; k++) {
                 if (values[i][k] == fullName) {
