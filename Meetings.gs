@@ -111,7 +111,8 @@ var MEETING_PROGRAM_CHOOSE_DATE = 'Виберіть дату засідання:
 var MEETING_PROGRAM_TITLE_1 = '<b>Програма засідання</b>';
 var MEETING_PROGRAM_TITLE_2 = '<b>📆 {0}</b>';
 var MEETING_PROGRAM_ROLE_INFO = '<b>{0}</b>:\n{1}\n\n';
-var MEETING_PROGRAM_ROLE_SPEACH_INFO = '<b>{0}:</b>\n{2} ⁠— <i>"{1}"</i>\n\n';
+var MEETING_PROGRAM_ROLE_SPEACH_INFO_NO_PROJECT = '<b>{0}:</b>\n{2} ⁠— <i>"{1}"</i>\n\n';
+var MEETING_PROGRAM_ROLE_SPEACH_INFO_WITH_PROJECT = '<b>{0}:</b>\n{3} ⁠— <i>"{1}"</i> <code>({2})</code>\n\n';
 var MEETING_PROGRAM_ROLE_NO_MEMBER = '⇨ <i>Роль вільна</i>';
 var MEETING_PROGRAM_ROLE_EMPTY = '⇨ <i>Не вказано</i>';
 
@@ -248,7 +249,11 @@ function showMeetingProgram(userTelegramId, date) {
                 message += icon + " " + format(MEETING_PROGRAM_ROLE_INFO, role.name, member);
             } else {
                 var icon = MEETING_ROLE_ICONS[MEETING_ROLE_SPEACH];
-                message += icon + " " + format(MEETING_PROGRAM_ROLE_SPEACH_INFO, role.name, role.speachTitle, role.member);
+                if (role.speachProject && role.speachProject != MEETING_SPEACH_PROJECT_EMPTY) {
+                  message += icon + " " + format(MEETING_PROGRAM_ROLE_SPEACH_INFO_WITH_PROJECT, role.name, role.speachTitle, role.speachProject, role.member);
+                } else {
+                  message += icon + " " + format(MEETING_PROGRAM_ROLE_SPEACH_INFO_NO_PROJECT, role.name, role.speachTitle, role.member);
+                }
             }
         }
     }
