@@ -546,14 +546,7 @@ function processEditMeeting(userData, text) {
             if (!userData.statuses[statusesIndexToStart + 2]) {
                 var date = userData.statuses[dateIndexInStatuses];
                 var field = userData.statuses[fieldIndexInStatuses];
-                var value = text;
-                if (value[0] == '@') {
-                    var spaceIndex = value.indexOf(' ');
-                    if (spaceIndex > -1) {
-                        value = value.replace(TEMPLATE_TEXT_BELOW, '');
-                        value = value.substring(spaceIndex + 1).trim();
-                    }
-                }
+                var value = removeTemplateTextBelow(text);
                 if (updateMeetingInfo(date, field, value, false)) {
                     showMenu(userData.telegramId, MEETING_EDIT_SUCCESS);
                 } else {

@@ -92,4 +92,14 @@ function addNewRowAndKeepFormulas(sheet, values)
   } 
 }
 
+function removeTemplateTextBelow(text)
+{
+  if (text[0] == '@') {
+    var templateIndex = text.indexOf(TEMPLATE_TEXT_BELOW)
+    if (templateIndex > -1) {
+      text = text.substring(templateIndex + TEMPLATE_TEXT_BELOW.length).trim();
+    }
+  }
+  return text;
+}
 
