@@ -60,7 +60,7 @@ function processManagement(userData, text) {
     else if (text == MEMBERS)
     {
       showMenu(userData.telegramId, 'Яку операцію бажаєте виконати?', 
-               [MEMBERS_SHOW_LIST, MEMBERS_ADD, MEMBERS_EDIT]);
+               [MEMBERS_SHOW_LIST, MEMBERS_ADD, MEMBERS_EDIT, MEMBERS_SEND_MESSAGE]);
       return true;
     }
     else if (text == INVENTORY) {          

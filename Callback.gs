@@ -86,14 +86,89 @@ function processCallback(contents) {
                 var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, fullName);
                 sendText(memberInfo.telegramId, format(MEETING_ROLE_REQUEST_REJECTED, memberInfo.callName, role, date));
                 sendText(callbackId, format(MEETING_ROLE_REQUEST_REJECTED_INFO, fullName, role, date));
-            } else if (statuses[0] == MEMBERS_SEND_GREETING_CONFIRM_CALLBACK) {
-//                var newMember = getMemberInfo(MEMBERS_HEADER_FULLNAME, fullName);
-//                GmailApp.sendEmail(ne
-            }   
+            } else if (statuses[0] == MEMBERS_SEND_EMAIL_MESSAGE_CALLBACK
+                      || statuses[0] == MEMBERS_SEND_TELEGRAM_MESSAGE_CALLBACK) {            
+                var userData = getMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, callbackId);
+                var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, statuses[1]);
+                if (!memberInfo) {
+                   sendText(userData.telegramId, MEMBER_SEARCH_FAILED);
+                } else {
+                  var type = statuses[0] == MEMBERS_SEND_EMAIL_MESSAGE_CALLBACK 
+                                              ? MEMBERS_SEND_EMAIL_MESSAGE 
+                                              : MEMBERS_SEND_TELEGRAM_MESSAGE;
+                  startSendMessage(userData, memberInfo, type);
+                }
+            } else if (statuses[0] == MEMBERS_EDIT_MEMBER_CALLBACK) {
+                  var userData = getMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, callbackId);
+                  
+                  continueEditMember(userData, statuses[1]);              
+            } else if (statuses[0] == MEMBERS_ADD_NEW_MEMBER_CALLBACK) {
+                  var userData = getMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, callbackId);
+                  
+                  userData.statuses = userData.statuses.slice(0, 2);
+                  userData.status = userData.statuses.join('___') + '___';
+                  
+                  processRequest(userData, MEMBERS_ADD);              
+            } else if (statuses[0] == MEMBERS_ACCEPT_SEND_MESSAGE_CALLBACK
+                      || statuses[0] == MEMBERS_REJECT_SEND_MESSAGE_CALLBACK) {
+                 var userData = getMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, callbackId);
+                 var fullName = statuses[1];
+                 var type = statuses[2];
+                 var encodedMessage = statuses[3];
+              
+                 var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, fullName);
+                 var memberEmailAddress = memberInfo.fields[MEMBERS_HEADER_EMAIL_ADDRESS];
+                 var memberTelegramId = memberInfo.fields[MEMBERS_HEADER_TELEGRAM_ID];
+                 
+                 var decodedMessage = Utilities.base64Decode(encodedMessage);
+                 var message = Utilities.newBlob(decodedMessage).getDataAsString();
+                 
+                 if (statuses[0] == MEMBERS_ACCEPT_SEND_MESSAGE_CALLBACK) {
+                   if (type == MEMBERS_SEND_EMAIL_MESSAGE) {
+                     if (memberEmailAddress) {
+                       GmailApp.sendEmail(memberEmailAddress, MESSAGES_EMAIL_SUBJECT, message);
+                     } else {
+                       showMenu(callbackId, format(MEMBERS_MESSAGE_NO_EMAIL, fullName));                                     
+                       continueEditMember(userData, fullName); 
+                       return false;
+                     }
+                   } else {
+                     sendText(memberTelegramId, message);      
+                   }
+                   
+                   showMenu(callbackId, MEMBERS_MESSAGE_SUCCESSFULLY_SENT);    
+                 }
+                 else {
+                   startSendMessage(userData, memberInfo, type, message);
+                 }
+            } 
         }
     }
 }
 
+/* ПОВІДОМЛЕННЯ */
+
+function sendTextWithCallbacks(telegramId, callbacks, message) {
+  
+  var callbacksToInsert = [];
+  var keyboards = [];
+  
+  for (var i = 0; i < callbacks.length; i++)
+  {
+    var callback = callbacks[i];
+    var callbackId = (new Date()).getTime() + i;
+    var time = (new Date()).getTime();
+    var keyboard = {
+      text: callback.text,
+      callback: callbackId
+    };
+    keyboards.push(keyboard);
+    callbacksToInsert.push([callbackId, time, callback.data]);
+  }
+
+  insertCallbacks(callbacksToInsert);
+  sendText(telegramId, message, getMenuInlineKeyBoardMultiline(keyboards));  
+}
 
 /* РОБОТА З БАЗОЮ ДАННИХ */
 

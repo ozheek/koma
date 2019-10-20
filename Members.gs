@@ -4,6 +4,13 @@ var SHEET_CONTACTS = "Контакти"
 var MEMBERS_SHOW_LIST = 'Показати список';
 var MEMBERS_ADD = 'Додати';
 var MEMBERS_EDIT = 'Редагувати';
+var MEMBERS_SEND_MESSAGE = 'Відправити повідомлення';
+var MEMBERS_SEND_TELEGRAM_MESSAGE = '💬 Телеграм';
+var MEMBERS_SEND_EMAIL_MESSAGE = '✉️ E-mail';
+
+var MEMBERS_ADDED_MEMBER_SEND_EMAIL = 'Привітати';
+var MEMBERS_ADDED_MEMBER_ADD_NEW = 'Додати нового';
+var MEMBERS_ADDED_MEMBER_EDIT = 'Редагувати';
 
 /* СПИСКИ */
 var MEMBERS = '👥 Члени клубу';
@@ -36,7 +43,16 @@ var MEMBERS_HEADER_MENTOR = 'Наставник';
 var MEMBERS_HEADER_FACEBOOK = 'Facebook';
 var MEMBERS_HEADER_TELEGRAM = 'Телеграм';
 
-/*ПОШУК ПО БАЗI*/
+/* CALLBACKS */
+var MEMBERS_SEND_TELEGRAM_MESSAGE_CALLBACK = 'send_telegram_message_callback';
+var MEMBERS_SEND_EMAIL_MESSAGE_CALLBACK = 'send_email_message_callback';
+var MEMBERS_EDIT_MEMBER_CALLBACK = 'edit_member';
+var MEMBERS_ADD_NEW_MEMBER_CALLBACK = 'add_new_member';
+
+var MEMBERS_ACCEPT_SEND_MESSAGE_CALLBACK = 'accept_send_message';
+var MEMBERS_REJECT_SEND_MESSAGE_CALLBACK = 'reject_send_message';
+
+/* ПОШУК ПО БАЗI */
 var MEMBER_SEARCH_FAILED = 'На жаль, члена клубу з таким iменем не було знайдено в базi...\
                         \n\nПеревiрте, будь ласка, чи правильно ви ввели iм\'я і прiзвище та спробуйте знову!';
 var SEVERAL_MEMBERS_FOUND = 'За вашим запитом я знайшов декiлька членiв клубу.\
@@ -49,7 +65,7 @@ var MEMBERS_HEADER_TELEGRAM_STATUS = "status";
 
 /* ТЕКСТИ */
 var MEMBERS_PREVIOUS_VALUE_EMPTY = 'Попереднє значення відсутнє';
-var MEMBERS_PREVIOUS_VALUE = 'Попереднє значення {0} буде перезаписане';
+var MEMBERS_PREVIOUS_VALUE = 'Попереднє значення <i>"{0}"</i> буде перезаписане';
 
 var MEMBERS_SELECT_NEW_MENTOR = 'Виберіть нового ментора для {0}. {1}:';
 var MEMBERS_SELECT_NEW_PROGRAM = 'Виберіть нову програму, по якій буде займатись {0}. {1}:';
@@ -62,11 +78,24 @@ var MEMBERS_SELECT_NEW_MOBILE_PHONE_NUMBER = 'Введіть новий номе
 var MEMBERS_SELECT_NEW_FACEBOOK = 'Введіть посилання на Фейсбук-сторінку для {0}. {1}:';
 var MEMBERS_SELECT_NEW_NAME = 'Введіть нове ім\'я для {0} (повне ім\'я буде змінено автоматично). {1}:';
 var MEMBERS_SELECT_NEW_LASTNAME = 'Введіть нове прізвище для {0} (повне ім\'я буде змінено автоматично). {1}:';
-var MEMBERS_SUCCESS_ADDED = 'Дякую! Додав <b>{0} {1}</b> (<i>{2}</i>) до бази.\n☎️: {3}, 📧: {4}\n\n<b>Ви можете продовжити заповнення інших полей.</b>';
+//var MEMBERS_SUCCESS_ADDED = 'Дякую! Додав <b>{0} {1}</b> (<i>{2}</i>) до бази.\n☎️: {3}, 📧: {4}\n\n<b>Ви можете продовжити заповнення інших полей.</b>';
+
+var MEMBERS_SEND_MESSAGE_SELECT_MEMBER = 'Виберіть члена клубу, якому хочете відправити повідомлення:';
+var MEMBERS_SEND_MESSAGE_SELECT_TYPE = 'Ви хочете відправити повідомлення в телеграмі чи e-mail?';
+var MEMBERS_SEND_MESSAGE_ALL = 'Всім';
 
 var MEMBERS_CANCEL_ROLE = '{0}, привіт! 😊 На жаль, вашу роль <b>{1}</b> на засіданні <b>{2}</b> було скасовано 😌. Зверніться до віце-президента з освіти, щоб дізнатись деталі або перегляньте програму засідання.\n\nМожливо цього дня в клубі відбудеться конкурс або інший захід 😍';
 
-var MEMBERS_TYPE_NEW_VALUE = 'Введіть нові дані поля {0} для {1}. {1}:';
+var MEMBERS_SUCCESS_ADDED = 'Дякую! Додав <b>{0}</b> (<i>{1}</i>) до бази.\n☎️: {2},\n📧: {3}';
+var MEMBERS_NEW_MEMBER_MENU = 'Ви можете продовжити заповнення інших полей, відправити лист-привітання, або додати нового члена клубу, використовуючи кнопки нижче:';
+var MEMBERS_MESSAGE_TEMPLATE_ABOUT = 'Напишіть повідомлення, що буде відправлено користувачу.';
+var MEMBERS_MESSAGE_TEMPLATE_BUTTONS = 'Ви також можете вставити готовий шаблон за допомогою кнопок нижче 👇'; 
+var MEMBERS_MESSAGE_TEMPLATE_EDIT = 'Напишіть нове повідомлення або вставте попередню версію повідомлення за допомогою кнопки нижче 👇'; 
+var MEMBERS_MESSAGE_SENDING_CONFIRM = 'Перевірте, будь ласка, чи все правильно, і підтвердіть відправку повідомлення. Фінальна версія повідомлення нижче 👇';
+var MEMBERS_MESSAGE_SUCCESSFULLY_SENT = '<b>Повідомлення було успішно відправлено!</b> 😎';
+var MEMBERS_MESSAGE_NO_EMAIL = 'На жаль, ви не вказали адресу електронної скриньки. Додайте лектронну пошту для {0} та повторіть відправку.';
+
+var MEMBERS_TYPE_NEW_VALUE = 'Введіть нові дані поля <b>{0}</b> для <b>{1}</b>. {2}:';
 var MEMBERS_CHOOSE_STATUS = 'Виберіть статус:';
 var MEMBERS_CHOOSE_EMAIL_ADDRESS = 'Введіть електронну пошту:';
 var MEMBERS_CHOOSE_PHONE_NUMBER = 'Введіть мобільний телефон (формат: +380ххххххххх):';
@@ -75,7 +104,7 @@ var MEMBERS_CHOOSE_LASTNAME = 'Введіть прізвище:';
 var MEMBERS_CHOOSE_MEMBER = 'Виберіть члену клубу, інформацію його хочете змінити:';
 var MEMBERS_CHOOSE_NAME = 'Введіть ім\'я (без прізвища):';
 var MEMBERS_CHOOSE_FIELD = 'Виберіть поле, що хочете змінити:';
-var MEMBERS_SUCCESS_UPDATE = 'Дякую! Змінив {0} на {1} для {2} 😍\n\n<b>Ви можете продовжити заповнення інших полей.</b>';
+var MEMBERS_SUCCESS_UPDATE = 'Дякую! Змінив <b>{0}</b> на <b>{1}</b> для <b>{2}</b> 😍\n\n<b>Ви можете продовжити заповнення інших полей.</b>';
 var MEMBERS_MEMBER_ALREADY_EXISTS = 'На жаль, користувач <b>{0}</b> вже <b>є в базі</b> 😟. Якщо це новий користувач, спробуйте інший варіант написання імені.';
 
 var MEMBERS_LIST = '<b>Список членів клубу та гостей ({0}):</b>\n\n';
@@ -96,7 +125,18 @@ var MEMBERS_LIST_CHOOSE_STATUS = 'Виберіть статус користув
 
 function processMembers(userData, text) {
     if (userData.statuses[2]) {
-        if (userData.statuses[2] == MEMBERS_EDIT) {
+        if (userData.statuses[2] == MEMBERS_SEND_MESSAGE) {
+          if (userData.statuses[3]) {
+              if (userData.statuses[4]) {
+                confirmSendMessage(userData.telegramId, userData.statuses[3], userData.statuses[4], text);
+                return false;
+              }
+          } else {
+            showSendMessageMenu(userData, text);
+            return true;      
+          }       
+        }
+        else if (userData.statuses[2] == MEMBERS_EDIT) {
             if (userData.statuses[3]) {
                 if (userData.statuses[4]) {
                     if (!userData.statuses[5]) {
@@ -109,9 +149,13 @@ function processMembers(userData, text) {
                                 memberInfo.fields[MEMBERS_HEADER_NAME] + ' ' + text;
 
                             updateMemberInfo(MEMBERS_HEADER_FULLNAME, userData.statuses[3], MEMBERS_HEADER_FULLNAME, fullName);
-                        }
+                            userData.statuses[3] = fullName;
+                            userData.status = userData.statuses.join('___') + '___';
+                        } 
+                        
                         updateMemberInfo(MEMBERS_HEADER_FULLNAME, userData.statuses[3], userData.statuses[4], text);
                         showMenu(userData.telegramId, format(MEMBERS_SUCCESS_UPDATE, userData.statuses[4], text, userData.statuses[3]));
+                        
                         continueEditMember(userData, userData.statuses[3]);
                         return false;
                     }
@@ -163,24 +207,27 @@ function processMembers(userData, text) {
                         if (userData.statuses[6]) {
                             if (userData.statuses[7]) {
                                 if (!userData.statuses[8]) {
-                                    var name = userData.statuses[4];
-                                    var lastname = userData.statuses[3];
+                                    var name = capitalizeFirstLetter(userData.statuses[4]);
+                                    var lastname = capitalizeFirstLetter(userData.statuses[3]);
                                     var fullName = name + ' ' + lastname;
                                     var callName = userData.statuses[5];
                                     var phoneNumber = userData.statuses[6].replace('+', '') == EMPTY ? '' : userData.statuses[6];
                                     var email = userData.statuses[7] == EMPTY ? '' : userData.statuses[7];
                                     var status = text;
-
+                                    
                                     insertMembersData(name, lastname, callName, phoneNumber, email, status);
-
-                                    showMenu(userData.telegramId, format(MEMBERS_SUCCESS_ADDED, name, lastname, status, userData.statuses[6], userData.statuses[7]));
-                                    continueEditMember(userData, fullName);
-
+                                    showMenu(userData.telegramId, format(MEMBERS_SUCCESS_ADDED, fullName, status, userData.statuses[6], userData.statuses[7]));
+                                    showNewMemberMenu(userData, fullName);
                                     return false;
                                 }
                             } else {
-                                showMenu(userData.telegramId, MEMBERS_CHOOSE_STATUS, getListItemsByName(MEMBERS_STATUSES));
-                                return true;
+                               if (validateEmail(text) || text == EMPTY) {
+                                 showMenu(userData.telegramId, MEMBERS_CHOOSE_STATUS, getListItemsByName(MEMBERS_STATUSES));
+                                 return true;
+                               } else {
+                                 sendText(userData.telegramId, REGISTRATION_INVALID_EMAIL);
+                                 showMenu(userData.telegramId, MEMBERS_CHOOSE_EMAIL_ADDRESS, [EMPTY]);
+                               }
                             }
                         } else {
                             showMenu(userData.telegramId, MEMBERS_CHOOSE_EMAIL_ADDRESS, [EMPTY]);
@@ -213,7 +260,12 @@ function processMembers(userData, text) {
             }
         }
     } else {
-        if (text == MEMBERS_EDIT) {
+        if (text == MEMBERS_SEND_MESSAGE) {
+            var members = getAllMembers();
+            members.unshift(MEMBERS_SEND_MESSAGE_ALL);
+            showMenu(userData.telegramId, MEMBERS_SEND_MESSAGE_SELECT_MEMBER, members);
+            return true;
+        } else if (text == MEMBERS_EDIT) {
             showMenu(userData.telegramId, MEMBERS_CHOOSE_MEMBER, getAllMembers());
             return true;
         } else if (text == MEMBERS_ADD) {
@@ -302,6 +354,27 @@ function sendMemberCanceledRoleMessage(memberInfo, date, role)
     if (memberInfo && memberInfo.telegramId) {
       sendText(memberInfo.telegramId, format(MEMBERS_CANCEL_ROLE, memberInfo.fields[MEMBERS_HEADER_CALLNAME], role, date));              
     }       
+}
+
+function showNewMemberMenu(userData, newMemberFullName) {
+  
+  var callbacks = [];
+  
+  callbacks.push({data : MEMBERS_SEND_EMAIL_MESSAGE_CALLBACK + '___' +  newMemberFullName, text: MEMBERS_ADDED_MEMBER_SEND_EMAIL});
+  callbacks.push({data : MEMBERS_EDIT_MEMBER_CALLBACK + '___' +  newMemberFullName, text: MEMBERS_ADDED_MEMBER_EDIT});
+  callbacks.push({data : MEMBERS_ADD_NEW_MEMBER_CALLBACK + '___' +  newMemberFullName, text: MEMBERS_ADDED_MEMBER_ADD_NEW});
+  
+  sendTextWithCallbacks(userData.telegramId, callbacks, MEMBERS_NEW_MEMBER_MENU);
+}
+
+function showSendMessageMenu(userData, member) {
+  
+  var callbacks = [];
+  
+  callbacks.push({data : MEMBERS_SEND_EMAIL_MESSAGE_CALLBACK + '___' +  member, text: MEMBERS_SEND_EMAIL_MESSAGE});
+  callbacks.push({data : MEMBERS_SEND_TELEGRAM_MESSAGE_CALLBACK + '___' +  member, text: MEMBERS_SEND_TELEGRAM_MESSAGE});
+  
+  sendTextWithCallbacks(userData.telegramId, callbacks, MEMBERS_SEND_MESSAGE_SELECT_TYPE);
 }
 
 /* РОБОТА З БАЗОЮ */
@@ -544,15 +617,6 @@ function checkMembersName(text) {
   
   return false;
 }
-
-function test_checkMembersName() {
-   try{
-      ttt(JSON.stringify(checkMembersName('е')));
-   } catch(err){
-     ttt(err);
-   }
-}
-
 
 /* ТЕЛЕГРАМ СТАТУС */
 
