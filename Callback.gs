@@ -126,7 +126,7 @@ function processCallback(contents) {
                  if (statuses[0] == MEMBERS_ACCEPT_SEND_MESSAGE_CALLBACK) {
                    if (type == MEMBERS_SEND_EMAIL_MESSAGE) {
                      if (memberEmailAddress) {
-                       GmailApp.sendEmail(memberEmailAddress, MESSAGES_EMAIL_SUBJECT, message);
+                       sendEmail(callbackId, memberEmailAddress, MESSAGES_EMAIL_SUBJECT, message);
                      } else {
                        showMenu(callbackId, format(MEMBERS_MESSAGE_NO_EMAIL, fullName));                                     
                        continueEditMember(userData, fullName); 

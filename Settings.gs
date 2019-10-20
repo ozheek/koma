@@ -14,6 +14,7 @@ function setRemindTriggers(){
 
 var CLUB_NAME = 'КОМА';
 var FULL_CLUB_NAME = 'Клуб ораторської майстерності "КОМА"';
+var CLUB_EMAIL_ADDRESS = 'komaukraine@gmail.com';
 
 var MEETING_ON_WEEK_DAY = 4;                          /* Четвер */; // 0 - Неділя, 6 - Субота
 var MEETING_TIME = 19;

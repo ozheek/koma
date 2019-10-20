@@ -1,3 +1,39 @@
+/* ТЕКСТИ */
+var MESSAGES_NO_ALLIASE_FOUND = 'В <a href="https://mail.google.com/mail/u/0/#settings/accounts">налаштуваннях пошти</a> <b>не прописаний ваш електронний адрес</b>, ми не можемо відправити лист від вашого імені, тому відправимо від адреси за замовченням <b>{0} ({1})</b>.';
+
+function sendEmail(telegramId, emailAddress, subject, message)
+{
+  var fromEmailAddress = CLUB_EMAIL_ADDRESS;
+  var fromName = FULL_CLUB_NAME;
+  var aliase = null;
+  
+  if (telegramId)
+  {
+    var memberInfo = getMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, telegramId);
+    var memberEmailAddress = memberInfo.fields[MEMBERS_HEADER_EMAIL_ADDRESS];
+    
+    var aliases = GmailApp.getAliases();
+    
+    aliases.forEach(function(item)
+    {
+      if (item == memberEmailAddress)
+      {
+        aliase = item;
+      }
+    });
+                    
+    if (aliase)
+    {
+      fromEmailAddress = memberEmailAddress;
+      fromName = memberInfo.fullName;
+    }
+    else {
+      sendText(telegramId, format(MESSAGES_NO_ALLIASE_FOUND, fromName, fromEmailAddress));
+    }
+  }
+
+  GmailApp.sendEmail(emailAddress, subject, message, {name : fromName, from : fromEmailAddress.toString()});   
+}
 
 function startSendMessage(userData, memberInfo, type, message)
 {
