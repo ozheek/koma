@@ -1084,8 +1084,9 @@ function isRoleDuplicated(fullName, meetingDate, role) {
   var roleColumnIndexes = [];
   var meetingRowIndex = 0;
 
-  for (var i = values.length - 1; i > 0; i--) {
-     if (!(parseDate(values[i][0]) - parseDate(meetingDate))) {
+  var meetingDateFormatted = formatDate(parseDate(meetingDate));
+  for (var i = values.length - 1; i >= 0; i--) {
+     if (formatDate(parseDate(values[i][0])) == meetingDateFormatted) {
        meetingRowIndex = lastRow - (values.length - i);
        break;
      }
@@ -1103,18 +1104,18 @@ function isRoleDuplicated(fullName, meetingDate, role) {
   
   for (var i = 0; i < roleColumnIndexes.length; i++) {
     for (var j = 1; j <= +MEETINGS_AMOUNT_WHERE_ROLE_NOT_DUPLICATES; j++) {
-      if(values[meetingRowIndex - j][roleColumnIndexes[i]].indexOf(fullName) > -1){
-        var nextAvailableDate = formatDate(parseDate(formatDate(meetingDate)).addDays((MEETINGS_AMOUNT_WHERE_ROLE_NOT_DUPLICATES - j + 1) * 7));
+      if(meetingRowIndex - j >= 0 && values[meetingRowIndex - j][roleColumnIndexes[i]].indexOf(fullName) > -1){
+        var nextAvailableDate = formatDate(parseDate(meetingDate).addDays((MEETINGS_AMOUNT_WHERE_ROLE_NOT_DUPLICATES - j + 1) * 7));
         var duplicate = {
-          date: formatDate(values[meetingRowIndex - j][0]),
+          date: formatDate(parseDate(values[meetingRowIndex - j][0])),
           availableDate: nextAvailableDate,
           isFuture: false
         };
         return duplicate;
-      } else if(values[meetingRowIndex + j][roleColumnIndexes[i]].indexOf(fullName) > -1){
-        var nextAvailableDate = formatDate(parseDate(formatDate(values[meetingRowIndex + j][0])).addDays((MEETINGS_AMOUNT_WHERE_ROLE_NOT_DUPLICATES + 1) * 7));
+      } else if(meetingRowIndex + j < values.length && values[meetingRowIndex + j][roleColumnIndexes[i]].indexOf(fullName) > -1){
+        var nextAvailableDate = formatDate(parseDate(values[meetingRowIndex + j][0]).addDays((MEETINGS_AMOUNT_WHERE_ROLE_NOT_DUPLICATES + 1) * 7));
         var duplicate = {
-          date: formatDate(values[meetingRowIndex + j][0]),
+          date: formatDate(parseDate(values[meetingRowIndex + j][0])),
           availableDate: nextAvailableDate,
           isFuture: true
         };
@@ -1127,16 +1128,15 @@ function isRoleDuplicated(fullName, meetingDate, role) {
 }
 
 function isEnoughAmountOfSpeeches(fullName, role, meetingDate) {
-  return true;
   var sheet = SpreadsheetApp.openById(databaseSpreadSheetId).getSheetByName(SHEET_MEETINGS);
   var headerValues = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
   var dateColumnIndex = headerValues.findIndex(MEETING_HEADER_DATE);
   var lastRow = sheet.getLastRow() - 1;
   var values = sheet.getRange(2, 1, lastRow, sheet.getLastColumn()).getValues();
   
-  var sufficientAmount = (role == MEETING_ROLE_EVALUATION || role == MEETING_ROLE_TABLE_TOPIC_EVALUATOR) ? 5 :
-                            (role == MEETING_ROLE_TOASTMASTER) ? 3 : 
-                               (role == MEETING_ROLE_TABLE_TOPIC_MASTER) ? 2 : 0;
+  var sufficientAmount = (role == MEETING_ROLE_EVALUATION || role == MEETING_ROLE_TABLE_TOPIC_EVALUATOR) ? MINIMUM_SPEECHES_FOR_EVALUATION :
+                            (role == MEETING_ROLE_TOASTMASTER) ? MINIMUM_SPEECHES_FOR_TOASTMASTER : 
+                               (role == MEETING_ROLE_TABLE_TOPIC_MASTER) ? MINIMUM_SPEECHES_FOR_TABLE_TOPIC : 0;
   if (!sufficientAmount) {
      return true;
   }

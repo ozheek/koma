@@ -21,9 +21,15 @@ var MEETING_TIME = 19;
 var MEETING_DURATION_MINUTES = 90;
 var TIMEZONE_OFFSET = 180;                            /* 3 години, Київ */; 
 var SIGN_UP_FOR_NEXT_MEETINGS_AMOUNT = 12;            /* Можна записатись на наступні 12 засідань */
-var MEETINGS_AMOUNT_WHERE_ROLE_NOT_DUPLICATES = 1;    /* Скільки засідань не можна записувати на одну й ту ж саму роль, якщо 1, то на попередньому засіданні користувач не повинен був виконувати таку ж роль */
 
 var MESSAGES_EMAIL_SUBJECT = 'Клуб ораторської майстерності "КОМА"';
+
+/* ОБМЕЖЕННЯ ДЛЯ РОЛЕЙ */
+var MEETINGS_AMOUNT_WHERE_ROLE_NOT_DUPLICATES = 1;    /* Скільки засідань не можна записувати на одну й ту ж саму роль, якщо 1, то на попередньому засіданні користувач не повинен був виконувати таку ж роль */
+
+var MINIMUM_SPEECHES_FOR_TOASTMASTER = 3; /* Потрібно виконати мінімум 3 промови для того, щоб бути головою */
+var MINIMUM_SPEECHES_FOR_TABLE_TOPIC = 2;
+var MINIMUM_SPEECHES_FOR_EVALUATION = 5;
 
 /* ТЕКСТИ */
 
