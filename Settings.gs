@@ -29,7 +29,7 @@ var MEETINGS_AMOUNT_WHERE_ROLE_NOT_DUPLICATES = 1;    /* Скільки засі
 
 var MINIMUM_SPEECHES_FOR_TOASTMASTER = 3; /* Потрібно виконати мінімум 3 промови для того, щоб бути головою */
 var MINIMUM_SPEECHES_FOR_TABLE_TOPIC = 2;
-var MINIMUM_SPEECHES_FOR_EVALUATION = 5;
+var MINIMUM_SPEECHES_FOR_EVALUATION = 4;
 
 /* ТЕКСТИ */
 
