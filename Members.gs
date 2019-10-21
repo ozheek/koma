@@ -8,9 +8,9 @@ var MEMBERS_SEND_MESSAGE = 'Відправити повідомлення';
 var MEMBERS_SEND_TELEGRAM_MESSAGE = '💬 Телеграм';
 var MEMBERS_SEND_EMAIL_MESSAGE = '✉️ E-mail';
 
-var MEMBERS_ADDED_MEMBER_SEND_EMAIL = 'Привітати';
-var MEMBERS_ADDED_MEMBER_ADD_NEW = 'Додати нового';
-var MEMBERS_ADDED_MEMBER_EDIT = 'Редагувати';
+var MEMBERS_ADDED_MEMBER_SEND_EMAIL = '✉️ Привітати';
+var MEMBERS_ADDED_MEMBER_ADD_NEW = '➕ Додати нового';
+var MEMBERS_ADDED_MEMBER_EDIT = '✏ Редагувати';
 
 /* СПИСКИ */
 var MEMBERS = '👥 Члени клубу';
@@ -93,7 +93,7 @@ var MEMBERS_MESSAGE_TEMPLATE_BUTTONS = 'Ви також можете встав�
 var MEMBERS_MESSAGE_TEMPLATE_EDIT = 'Напишіть нове повідомлення або вставте попередню версію повідомлення за допомогою кнопки нижче 👇'; 
 var MEMBERS_MESSAGE_SENDING_CONFIRM = 'Перевірте, будь ласка, чи все правильно, і підтвердіть відправку повідомлення. Фінальна версія повідомлення нижче 👇';
 var MEMBERS_MESSAGE_SUCCESSFULLY_SENT = '<b>Повідомлення було успішно відправлено!</b> 😎';
-var MEMBERS_MESSAGE_NO_EMAIL = 'На жаль, ви не вказали адресу електронної скриньки. Додайте лектронну пошту для {0} та повторіть відправку.';
+var MEMBERS_MESSAGE_NO_EMAIL = 'На жаль, ви не вказали адресу електронної скриньки. Додайте електронну пошту для {0} та повторіть відправку.';
 
 var MEMBERS_TYPE_NEW_VALUE = 'Введіть нові дані поля <b>{0}</b> для <b>{1}</b>. {2}:';
 var MEMBERS_CHOOSE_STATUS = 'Виберіть статус:';
@@ -425,7 +425,7 @@ function insertMembersData(name, lastname, callName, phoneNumber, email, status,
     values[0][telegramIdColumnIndex] = (telegramId ? telegramId : '');  
     values[0][telegramColumnIndex] = (username ? username : '');
     values[0][dateColumnIndex] = formatDate(new Date());
-    values[0][telegramStatusColumnIndex] = telegramStatus;
+    values[0][telegramStatusColumnIndex] = (telegramStatus ? telegramStatus : '');
 
     insertedRange.setValues(values);
 }
