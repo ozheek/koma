@@ -8,65 +8,68 @@ function doGet(e) {
 }
 
 function doPost(e) {
-  try {
-    var contents = JSON.parse(e.postData.contents);
-    if (contents.callback_query) {
-        processCallback(contents);
-    } else if (contents.message) {
-        var userTelegramId = contents.message.from.id;
-        var text = contents.message.text;
-        var keyBoard = null;
+    try {
+        var contents = JSON.parse(e.postData.contents);
+        var userTelegramId = contents.message.from.id || contents.callback_query.from.id;
 
-        // Відправлено телефон - зареєструвати користувача
-        if (contents.message.contact) {
-            if (contents.message.contact.user_id == userTelegramId) {
-                var phoneNumber = contents.message.contact.phone_number;
-                var username = contents.message.from.username;
+        if (contents.callback_query) {
+            processCallback(contents);
+        } else if (contents.message) {
+            var text = contents.message.text;
+            var keyBoard = null;
 
-                checkRegistration(userTelegramId, phoneNumber, username);
-            } else {
-                requestPhoneNumberForRegistration(userTelegramId);
-            }
-        } else {
-            var replyToMessageText = contents.message.reply_to_message ? contents.message.reply_to_message.text : null;
-            if (replyToMessageText && replyToMessageText.length > 2 && replyToMessageText.substring(0, REPLY_SYMBOL.length) == REPLY_SYMBOL) {
-                var firstLine = replyToMessageText.split('\n')[0];
-                var reaplyUserTelegramId = firstLine.split(/\(|\)/)[1];
-                showMenu(reaplyUserTelegramId, text);
-            } else {
-                //showMenu(userTelegramId, "🤔");
-                var userData = getMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userTelegramId);
+            // Відправлено телефон - зареєструвати користувача
+            if (contents.message.contact) {
+                if (contents.message.contact.user_id == userTelegramId) {
+                    var phoneNumber = contents.message.contact.phone_number;
+                    var username = contents.message.from.username;
 
-                if (userData && !userData.fullName && (!userData.statuses || userData.statuses.length == 0 || userData.statuses[0] != REGISTRATION)) {
-                    checkRegistration(userTelegramId, userData.fields[MEMBERS_HEADER_MOBILE_PHONE_NUMBER],
-                        userData.fields[MEMBERS_HEADER_TELEGRAM_ID], '', '');
+                    checkRegistration(userTelegramId, phoneNumber, username);
                 } else {
-                    var spaceIndex = text.indexOf(' ');
-                    var icon = text.substring(0, spaceIndex);
-                    if (icon == MANAGEMENT_ICON && text != MANAGEMENT) {
-                        text = text.substring(spaceIndex + 1);
-                        userData.statuses.splice(1);
-                        userData.status = userData.statuses[0] + '___';
-                    }
+                    requestPhoneNumberForRegistration(userTelegramId);
+                }
+            } else {
+                var replyToMessageText = contents.message.reply_to_message ? contents.message.reply_to_message.text : null;
+                if (replyToMessageText && replyToMessageText.length > 2 && replyToMessageText.substring(0, REPLY_SYMBOL.length) == REPLY_SYMBOL) {
+                    var firstLine = replyToMessageText.split('\n')[0];
+                    var reaplyUserTelegramId = firstLine.split(/\(|\)/)[1];
+                    showMenu(reaplyUserTelegramId, text);
+                } else {
+                    //showMenu(userTelegramId, "🤔");
+                    var userData = getMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userTelegramId);
 
-                    if (!userData) {
-                        requestPhoneNumberForRegistration(userTelegramId);
-                    } else if (userData.fullName) {
-                        if (text == "/start" || text == MAIN_MENU) {
-                            showMainMenu(userTelegramId);
-                        } else if (text == GO_BACK) {
-                            goBack(userData);
+                    if (userData && !userData.fullName && (!userData.statuses || userData.statuses.length == 0 || userData.statuses[0] != REGISTRATION)) {
+                        checkRegistration(userTelegramId, userData.fields[MEMBERS_HEADER_MOBILE_PHONE_NUMBER],
+                            userData.fields[MEMBERS_HEADER_TELEGRAM_ID], '', '');
+                    } else {
+                        var spaceIndex = text.indexOf(' ');
+                        var icon = text.substring(0, spaceIndex);
+                        if (icon == MANAGEMENT_ICON && text != MANAGEMENT) {
+                            text = text.substring(spaceIndex + 1);
+                            userData.statuses.splice(1);
+                            userData.status = userData.statuses[0] + '___';
+                        }
+
+                        if (!userData) {
+                            requestPhoneNumberForRegistration(userTelegramId);
+                        } else if (userData.fullName) {
+                            if (text == "/start" || text == MAIN_MENU) {
+                                showMainMenu(userTelegramId);
+                            } else if (text == GO_BACK) {
+                                goBack(userData);
+                            } else {
+                                processRequest(userData, text);
+                            }
                         } else {
                             processRequest(userData, text);
                         }
-                    } else {
-                        processRequest(userData, text);
                     }
                 }
             }
         }
+    } catch (ex) {
+        log(JSON.stringify(ex));
     }
-  }catch(ex){ttt(JSON.stringify(ex));}
 }
 
 function goBack(userData, text) {
@@ -94,8 +97,7 @@ function processRequest(userData, text) {
     if (userData.statuses[0]) {
         if (userData.statuses[0] == MANAGEMENT) {
             isContinue = processManagement(userData, text);
-        }
-        else if (userData.statuses[0] == LIBRARY) {
+        } else if (userData.statuses[0] == LIBRARY) {
             isContinue = processLibrary(userData, text);
         } else if (userData.statuses[0] == MEETING) {
             isContinue = processMeeting(userData, text);
@@ -133,23 +135,23 @@ function processRequest(userData, text) {
                     return true;
                 }
             }
-          } else if (userData.statuses[0] == MEETING_CHANGE_THEME_CALLBACK) {
+        } else if (userData.statuses[0] == MEETING_CHANGE_THEME_CALLBACK) {
             if (!userData.statuses[4]) {
                 var date = userData.statuses[1];
                 var role = MEETING_THEME;
                 var fullName = userData.statuses[3];
-              
+
                 if (updateMeetingInfo(date, role, text, false)) {
                     showMenu(userData.telegramId, format('Дякую, записав, що тема засідання <b>"{0}"</b> на засіданні <b>{1}</b>.', text, date));
                     return true;
                 }
             }
-          } else if (userData.statuses[0] == MEETING_CHANGE_WORD_OF_THE_DAY_CALLBACK) {
+        } else if (userData.statuses[0] == MEETING_CHANGE_WORD_OF_THE_DAY_CALLBACK) {
             if (!userData.statuses[4]) {
                 var date = userData.statuses[1];
                 var role = MEETING_WORD_OF_THE_DAY;
                 var fullName = userData.statuses[3];
-              
+
                 if (updateMeetingInfo(date, role, text, false)) {
                     showMenu(userData.telegramId, format('Дякую, записав, що слово дня <b>"{0}"</b> на засіданні <b>{1}</b>.', text, date));
                     return true;
@@ -184,8 +186,7 @@ function processRequest(userData, text) {
             showMenu(userData.telegramId, 'Яку операцію бажаєте виконати?', [MEETING_SIGN_UP_FOR_ROLE, MEETING_SHOW_MY_ROLES, MEETING_SHOW_PROGRAM]);
 
             isContinue = true;
-        }
-        else if (text == LIBRARY) {
+        } else if (text == LIBRARY) {
             showMenu(userData.telegramId, 'Яку операцію бажаєте виконати?', [LIBRARY_SHOW_LIST, LIBRARY_TAKE_BOOK, LIBRARY_SHOW_RULES]);
 
             isContinue = true;

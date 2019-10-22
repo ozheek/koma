@@ -52,6 +52,15 @@ var FINANCE_BALANCE_TITLE = "💰 <b>В кого гроші клубу:</b>\n\n"
 var FINANCE_BALANCE_TOTAL = '\n<b>Загальний баланс:</b> {0}грн';
 var FINANCE_BALANCE_RECORD = '<b>{0}:</b> {1}грн\n';
 
+var FINANCE_TREASURER_MESSAGE_TITLE = '💰 <b>Сповіщення по скарбничці</b>\n\n';
+var FINANCE_TRANSFER_TREASURER_MESSAGE = FINANCE_TREASURER_MESSAGE_TITLE + '{0} передав(-ла) {1}грн {2}.';
+var FINANCE_OUT_MEMBERSHIP_TM_TREASURER_MESSAGE = FINANCE_TREASURER_MESSAGE_TITLE + '{0} витратив(-ла) на сплату в ТМ {1}грн за {2}.';
+var FINANCE_OUT_MEMBERSHIP_MESSAGE = FINANCE_TREASURER_MESSAGE_TITLE + '{0} витратив(-ла) на членський внесок {1}грн за {2}.';
+var FINANCE_OUT_TREASURER_MESSAGE = FINANCE_TREASURER_MESSAGE_TITLE + '{0} витратив(-ла) {1}грн на {2}.';
+var FINANCE_IN_MEMBERSHIP_TM_TREASURER_MESSAGE = FINANCE_TREASURER_MESSAGE_TITLE + 'Отримано членський внесок за ТМ, у розмірі {0}грн від {1}.';
+var FINANCE_IN_MEMBERSHIP_TREASURER_MESSAGE = FINANCE_TREASURER_MESSAGE_TITLE + 'Отримано членський внесок {0}грн від {1}.';
+var FINANCE_IN_TREASURER_MESSAGE = FINANCE_TREASURER_MESSAGE_TITLE + '{0} отримав(-ла) {1}грн за {2}.';
+
 function showBalancesByMembers(userTelegramId) {
     var balances = getBalancesByMembers();
     var html = FINANCE_BALANCE_TITLE;
@@ -79,6 +88,7 @@ function processFinance(userData, text) {
                     insertFinanceData(FINANCE_LISTS_TYPE_TRANSFER, userData.statuses[3], -1 * text, userData.fullName, description);
                     insertFinanceData(FINANCE_LISTS_TYPE_TRANSFER, userData.fullName, text, userData.statuses[3], description);
                     showMenu(userData.telegramId, format(FINANCE_TRANSFER_SUCCESS,text , userData.statuses[3]));
+                    sendMessageToOfficer(OFFICER_POSITION_TREASURE, format(FINANCE_TRANSFER_TREASURER_MESSAGE, userData.fullName, text, userData.statuses[3]));
                     return true;
                   }
                   else {
@@ -98,8 +108,8 @@ function processFinance(userData, text) {
                           // ADD DEBIT BALANCE RECORD
                           var description = '';
                           insertFinanceData(FINANCE_LISTS_TYPE_MEMBERSHIP_TM, userData.statuses[4], -1 * text, userData.fullName, description);
-                          showMenu(userData.telegramId, format(FINANCE_OUT_TM_SUCCESS, text, userData.statuses[4]));
-                          //showParentManagementMenu(userData);
+                          sendMessageToOfficer(OFFICER_POSITION_TREASURE, format(FINANCE_OUT_MEMBERSHIP_TM_TREASURER_MESSAGE, userData.fullName, text, userData.statuses[4]));
+                          showMenu(userData.telegramId, format(FINANCE_OUT_TM_SUCCESS, text, userData.statuses[4]));s                          
                           return true;
                         }
                         else {
@@ -118,6 +128,7 @@ function processFinance(userData, text) {
                           var description = userData.statuses[4] == FINANCE_NO_DESCRIPTION ? '' : userData.statuses[4];
                           insertFinanceData(userData.statuses[3], null, -1 * text, userData.fullName, description);
                           showMenu(userData.telegramId, format(FINANCE_OUT_SUCCESS, text, userData.statuses[3]));
+                          sendMessageToOfficer(OFFICER_POSITION_TREASURE, format(FINANCE_OUT_TREASURER_MESSAGE, userData.fullName, text, userData.statuses[4]));
                           //showParentManagementMenu(userData);
                           return true;
                         }
@@ -155,6 +166,11 @@ function processFinance(userData, text) {
                           updateMemberInfo(MEMBERS_HEADER_FULLNAME, userData.statuses[4], MEMBERS_HEADER_STATUS, MEMBERS_STATUS_MEMBER);                 
                           showMenu(userData.telegramId, format(FINANCE_IN_SUCCESS, text, userData.statuses[3]));
                           
+                          if (userData.statuses[3] == FINANCE_LISTS_TYPE_MEMBERSHIP_TM) {
+                            sendMessageToOfficer(OFFICER_POSITION_TREASURE, format(FINANCE_IN_MEMBERSHIP_TM_TREASURER_MESSAGE, text, userData.statuses[4]));
+                            return true;
+                          } 
+                          sendMessageToOfficer(OFFICER_POSITION_TREASURE, format(FINANCE_IN_MEMBERSHIP_TREASURER_MESSAGE, text, userData.statuses[4]));
                           return true;
                         }
                         else {
@@ -173,6 +189,7 @@ function processFinance(userData, text) {
                           var description = userData.statuses[4] == FINANCE_NO_DESCRIPTION ? '' : userData.statuses[4];
                           insertFinanceData(userData.statuses[3], null, text, userData.fullName, description);
                           showMenu(userData.telegramId, format(FINANCE_IN_SUCCESS, text, userData.statuses[3]));
+                          sendMessageToOfficer(OFFICER_POSITION_TREASURE, format(FINANCE_IN_TREASURER_MESSAGE, userData.fullName, text, userData.statuses[3]));
                           return true;
                         }
                         else {
