@@ -10,11 +10,10 @@ function doGet(e) {
 function doPost(e) {
     try {
         var contents = JSON.parse(e.postData.contents);
-        var userTelegramId = contents.message.from.id || contents.callback_query.from.id;
-
         if (contents.callback_query) {
             processCallback(contents);
         } else if (contents.message) {
+            var userTelegramId = contents.message.from.id;
             var text = contents.message.text;
             var keyBoard = null;
 
