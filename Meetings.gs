@@ -660,7 +660,7 @@ function checkProgramBeforeMeeting() {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) - 1;
 
     if (!(diffDays == 0 && date.getHours() >= 9 && date.getHours() <= MEETING_TIME)) {
-        //return;
+        return;
     }
 
     var roles = getMeetingProgramRoles(nextMeetingDate);

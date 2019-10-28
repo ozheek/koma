@@ -48,6 +48,10 @@ function validateEmail(email) {
   return re.test(email);
 }
 
+function stripHTMLTags(html)
+{
+  return html.replace(/<\/?[^>]+(>|$)/g, "");
+}
 
 function isCyrillic(str) 
 {

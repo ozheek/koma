@@ -4,6 +4,10 @@ Date.prototype.addDays = function(days) {
     return date;
 }
 
+function isValidDate(d) {
+  return d instanceof Date && !isNaN(d);
+}
+
 function currentDate()
 {
   var oldDateTime = new Date();
@@ -26,6 +30,15 @@ function formatDate(date) {
   if (day.length < 2) day = '0' + day;
 
   return [day, month, year].join('-');
+}
+
+function monthsBetweenTwoDates(d1, d2) {
+        var d1Y = d1.getFullYear();
+        var d2Y = d2.getFullYear();
+        var d1M = d1.getMonth();
+        var d2M = d2.getMonth();
+
+        return (d1M+12*d1Y)-(d2M+12*d2Y);
 }
 
 function parseDate(date)

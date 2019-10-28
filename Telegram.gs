@@ -23,6 +23,6 @@ function sendText(chatId, text, replyMarkup) {
   }
   catch(ex) 
   {
-    ttt(JSON.stringify(ex));
+    log(JSON.stringify(ex));
   }
 }

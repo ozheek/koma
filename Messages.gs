@@ -10,29 +10,36 @@ function sendEmail(telegramId, emailAddress, subject, message)
   if (telegramId)
   {
     var memberInfo = getMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, telegramId);
-    var memberEmailAddress = memberInfo.fields[MEMBERS_HEADER_EMAIL_ADDRESS];
     
-    var aliases = GmailApp.getAliases();
-    
-    aliases.forEach(function(item)
-    {
-      if (item == memberEmailAddress)
-      {
-        aliase = item;
-      }
-    });
-                    
-    if (aliase)
-    {
-      fromEmailAddress = memberEmailAddress;
+    if (!memberInfo) {
+      var memberEmailAddress = memberInfo.fields[MEMBERS_HEADER_EMAIL_ADDRESS];
       fromName = memberInfo.fullName;
-    }
-    else {
-      sendText(telegramId, format(MESSAGES_NO_ALLIASE_FOUND, fromName, fromEmailAddress));
+      
+      var aliases = GmailApp.getAliases();
+      
+      aliases.forEach(function(item)
+                      {
+                        if (item == memberEmailAddress)
+                        {
+                          aliase = item;
+                        }
+                      });
+      
+      if (aliase)
+      {
+        fromEmailAddress = memberEmailAddress;
+      }
+      else {
+        sendText(telegramId, format(MESSAGES_NO_ALLIASE_FOUND, fromName, fromEmailAddress));
+      }
     }
   }
 
-  GmailApp.sendEmail(emailAddress, subject, message, {name : fromName, from : fromEmailAddress.toString()});   
+  var options = { name : fromName, from : fromEmailAddress.toString()};
+  log(JSON.stringify(options));
+  
+  options = { htmlBody : message.replaceAll('\n', '<br/>'), name : 'КОМА' };
+  GmailApp.sendEmail(emailAddress, subject, stripHTMLTags(message), options);   
 }
 
 function startSendMessage(userData, memberInfo, type, message)

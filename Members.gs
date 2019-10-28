@@ -25,6 +25,8 @@ var MEMBERS_PROGRAM_TOASTMASTERS = 'Toastmasters';
 
 /* СТАТУСИ */
 var MEMBERS_STATUS_GUEST = 'Гість';
+var MEMBERS_STATUS_WAITING_PAYMENT = 'Чекаємо на внесок';
+var MEMBERS_STATUS_EX_MEMBER = 'Колишній член';
 var MEMBERS_STATUS_MEMBER = 'Дійсний член';
 
 /* ЗАГОЛОВКИ БАЗИ ДАННИХ */
@@ -42,12 +44,16 @@ var MEMBERS_HEADER_DATE = 'Дата реєстрації';
 var MEMBERS_HEADER_MENTOR = 'Наставник';
 var MEMBERS_HEADER_FACEBOOK = 'Facebook';
 var MEMBERS_HEADER_TELEGRAM = 'Телеграм';
+var MEMBERS_HEADER_MEMBERSHIP_EXPIRES = "Членство до";
 
 /* CALLBACKS */
 var MEMBERS_SEND_TELEGRAM_MESSAGE_CALLBACK = 'send_telegram_message_callback';
 var MEMBERS_SEND_EMAIL_MESSAGE_CALLBACK = 'send_email_message_callback';
 var MEMBERS_EDIT_MEMBER_CALLBACK = 'edit_member';
 var MEMBERS_ADD_NEW_MEMBER_CALLBACK = 'add_new_member';
+
+var MEMBERS_CANCEL_MEMBERSHIP_CALLBACK = 'membership_cancel_callback';
+var MEMBERS_CANCEL_WAITING_PAYMENT_CALLBACK = 'membership_waiting_payment';
 
 var MEMBERS_ACCEPT_SEND_MESSAGE_CALLBACK = 'accept_send_message';
 var MEMBERS_REJECT_SEND_MESSAGE_CALLBACK = 'reject_send_message';
@@ -65,6 +71,14 @@ var MEMBERS_HEADER_TELEGRAM_STATUS = "status";
 
 
 /* ТЕКСТИ */
+
+var MEMBERS_CANCEL_MEMBERSHIP = 'Скасувати членство 😢';
+var MEMBERS_MEMBERSHIP_CANCELED = 'Ваше членство було скасоване 😢 Але ви можете продовжувати ходити на засіданні, брати деякі технічні ролі та виступати на експромт-сесії 😊\
+                                   \n\nТакож, ви можете продовжити членство в будь-який момент 😍';
+var MEMBERS_CANCEL_WAITING_PAYMENT = 'Скасувати 😢'; 
+var MEMBERS_WAITING_PAYMENT_CANCELED = 'Я більше не буду надсилати нагадування про сплату членських внесків 😊\
+                                   \n\nПроте ви можете продовжити членство в будь-який момент 😍';
+
 var MEMBERS_PREVIOUS_VALUE_EMPTY = 'Попереднє значення відсутнє';
 var MEMBERS_PREVIOUS_VALUE = 'Попереднє значення <i>"{0}"</i> буде перезаписане';
 

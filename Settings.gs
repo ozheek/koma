@@ -55,6 +55,20 @@ var OFFICER_POSITION_TREASURE = "Скарбник";
 var OFFICER_POSITION_STEWARD = "Розпорядник";
 var OFFICER_POSITION_LIBRARIAN = "Бібліотекар";
 
+/* БІБЛІОТЕКА */
+var LIBRARY_BOOK_FEE = 10; // 10грн
+var LIBRARY_RESERVATION_DAYS = 7; // 7днів
+var LIBRARY_DAYS_BEFORE_RETURN = 3; // 3 дні
+var LIBRARY_REMIND_RETURN_FREQUENCY = 7; // 7 днів
+
+/* ЧЛЕНСТВО */
+
+var MONTHLY_MEMBERSHIP_FEE = '150'; // 150 UAH
+var MONTHLY_MEMBERSHIP_FEE_TM = '225'; // 225 UAH
+var DAYS_BEFORE_REMOVED_MEMBERSHIP = '60';
+var TRIAL_PERIOD_TO_PAY_MONTHS = 2; // якщо користувач заплатить протягом 2х місяців, то йому членство продовжиться з останньої дати оплати
+var DAY_IN_MONTH_FROM_WHICH_DISCOUNT_APLIED = 15; // з якого дня в місця коли членство зараховується вже з наступного місяця
+  
 // ВІЦЕ-ПРЕЗИДЕНТ З ОСВІТИ
 
 var VPO_TELEGRAM = "@teb01";

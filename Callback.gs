@@ -57,6 +57,12 @@ function processCallback(contents) {
             } else if (statuses[0] == MEETING_CHANGE_WORD_OF_THE_DAY_CALLBACK) {
                 updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, callbackId, MEMBERS_HEADER_TELEGRAM_STATUS, callback);
                 showMenu(callbackId, MEETING_CHOOSE_WORD_OF_THE_DAY);
+            } else if (statuses[0] == MEMBERS_CANCEL_MEMBERSHIP_CALLBACK) {
+                updateMemberInfo(MEMBERS_HEADER_FULLNAME, statuses[1], MEMBERS_HEADER_STATUS, MEMBERS_STATUS_EX_MEMBER);
+                showMenu(callbackId, MEMBERS_MEMBERSHIP_CANCELED);
+            } else if (statuses[0] == MEMBERS_CANCEL_WAITING_PAYMENT_CALLBACK) {
+                updateMemberInfo(MEMBERS_HEADER_FULLNAME, statuses[1], MEMBERS_HEADER_STATUS, MEMBERS_STATUS_EX_MEMBER);
+                showMenu(callbackId, MEMBERS_WAITING_PAYMENT_CANCELED);
             } else if (statuses[0] == MEETING_CHANGE_THEME_CALLBACK) {
                 updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, callbackId, MEMBERS_HEADER_TELEGRAM_STATUS, callback);
                 showMenu(callbackId, MEETING_CHOOSE_THEME);
@@ -141,7 +147,21 @@ function processCallback(contents) {
                  else {
                    startSendMessage(userData, memberInfo, type, message);
                  }
-            } 
+            } else if (statuses[0] == REGISTRATION_CONTINUE_CALLBACK) {
+                var memberInfo = getMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, statuses[1]);
+                var statusesLength = memberInfo.statuses.length;
+                log(JSON.stringify(memberInfo.statuses))
+                log(statusesLength);
+                if (memberInfo.statuses[statusesLength - 2] == REGISTRATION) {
+                  sendText(memberInfo.telegramId, REGISTRATION_STEP_1);
+                } else {
+                  var text = memberInfo.statuses[statusesLength - 2];
+                  log(text);
+                  processRequest(memberInfo, text);
+                }
+            } else if (statuses[0] == REGISTRATION_CANCEL_CALLBACK) {
+               sendText(statuses[1], REGISTRATION_USERDATA_HAS_BEEN_REMOVED);
+            }
         }
     }
 }
@@ -149,15 +169,16 @@ function processCallback(contents) {
 /* ПОВІДОМЛЕННЯ */
 
 function sendTextWithCallbacks(telegramId, callbacks, message) {
+  if (!telegramId) return;
   
   var callbacksToInsert = [];
   var keyboards = [];
   
   for (var i = 0; i < callbacks.length; i++)
   {
-    var callback = callbacks[i];
+    var callback = callbacks[i];    
     var callbackId = (new Date()).getTime() + i;
-    var time = (new Date()).getTime();
+    var time = (new Date()).getTime(); 
     var keyboard = {
       text: callback.text,
       callback: callbackId
@@ -166,7 +187,7 @@ function sendTextWithCallbacks(telegramId, callbacks, message) {
     callbacksToInsert.push([callbackId, time, callback.data]);
   }
 
-  insertCallbacks(callbacksToInsert);
+  insertCallbacks(callbacksToInsert);    
   sendText(telegramId, message, getMenuInlineKeyBoardMultiline(keyboards));  
 }
 
