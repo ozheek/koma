@@ -1062,7 +1062,7 @@ function updateMeetingInfo(date, setHeader, setValue, updateOnlyIfFree) {
 
             if (setHeader.indexOf(MEETING_ROLE_SPEACH) > -1 && !setValue) {
                 var speechNumber = setHeader.slice(setHeader.length - 1);
-                var headersToClear = [MEETING_ROLE_SPEACH_PROJECT, MEETING_ROLE_SPEACH_TITLE, MEETING_ROLE_EVALUATION];
+                var headersToClear = [MEETING_ROLE_SPEACH_PROJECT, MEETING_ROLE_SPEACH_TITLE/*, MEETING_ROLE_EVALUATION*/];
 
                 for (var i = 0; i < headersToClear.length; i++) {
                     var index = headerValues.findIndex(headersToClear[i] + ' №' + speechNumber) + 1;
