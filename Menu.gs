@@ -23,10 +23,10 @@ function showMainMenu(userTelegramId) {
     showMenu(userTelegramId, "Виберіть операцію:", MAIN_MENU);
 }
 
-function getMenuKeyBoard(options, userTelegramId) {
+function getMenuKeyBoard(options, userTelegramId, itemsInLine) {
     var keyBoard = '';
 
-    var HOME_MANY_ITEMS_IN_A_LINE = 2;
+    var HOW_MANY_ITEMS_IN_A_LINE = itemsInLine || 2;
 
     if (options && options.length > 0) {
         var keyBoard = '[';
@@ -35,7 +35,7 @@ function getMenuKeyBoard(options, userTelegramId) {
 
             keyBoard += '{"text": "' + String(element).replaceAll('"', '\\"') + '"},';
 
-            if ((i + 1) % HOME_MANY_ITEMS_IN_A_LINE == 0) {
+            if ((i + 1) % HOW_MANY_ITEMS_IN_A_LINE == 0) {
                 keyBoard = keyBoard.substring(0, keyBoard.length - 1) + '],[';
             }
         }
@@ -126,14 +126,14 @@ function getMenuInlineKeyBoardMultiline(options) {
 }
 
 
-function showMenu(userTelegramId, message, options) {
+function showMenu(userTelegramId, message, options, buttonsInLine) {
     if (options == MAIN_MENU) {
         updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, userTelegramId, MEMBERS_HEADER_TELEGRAM_STATUS, "");
         options = getMainMenuOptions(userTelegramId);
     }
     var keyboard = null;
 
-    keyboard = getMenuKeyBoard(options, userTelegramId);
+    keyboard = getMenuKeyBoard(options, userTelegramId, buttonsInLine);
     sendText(userTelegramId, message, keyboard);
 }
 

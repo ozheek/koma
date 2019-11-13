@@ -157,13 +157,17 @@ function processRequest(userData, text) {
                 }
             }
         } else if (userData.statuses[0] == MEETING_ROLE_CHANGE_CALLBACK) {
-            var date = userData.statuses[1];
-            var role = userData.statuses[2];
-
-            if (updateMeetingInfo(date, role, text, false)) {
-                sendText(userData.telegramId, 'Дякую, записав!');
-                resetStatus(userData.telegramId);
-            }
+            if(!userData.statuses[3]) {
+              if(searchMemberInDatabase(text, userData.telegramId, null, null)) {
+                var date = userData.statuses[1];
+                var role = userData.statuses[2];
+                
+                if (updateMeetingInfo(date, role, text, false)) {
+                  sendText(userData.telegramId, 'Дякую, записав!');
+                  resetStatus(userData.telegramId);
+                }
+              }
+            } 
         } else {
             sendMessageToOfficer(OFFICER_POSITION_VP_EDUCATION, REPLY_SYMBOL +
                 ' ' + userData.fullName +

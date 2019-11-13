@@ -12,6 +12,9 @@ var MEMBERS_ADDED_MEMBER_SEND_EMAIL = '✉️ Привітати';
 var MEMBERS_ADDED_MEMBER_ADD_NEW = '➕ Додати нового';
 var MEMBERS_ADDED_MEMBER_EDIT = '✏ Редагувати';
 
+var SEX_MALE = "Чоловiча";
+var SEX_FEMALE = "Жiноча";
+
 /* СПИСКИ */
 var MEMBERS = '👥 Члени клубу';
 var MEMBERS_STATUSES = 'Статуси';
@@ -38,6 +41,7 @@ var MEMBERS_HEADER_CALLNAME = "Кличний відмінок";
 var MEMBERS_HEADER_STATUS = "Статус";
 var MEMBERS_HEADER_EMAIL_ADDRESS = "Електронна пошта";
 var MEMBERS_HEADER_CLUB = "Клуб";
+var MEMBERS_HEADER_SEX = "Стать";
 var MEMBERS_HEADER_POSITION = "Посада";
 var MEMBERS_HEADER_PROGRAM = 'Програма';
 var MEMBERS_HEADER_DATE = 'Дата реєстрації';
@@ -58,6 +62,8 @@ var MEMBERS_CANCEL_WAITING_PAYMENT_CALLBACK = 'membership_waiting_payment';
 var MEMBERS_ACCEPT_SEND_MESSAGE_CALLBACK = 'accept_send_message';
 var MEMBERS_REJECT_SEND_MESSAGE_CALLBACK = 'reject_send_message';
 
+var MEMBERS_KEEP_MEMBERSHIP_CALLBACK = 'membership_keep_callback';
+
 /* ПОШУК ПО БАЗI */
 var MEMBER_SEARCH_FAILED = 'На жаль, члена клубу з таким iменем не було знайдено в базi...\
                         \n\nПеревiрте, будь ласка, чи правильно ви ввели iм\'я і прiзвище та спробуйте знову!';
@@ -75,9 +81,11 @@ var MEMBERS_HEADER_TELEGRAM_STATUS = "status";
 var MEMBERS_CANCEL_MEMBERSHIP = 'Скасувати членство 😢';
 var MEMBERS_MEMBERSHIP_CANCELED = 'Ваше членство було скасоване 😢 Але ви можете продовжувати ходити на засіданні, брати деякі технічні ролі та виступати на експромт-сесії 😊\
                                    \n\nТакож, ви можете продовжити членство в будь-який момент 😍';
-var MEMBERS_CANCEL_WAITING_PAYMENT = 'Скасувати 😢'; 
+var MEMBERS_CANCEL_WAITING_PAYMENT = 'Змінились плани 😢'; 
 var MEMBERS_WAITING_PAYMENT_CANCELED = 'Я більше не буду надсилати нагадування про сплату членських внесків 😊\
                                    \n\nПроте ви можете продовжити членство в будь-який момент 😍';
+var MEMBERS_MEMBERSHIP_KEPT = 'Дякую, що залишаєтесь з нами 😍';
+var MEMBERS_KEEP_MEMBERSHIP = 'Нагадати пізніше 🕘';
 
 var MEMBERS_PREVIOUS_VALUE_EMPTY = 'Попереднє значення відсутнє';
 var MEMBERS_PREVIOUS_VALUE = 'Попереднє значення <i>"{0}"</i> буде перезаписане';
@@ -93,9 +101,11 @@ var MEMBERS_SELECT_NEW_MOBILE_PHONE_NUMBER = 'Введіть новий номе
 var MEMBERS_SELECT_NEW_FACEBOOK = 'Введіть посилання на Фейсбук-сторінку для {0}. {1}:';
 var MEMBERS_SELECT_NEW_NAME = 'Введіть нове ім\'я для {0} (повне ім\'я буде змінено автоматично). {1}:';
 var MEMBERS_SELECT_NEW_LASTNAME = 'Введіть нове прізвище для {0} (повне ім\'я буде змінено автоматично). {1}:';
+var MEMBERS_SELECT_SEX = "Оберiть стать:";
+
 //var MEMBERS_SUCCESS_ADDED = 'Дякую! Додав <b>{0} {1}</b> (<i>{2}</i>) до бази.\n☎️: {3}, 📧: {4}\n\n<b>Ви можете продовжити заповнення інших полей.</b>';
 
-var MEMBERS_SEND_MESSAGE_SELECT_MEMBER = 'Виберіть члена клубу, якому хочете відправити повідомлення:';
+var MEMBERS_SEND_MESSAGE_SELECT_MEMBER = 'Оберіть члена клубу (або введіть ім\'я для пошуку), якому хочете відправити повідомлення:';
 var MEMBERS_SEND_MESSAGE_SELECT_TYPE = 'Ви хочете відправити повідомлення в телеграмі чи e-mail?';
 var MEMBERS_SEND_MESSAGE_ALL = 'Всім';
 
@@ -147,8 +157,13 @@ function processMembers(userData, text) {
                 return false;
               }
           } else {
-            showSendMessageMenu(userData, text);
-            return true;      
+            if (text == MEMBERS_SEND_MESSAGE_ALL) {
+              showSendMessageMenu(userData, text); 
+              return true;
+            } else if (searchMemberInDatabase(text, userData.telegramId, null, null)) {
+              showSendMessageMenu(userData, text); 
+              return true;
+            }  
           }       
         }
         else if (userData.statuses[2] == MEMBERS_EDIT) {
@@ -157,6 +172,8 @@ function processMembers(userData, text) {
                     if (!userData.statuses[5]) {
                         if (userData.statuses[4] == MEMBERS_HEADER_MOBILE_PHONE_NUMBER) {
                             text = text.replace('+', '');
+                        } else if (userData.statuses[4] == MEMBERS_HEADER_TELEGRAM) {
+                            text = text.replace('@', '');
                         } else if (userData.statuses[4] == MEMBERS_HEADER_NAME || userData.statuses[4] == MEMBERS_HEADER_LASTNAME) {
                             var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, userData.statuses[3]);
                             var fullName = userData.statuses[4] == MEMBERS_HEADER_NAME ?
@@ -166,8 +183,13 @@ function processMembers(userData, text) {
                             updateMemberInfo(MEMBERS_HEADER_FULLNAME, userData.statuses[3], MEMBERS_HEADER_FULLNAME, fullName);
                             userData.statuses[3] = fullName;
                             userData.status = userData.statuses.join('___') + '___';
-                        } 
-                        
+                        } else if (userData.statuses[4] == MEMBERS_HEADER_MENTOR) { 
+                            if (searchMemberInDatabase(text, userData.telegramId, format(MEMBERS_SUCCESS_UPDATE, userData.statuses[4], text, userData.statuses[3]), null)) {
+                               updateMemberInfo(MEMBERS_HEADER_FULLNAME, userData.statuses[3], userData.statuses[4], text);
+                               continueEditMember(userData, userData.statuses[3]);
+                            }
+                            return false;
+                        }
                         updateMemberInfo(MEMBERS_HEADER_FULLNAME, userData.statuses[3], userData.statuses[4], text);
                         showMenu(userData.telegramId, format(MEMBERS_SUCCESS_UPDATE, userData.statuses[4], text, userData.statuses[3]));
                         
@@ -188,6 +210,8 @@ function processMembers(userData, text) {
                         showMenu(userData.telegramId, format(MEMBERS_SELECT_NEW_MENTOR, userData.statuses[3], previousValue), getAllMembers());
                     } else if (text == MEMBERS_HEADER_CLUB) {
                         showMenu(userData.telegramId, format(MEMBERS_SELECT_NEW_CLUB, userData.statuses[3], previousValue), getListItemsByName(MEMBERS_CLUBS));
+                    } else if (text == MEMBERS_HEADER_SEX) {
+                        showMenu(userData.telegramId, format(MEMBERS_SELECT_NEW_CLUB, userData.statuses[3], previousValue), [SEX_MALE, SEX_FEMALE]);
                     } else if (text == MEMBERS_HEADER_EMAIL_ADDRESS) {
                         showMenu(userData.telegramId, format(MEMBERS_SELECT_NEW_EMAIL_ADDRESS, userData.statuses[3], previousValue));
                     } else if (text == MEMBERS_HEADER_CALLNAME) {
@@ -206,14 +230,13 @@ function processMembers(userData, text) {
                     return true;
                 }
             } else {
-                var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, text);
-
+                //var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, member); для чого це тут?
                 var items = getMemberFields();
                 var index = items.indexOf(MEMBERS_HEADER_DATE);
+                
                 items.splice(index, 1);
-
-                showMenu(userData.telegramId, MEMBERS_CHOOSE_FIELD, items);
-                return true;
+                
+                return searchMemberInDatabase(text, userData.telegramId, MEMBERS_CHOOSE_FIELD, items);
             }
         } else if (userData.statuses[2] == MEMBERS_ADD) {
             if (userData.statuses[3]) {
@@ -221,52 +244,76 @@ function processMembers(userData, text) {
                     if (userData.statuses[5]) {
                         if (userData.statuses[6]) {
                             if (userData.statuses[7]) {
-                                if (!userData.statuses[8]) {
-                                    var name = capitalizeFirstLetter(userData.statuses[4]);
-                                    var lastname = capitalizeFirstLetter(userData.statuses[3]);
-                                    var fullName = name + ' ' + lastname;
-                                    var callName = userData.statuses[5];
-                                    var phoneNumber = userData.statuses[6].replace('+', '') == EMPTY ? '' : userData.statuses[6];
-                                    var email = userData.statuses[7] == EMPTY ? '' : userData.statuses[7];
-                                    var status = text;
-                                    
-                                    insertMembersData(name, lastname, callName, phoneNumber, email, status);
-                                    showMenu(userData.telegramId, format(MEMBERS_SUCCESS_ADDED, fullName, status, userData.statuses[6], userData.statuses[7]));
-                                    showNewMemberMenu(userData, fullName);
-                                    return false;
-                                }
+                                if (userData.statuses[8]) {
+                                    if (!userData.statuses[9]) {
+                                        var name = capitalizeFirstLetter(userData.statuses[4]);
+                                        var lastname = capitalizeFirstLetter(userData.statuses[3]);
+                                        var fullName = name + ' ' + lastname;
+                                        var callName = userData.statuses[5];
+                                        var sex = userData.statuses[6];
+                                        var phoneNumber = userData.statuses[7].replace('+', '') == EMPTY ? '' : userData.statuses[7];
+                                        var email = userData.statuses[8] == EMPTY ? '' : userData.statuses[8];
+                                        var status = text;
+                                        
+                                        insertMembersData(name, lastname, callName, sex, phoneNumber, email, status);
+                                        showMenu(userData.telegramId, format(MEMBERS_SUCCESS_ADDED, fullName, status, userData.statuses[7], userData.statuses[8]));
+                                        showNewMemberMenu(userData, fullName);
+                                        return false;
+                                   }
+                                } else {
+                                    if (validateEmail(text) || text == EMPTY) {
+                                      showMenu(userData.telegramId, MEMBERS_CHOOSE_STATUS, getListItemsByName(MEMBERS_STATUSES));
+                                      return true;
+                                    } else {
+                                      sendText(userData.telegramId, REGISTRATION_INVALID_EMAIL);
+                                      showMenu(userData.telegramId, MEMBERS_CHOOSE_EMAIL_ADDRESS, [EMPTY]);
+                                    }
+                                } 
                             } else {
-                               if (validateEmail(text) || text == EMPTY) {
-                                 showMenu(userData.telegramId, MEMBERS_CHOOSE_STATUS, getListItemsByName(MEMBERS_STATUSES));
-                                 return true;
-                               } else {
-                                 sendText(userData.telegramId, REGISTRATION_INVALID_EMAIL);
-                                 showMenu(userData.telegramId, MEMBERS_CHOOSE_EMAIL_ADDRESS, [EMPTY]);
-                               }
+                                  showMenu(userData.telegramId, MEMBERS_CHOOSE_EMAIL_ADDRESS, [EMPTY]);
+                                  return true;
+//                               if (validateEmail(text) || text == EMPTY) {
+//                                 showMenu(userData.telegramId, MEMBERS_CHOOSE_STATUS, getListItemsByName(MEMBERS_STATUSES));
+//                                 return true;
+//                               } else {
+//                                 sendText(userData.telegramId, REGISTRATION_INVALID_EMAIL);
+//                                 showMenu(userData.telegramId, MEMBERS_CHOOSE_EMAIL_ADDRESS, [EMPTY]);
+//                               }
+                                 
                             }
                         } else {
-                            showMenu(userData.telegramId, MEMBERS_CHOOSE_EMAIL_ADDRESS, [EMPTY]);
+                            showMenu(userData.telegramId, MEMBERS_CHOOSE_PHONE_NUMBER, [EMPTY]);
+                            //showMenu(userData.telegramId, MEMBERS_CHOOSE_EMAIL_ADDRESS, [EMPTY]);
                             return true;
                         }
                     } else {
-                        showMenu(userData.telegramId, MEMBERS_CHOOSE_PHONE_NUMBER, [EMPTY]);
+                        showMenu(userData.telegramId, MEMBERS_SELECT_SEX, [SEX_MALE, SEX_FEMALE]);
+                       // showMenu(userData.telegramId, MEMBERS_CHOOSE_PHONE_NUMBER, [EMPTY]);
                         return true;
                     }
                 } else {
-                    var fullName = capitalizeFirstLetter(text) + ' ' + capitalizeFirstLetter(userData.statuses[3]);//
-                    var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, fullName);
-                    if (memberInfo) {
-                        showMenu(userData.telegramId, format(MEMBERS_MEMBER_ALREADY_EXISTS, fullName));
-                        goBack(userData);
-                        return false;
-                    } else {
-                        showMenu(userData.telegramId, MEMBERS_CHOOSE_CALLNAME, [getCallName(capitalizeFirstLetter(text))]);
-                        return true;
-                    }
+                     if (isCyrillic(text)) {
+                        var fullName = capitalizeFirstLetter(text) + ' ' + capitalizeFirstLetter(userData.statuses[3]);//
+                        var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, fullName);
+                        if (memberInfo) {
+                            showMenu(userData.telegramId, format(MEMBERS_MEMBER_ALREADY_EXISTS, fullName));
+                            goBack(userData);
+                            return false;
+                        } else {
+                            showMenu(userData.telegramId, MEMBERS_CHOOSE_CALLNAME, [getCallName(capitalizeFirstLetter(text))]);
+                            return true;
+                        }
+                     }
+                     showMenu(userData.telegramId, REGISTRATION_INVALID_NAME);
+                     return false;
                 }
             } else {
+              if (isCyrillic(text)) {
                 showMenu(userData.telegramId, MEMBERS_CHOOSE_NAME);
                 return true;
+              }
+              showMenu(userData.telegramId, REGISTRATION_INVALID_LASTNAME);
+              return false;
             }
         } else if (userData.statuses[2] == MEMBERS_SHOW_LIST) {
             if (!userData.statuses[3]) {
@@ -394,7 +441,29 @@ function showSendMessageMenu(userData, member) {
 
 /* РОБОТА З БАЗОЮ */
 
-function insertMembersData(name, lastname, callName, phoneNumber, email, status, club, telegramId, username, telegramStatus) {
+function deleteMemberFromDatabase(telegramId) {
+  var sheet = SpreadsheetApp.openById(databaseSpreadSheetId).getSheetByName(SHEET_CONTACTS);
+  var headerValues = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  var telegramIdColumnIndex = headerValues.findIndex(MEMBERS_HEADER_TELEGRAM_ID) + 1;
+  var idValues = sheet.getRange(2, telegramIdColumnIndex, sheet.getLastRow(), 1).getValues();
+  
+  var rowIndex;
+  
+  
+  for (var i = 0; i < idValues.length; i++) {
+    if (idValues[i] == telegramId) {
+      rowIndex = i + 2;
+    }
+  }
+  
+  if(rowIndex) {
+    sheet.deleteRow(rowIndex);
+    return true;
+  }
+  return false;
+}
+
+function insertMembersData(name, lastname, callName, sex, phoneNumber, email, status, club, telegramId, username, telegramStatus) {
     var sheet = SpreadsheetApp.openById(databaseSpreadSheetId).getSheetByName(SHEET_CONTACTS);
     var headerValues = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
 
@@ -406,6 +475,7 @@ function insertMembersData(name, lastname, callName, phoneNumber, email, status,
     var nameColumnIndex = headerValues.findIndex(MEMBERS_HEADER_NAME);
     var lastnameColumnIndex = headerValues.findIndex(MEMBERS_HEADER_LASTNAME);
     var callNameColumnIndex = headerValues.findIndex(MEMBERS_HEADER_CALLNAME);
+    var sexColumnIndex = headerValues.findIndex(MEMBERS_HEADER_SEX);
     var phoneNumberColumnIndex = headerValues.findIndex(MEMBERS_HEADER_MOBILE_PHONE_NUMBER);
     var statusColumnIndex = headerValues.findIndex(MEMBERS_HEADER_STATUS);
     var emailAddressColumnIndex = headerValues.findIndex(MEMBERS_HEADER_EMAIL_ADDRESS);
@@ -434,7 +504,8 @@ function insertMembersData(name, lastname, callName, phoneNumber, email, status,
     values[0][nameColumnIndex] = name;
     values[0][lastnameColumnIndex] = lastname;
     values[0][callNameColumnIndex] = callName;
-    values[0][phoneNumberColumnIndex] = phoneNumber.replace('+', '');;
+    values[0][sexColumnIndex] = sex;
+    values[0][phoneNumberColumnIndex] = phoneNumber.replace('+', '');
     values[0][emailAddressColumnIndex] = email;
     values[0][statusColumnIndex] = (status ? status : '');
     values[0][telegramIdColumnIndex] = (telegramId ? telegramId : '');  
@@ -573,7 +644,6 @@ function searchMemberInDatabase(text, telegramId, data, buttons) {
     sendText(telegramId, format(MEMBER_SEARCH_SUCCESS, checkResult));
     if (data) {
       showMenu(telegramId, data, buttons);
-      return true;
     } 
     return true;
   }
@@ -593,33 +663,34 @@ function checkMembersName(text) {
     var fullName = values[i][0];
     var fullNameToLowerCase = values[i][0].toLowerCase();
     
-    if ((fullNameToLowerCase == textAtLowerCase)) {
-    
-        return fullName;  
-        
-    } else if(~fullNameToLowerCase.indexOf(textAtLowerCase)) {
-    
-        members[fullName] = fullName; 
-        
-    } else {
-    
-       if (~textAtLowerCase.indexOf(' ')) {
-       
-          var splittedText = textAtLowerCase.split(' ');
-          var switchedText = (splittedText[1] + ' ' + splittedText[0]).trim();
-
-          if(fullNameToLowerCase == switchedText) {
-          
-            return fullName;
-            
-          } else if (~fullNameToLowerCase.indexOf(splittedText[0]) || ~fullNameToLowerCase.indexOf(splittedText[1])) {
-          
-            members[fullName] = fullName;
-          }  
-       } 
+    if (text.trim() == fullName) {
+      return fullName;
     } 
-  }
-  
+    
+    if(fullNameToLowerCase == textAtLowerCase) {
+       members = {};
+       members[fullName] = fullName;
+       break;
+    }
+    
+    if (~textAtLowerCase.indexOf(' ')) {
+      var splittedText = textAtLowerCase.split(' ');
+      var switchedText = (splittedText[1] + ' ' + splittedText[0]).trim();
+      
+      if (fullNameToLowerCase == switchedText) {
+        members = {};
+        members[fullName] = fullName;
+        break;
+      }
+      if (~fullNameToLowerCase.indexOf(splittedText[0]) || ~fullNameToLowerCase.indexOf(splittedText[1])) {
+        members[fullName] = fullName;
+      }
+    }
+    
+    if (~fullNameToLowerCase.indexOf(textAtLowerCase)) {
+      members[fullName] = fullName; 
+    } 
+  } 
   if(Object.keys(members).length) {
   const sortedMembers = [];
   

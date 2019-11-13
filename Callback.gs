@@ -4,8 +4,10 @@ var CANCEL_ROLE_BEFORE_DAYS = 7;
 
 var CALLBACK_EXPIRED = "Сесія закінчилась, будь ласка, виконайте операцію ще раз!";
 var CALLBACK_ROLE_FREE = "Роль <b>{0}</b> на засіданні <b>{1}</b> тепер вільна!";
+
 var CALLBACK_ROLE_CAN_NOT_BE_CANCELED = "На жаль, не можна відмовитись від ролі на найближчкому засіданні. Спробуйте прийти! 😊";
 var CALLBACL_ROLE_VALUE_CLEANED = "Дякую! Очистив значення для <b>{0}</b> на засіданні <b>{1}</b>.";
+var CALLBACL_ROLE_VALUE_CLEANED_SPEECH_RELATED = ', її проект, вiдгук на неї та назву.';
 var CALLBACK_ROLE_VALUE_NEW = 'Вкажіть нове значення для <b>{0}</b> на засіданні <b>{1}</b>:';
 
 function processCallback(contents) {
@@ -31,8 +33,9 @@ function processCallback(contents) {
                 if (memberInfo && (memberInfo.fields[MEMBERS_HEADER_POSITION] == OFFICER_POSITION_PRESIDENT || memberInfo.fields[MEMBERS_HEADER_POSITION] == OFFICER_POSITION_VP_EDUCATION) ||
                     now.addDays(CANCEL_ROLE_BEFORE_DAYS) <= parseDate(date)) {
                     if (updateMeetingInfo(date, role, '', false)) {
-                        sendMemberCanceledRoleMessage(memberInfo, date, role)
-                        showMenu(callbackId, format(CALLBACK_ROLE_FREE, role, date));
+                       sendMemberCanceledRoleMessage(memberInfo, date, role);
+                       var roleInfo = role.indexOf(MEETING_ROLE_SPEACH) > -1 ? role + MEETING_SPEECH_RELATED_ROLES_LIST : role;
+                       showMenu(callbackId, format(CALLBACK_ROLE_FREE, roleInfo, date));
                     }
                 } else {
                     showMenu(callbackId, CALLBACK_ROLE_CAN_NOT_BE_CANCELED);
@@ -43,7 +46,7 @@ function processCallback(contents) {
                 var fullName = statuses[3];
 
                 if (updateMeetingInfo(date, role, '', false)) {
-                    showMenu(callbackId, format(CALLBACL_ROLE_VALUE_CLEANED, role, date));
+                    showMenu(callbackId, format(CALLBACL_ROLE_VALUE_CLEANED, role.indexOf(MEETING_ROLE_SPEACH) > -1 ? role + MEETING_SPEECH_RELATED_ROLES_LIST : role, date));
                 }
             } else if (statuses[0] == MEETING_SPEACH_CHANGE_PROJECT_CALLBACK) {
                 updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, callbackId, MEMBERS_HEADER_TELEGRAM_STATUS, callback);
@@ -63,6 +66,8 @@ function processCallback(contents) {
             } else if (statuses[0] == MEMBERS_CANCEL_WAITING_PAYMENT_CALLBACK) {
                 updateMemberInfo(MEMBERS_HEADER_FULLNAME, statuses[1], MEMBERS_HEADER_STATUS, MEMBERS_STATUS_EX_MEMBER);
                 showMenu(callbackId, MEMBERS_WAITING_PAYMENT_CANCELED);
+            } else if (statuses[0] == MEMBERS_KEEP_MEMBERSHIP_CALLBACK) {
+                sendText(callbackId, MEMBERS_MEMBERSHIP_KEPT);            
             } else if (statuses[0] == MEETING_CHANGE_THEME_CALLBACK) {
                 updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, callbackId, MEMBERS_HEADER_TELEGRAM_STATUS, callback);
                 showMenu(callbackId, MEETING_CHOOSE_THEME);
@@ -149,18 +154,29 @@ function processCallback(contents) {
                  }
             } else if (statuses[0] == REGISTRATION_CONTINUE_CALLBACK) {
                 var memberInfo = getMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, statuses[1]);
-                var statusesLength = memberInfo.statuses.length;
-                log(JSON.stringify(memberInfo.statuses))
-                log(statusesLength);
-                if (memberInfo.statuses[statusesLength - 2] == REGISTRATION) {
-                  sendText(memberInfo.telegramId, REGISTRATION_STEP_1);
+                
+                if (memberInfo.fullName) {
+                  resetStatus(memberInfo.telegramId);
+                  showMainMenu(memberInfo.telegramId);
                 } else {
-                  var text = memberInfo.statuses[statusesLength - 2];
-                  log(text);
-                  processRequest(memberInfo, text);
+                  if (memberInfo.statuses.length == 2) {
+                    sendText(memberInfo.telegramId, REGISTRATION_STEP_1);
+                  } else {
+                    sendText(memberInfo.telegramId, REGISTRATION_STEP_2);
+                  }
                 }
             } else if (statuses[0] == REGISTRATION_CANCEL_CALLBACK) {
-               sendText(statuses[1], REGISTRATION_USERDATA_HAS_BEEN_REMOVED);
+               var memberInfo = getMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, statuses[1]);
+               if (memberInfo) {
+                 var fullName = memberInfo.fullName ? memberInfo.fullName : EMPTY;
+                 sendMessageToOfficer(OFFICER_POSITION_VP_MEMBERSHIP, format(REGISTRATION_CANCELED_BY_USER, fullName, 
+                                                                             memberInfo.fields[MEMBERS_HEADER_TELEGRAM], 
+                                                                             memberInfo.telegramId));
+                 deleteMemberFromDatabase(memberInfo.telegramId);
+                 sendText(memberInfo.telegramId, REGISTRATION_USERDATA_HAS_BEEN_REMOVED);
+               } else {
+               sendText(statuses[1], REGISTRATION_USERDATA_HAS_BEEN_REMOVED_BEFORE);
+               }
             }
         }
     }

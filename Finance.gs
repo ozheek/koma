@@ -72,10 +72,12 @@ var FINANCE_MEMBERSHIP_TREASURER_NOTIFICATION = FINANCE_TREASURER_MESSAGE_TITLE 
                                                          \n\n❌ <b>Члени клубу, якi були позбавленi членства за несплату внескiв:</b>\n\n{1}\
                                                          \n\n😏 <b>Члени клубу, що виявили бажання сплатити членські внески, проте ще не сплатили:</b>\n\n{2}';
                                                          
-var FINANCE_MEMBERSHIP_EXPIRED_MEMBER_NOTIFICATION = 'Вiтаю, {0}!\n\nНагадую, що у вас закінчилось членство у нашому клубі! Зв\'яжіться з нашим скарбником <b>{1}</b> (@{2}), щоб продовжити членство.\
+var FINANCE_MEMBERSHIP_EXPIRED_MEMBER_NOTIFICATION = 'Вiтаю, {0}!\n\nНагадую, що у вас закінчилось членство у нашому клубі 😔\
+                                                      \n\nЗв\'яжіться з нашим скарбником <b>{1}</b> (@{2}), щоб продовжити членство.\
                                                       \n\nЯкщо ви не бажаєте продовжувати членство і отримувати про це сповіщення, натисніть кнопку нижче 👇';
-var FINANCE_MEMBERSHIP_GUEST_NOTIFICATION = 'Вiтаю, {0}!\n\nВи можете оформити членство і виконувати ролі, що доступні тільки для членів клубу ☺!\
-                                             \n\nЗв\'яжіться з нашим скарбником <b>{1}</b> (@{2}), щоб продовжити членство ☺';
+var FINANCE_MEMBERSHIP_GUEST_NOTIFICATION = 'Вiтаю, {0}!\n\nЦе маленьке нагадування, що ми очікуємо від вас членських внесків ☺\
+                                             \n\nЗв\'яжіться з нашим скарбником <b>{1}</b> (@{2}), щоб продовжити членство ☺.\
+                                             \n\nЯкщо у вас змінились плани і ви не бажаєте отримувати нагадування, натисніть кнопку нижче 👇';
 var FINANCE_MEMBERSHIP_REMOVED_NOTIFICATION = 'Вiтаю, {0}!\n\nНа жаль, ви не продовжили членство і його було автоматично скасовано через певний час 😔\
                                                \n\nЗв\'яжіться з нашим скарбником <b>{1}</b> (@{2}), щоб продовжити членство ☺';
 
@@ -342,7 +344,7 @@ function checkMembershipAndSendNotifications() {
     var memberAndMessageStatus = fullName;
     var removeMembershipDate = memberExpiryDate ? new Date(memberExpiryDate.getTime() + msBeforeRemovedMembership) : null;
     
-    memberTelegramId = '432298769';
+    //memberTelegramId = '432298769';
     memberEmail = 'oleksandr@tebenko.com';
     
     if (memberStatus == MEMBERS_STATUS_EX_MEMBER) {
@@ -353,6 +355,7 @@ function checkMembershipAndSendNotifications() {
       if (memberTelegramId) {
         var callbacks = []; 
         callbacks.push({data : MEMBERS_CANCEL_WAITING_PAYMENT_CALLBACK + '___' +  fullName, text: MEMBERS_CANCEL_WAITING_PAYMENT});  
+        callbacks.push({data : MEMBERS_KEEP_MEMBERSHIP_CALLBACK + '___' +  fullName, text: MEMBERS_KEEP_MEMBERSHIP});  
         sendTextWithCallbacks(memberTelegramId, callbacks, message);
         memberAndMessageStatus += ' 💬';
       } else if (memberEmail) {
@@ -360,13 +363,12 @@ function checkMembershipAndSendNotifications() {
         memberAndMessageStatus += ' ✉️';
       }       
       waitingPaymentMembers.push(memberAndMessageStatus);
-    } else if (isValidDate(memberExpiryDate) && new Date() >= memberExpiryDate && new Date() <= removeMembershipDate) {
-      
-      
+    } else if (isValidDate(memberExpiryDate) && new Date() >= memberExpiryDate && new Date() <= removeMembershipDate) {      
       var message = format(FINANCE_MEMBERSHIP_EXPIRED_MEMBER_NOTIFICATION, callName || firstName, treasureMemberInfo.fullName, treasureMemberInfo.fields[MEMBERS_HEADER_TELEGRAM]);
       if (memberTelegramId) {
         var callbacks = []; 
         callbacks.push({data : MEMBERS_CANCEL_MEMBERSHIP_CALLBACK + '___' +  fullName, text: MEMBERS_CANCEL_MEMBERSHIP});  
+        callbacks.push({data : MEMBERS_KEEP_MEMBERSHIP_CALLBACK + '___' +  fullName, text: MEMBERS_KEEP_MEMBERSHIP});  
         sendTextWithCallbacks(memberTelegramId, callbacks, message);
         memberAndMessageStatus += ' 💬';
       } else if (memberEmail) {
@@ -389,11 +391,11 @@ function checkMembershipAndSendNotifications() {
     }
   }
 
-  if (expiredMembers.length || removedMembers.length || guests.length) {
+  if (expiredMembers.length || removedMembers.length || waitingPaymentMembers.length) {
     var expiredMembersList = expiredMembers.length ? expiredMembers.join('\n') : EMPTY;
     var removedMembersList = removedMembers.length ? removedMembers.join('\n') : EMPTY;
     var waitingPaymentMembersList = waitingPaymentMembers.length ? waitingPaymentMembers.join('\n') : EMPTY;
-    
+
     sendText(treasureMemberInfo.telegramId, format(FINANCE_MEMBERSHIP_TREASURER_NOTIFICATION, expiredMembersList, removedMembersList, waitingPaymentMembersList));
   }
 }

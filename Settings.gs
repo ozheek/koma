@@ -9,6 +9,7 @@ function setRemindTriggers(){
   ScriptApp.newTrigger("sendMeetingNotifications").timeBased().atHour(16).everyDays(1).inTimezone("Europe/Kiev").create();   
   ScriptApp.newTrigger("deleteExpiredCallbacks").timeBased().atHour(05).everyDays(7).inTimezone("Europe/Kiev").create();  
   ScriptApp.newTrigger("checkProgramBeforeMeeting").timeBased().everyHours(2).inTimezone("Europe/Kiev").create();  
+  ScriptApp.newTrigger("checkMembershipAndSendNotifications").timeBased().everyWeeks(2).onWeekDay(ScriptApp.WeekDay.TUESDAY).atHour(18).inTimezone("Europe/Kiev").create();  
 }
 
 /* НАЛАШТУВАННЯ */
@@ -38,6 +39,8 @@ var EMPTY = 'Немає';
 var REPLY_SYMBOL = '🔹';
 var YES = "Так! 😍";
 var NO = "Ні 😔";
+
+var CALLNAME_GENERAL = 'вас';
 
 /* РОБОЧІ ЗМІННІ */
 
@@ -69,6 +72,10 @@ var DAYS_BEFORE_REMOVED_MEMBERSHIP = '60';
 var TRIAL_PERIOD_TO_PAY_MONTHS = 2; // якщо користувач заплатить протягом 2х місяців, то йому членство продовжиться з останньої дати оплати
 var DAY_IN_MONTH_FROM_WHICH_DISCOUNT_APLIED = 15; // з якого дня в місця коли членство зараховується вже з наступного місяця
   
+// РЕЄСТРАЦІЯ
+
+var REGISTRATION_DAYS_BEFORE_ASK = '2'; // 2 днi
+
 // ВІЦЕ-ПРЕЗИДЕНТ З ОСВІТИ
 
 var VPO_TELEGRAM = "@teb01";

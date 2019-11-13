@@ -1,12 +1,6 @@
 var SHEET_LIBRARY = 'Бібліотека';
 var SHEET_LIBRARY_HISTORY = 'Бібліотека (Історія)';
 
-/* ОПЦІЇ */
-var LIBRARY_BOOK_FEE = 10; // 10грн
-var LIBRARY_RESERVATION_DAYS = 7; // 7днів
-var LIBRARY_DAYS_BEFORE_RETURN = 3; // 3 дні
-var LIBRARY_REMIND_RETURN_FREQUENCY = 7; // 7 днів
-
 /* МЕНЮ */
 var LIBRARY = '📚 Бібліотека';
 var LIBRARY_GIVE_BOOK = 'Видати книгу';
@@ -83,7 +77,9 @@ var LIBRARY_TAKE_BUSY = 'На жаль, книга <b>{0}</b> (<i>{1}</i>) за�
 var LIBRARY_TAKE_CANCELED = '{0}, привіт!\
 \n\nНа жаль, ви не забрали книгу <b>{1}</b> (<i>{2}</i>) і її резерв було скасовано.\
 \n\nЯкщо ви плануєте ще взяти цю книгу, зарезервуйте її, будь ласка, ще раз 😊';
-var LIBRARY_TAKE_REQUEST = 'Користувач <b>{0}</b> (<i>{1}, {2}</i>) хоче взяти книгу <b>{3}</b> (<i>{4}</i>), код книги: {5}.';
+var LIBRARY_TAKE_REQUEST = '📚 <b>Сповіщення по бібліотеці</b>\n\nКористувач <b>{0}</b> (<i>{1}, {2}</i>) хоче взяти книгу <b>{3}</b> (<i>{4}</i>).\
+                                \n\n<b>Книга знаходиться:</b> {5}\n<b>Книга знаходиться:</b> {6}\
+                                \n\n<b>Код книги:</b> {7}.';
 
 /* ПРАВИЛА КОРИСТУВАННЯ БIБЛIОТЕКОЮ */
 var LIBRARY_RULES = 'Любий читачу!\
@@ -149,7 +145,8 @@ function processLibrary(userData, text) {
                             //sendMessageToOfficer(OFFICER_POSITION_PRESIDENT, format(LIBRARY_TAKE_REQUEST, userData.fullName, userData.fields[MEMBERS_HEADER_EMAIL_ADDRESS], userData.fields[MEMBERS_HEADER_MOBILE_PHONE_NUMBER], bookInfo[LIBRARY_HEADER_TITLE], bookInfo[LIBRARY_HEADER_AUTHOR]));
                             var message = format(LIBRARY_TAKE_REQUEST, userData.fullName, userData.fields[MEMBERS_HEADER_EMAIL_ADDRESS],
                                 '+' + userData.fields[MEMBERS_HEADER_MOBILE_PHONE_NUMBER], bookInfo[LIBRARY_HEADER_TITLE],
-                                bookInfo[LIBRARY_HEADER_AUTHOR], bookInfo[LIBRARY_HISTORY_HEADER_CODE]);
+                                bookInfo[LIBRARY_HEADER_AUTHOR], bookInfo[LIBRARY_HEADER_PLACE], bookInfo[LIBRARY_HEADER_OWNER],
+                                bookInfo[LIBRARY_HISTORY_HEADER_CODE]);
                             if (!sendMessageToOfficer(OFFICER_POSITION_LIBRARIAN, message)) {
                                 sendMessageToOfficer(OFFICER_POSITION_SECRETARY, message);
                             }
