@@ -34,7 +34,7 @@ function processCallback(contents) {
                     now.addDays(CANCEL_ROLE_BEFORE_DAYS) <= parseDate(date)) {
                     if (updateMeetingInfo(date, role, '', false)) {
                        sendMemberCanceledRoleMessage(memberInfo, date, role);
-                       var roleInfo = role.indexOf(MEETING_ROLE_SPEACH) > -1 ? role + MEETING_SPEECH_RELATED_ROLES_LIST : role;
+                       var roleInfo = role.indexOf(MEETING_ROLE_SPEACH) > -1 ? role + MEETING_SPEECH_RELATED_ROLES : role;
                        showMenu(callbackId, format(CALLBACK_ROLE_FREE, roleInfo, date));
                     }
                 } else {
@@ -46,7 +46,7 @@ function processCallback(contents) {
                 var fullName = statuses[3];
 
                 if (updateMeetingInfo(date, role, '', false)) {
-                    showMenu(callbackId, format(CALLBACL_ROLE_VALUE_CLEANED, role.indexOf(MEETING_ROLE_SPEACH) > -1 ? role + MEETING_SPEECH_RELATED_ROLES_LIST : role, date));
+                    showMenu(callbackId, format(CALLBACL_ROLE_VALUE_CLEANED, role.indexOf(MEETING_ROLE_SPEACH) > -1 ? role + MEETING_SPEECH_RELATED_ROLES : role, date));
                 }
             } else if (statuses[0] == MEETING_SPEACH_CHANGE_PROJECT_CALLBACK) {
                 updateMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, callbackId, MEMBERS_HEADER_TELEGRAM_STATUS, callback);
