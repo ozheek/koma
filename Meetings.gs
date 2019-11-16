@@ -138,7 +138,7 @@ var MEETING_ASSIGN_ROLE_SELECT_ROLE = 'Яку роль необхідно вик
 var MEETING_ASSIGN_ROLE_SELECT_ROLE_OR_DATE = 'Хочете вибрати спочатку засідання чи роль?';
 
 var MEETING_ROLE_INFO_SPEACH_0_DAY = '{0}, засідання вже скоро, а в мене досі немає <b>{1}</b> для <b>вашої промови</b>. Заповніть дані якомога раніше, щоб я міг правильно сформувати програму ☺';
-var MEETING_ROLE_INFO_WORD_OF_THE_DAY_0_DAY = '{0}, засідання вже скоро, а в мене досі немає <b>немає слова дня</b>. Придумайте якнайшвидше слово дня і повідомте мені 😍';
+var MEETING_ROLE_INFO_WORD_OF_THE_DAY_0_DAY = '{0}, засідання вже скоро, а в мене досі <b>немає слова дня</b>. Придумайте якнайшвидше слово дня і повідомте мені 😍';
 var MEETING_ROLE_INFO_THEME_0_DAY = '{0}, засідання вже скоро, а в мене досі <b>немає теми засідання</b>. Придумайте якнайшвидше тему і повідомте мені 😍';
 
 var MEETING_ROLES_NOT_ASSIGNED = 'Ви не записані на жодну роль.';
@@ -510,37 +510,147 @@ function processAssignRole(userData, text) {
         if (userData.statuses[3] == MEETING_SIGN_UP_DATE) {
             if (userData.statuses[4]) {
                 if (userData.statuses[5]) {
-                    if (!userData.statuses[6]) {
-                        if (tryToUpdateMeetingInfo(userData.statuses[4], text, userData.statuses[5])) {
-                            var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, userData.statuses[5]);
-                            if (memberInfo) {
-                                var callName = memberInfo.callName || memberInfo.name;
-                                sendText(memberInfo.telegramId, format(MEETING_ASSIGN_ROLE_SUCCESS_MEMBER, callName, userData.statuses[4], text));
+                    if (userData.statuses[6]) {
+                       if(!userData.statuses[7]) {
+                         if (text.indexOf(MEETING_ROLE_EVALUATION) > -1 || text.indexOf(MEETING_EVALUATION_BUTTON_SELECT_RANDOM) > -1) {
+                            var meetingUpdated = (text == MEETING_EVALUATION_BUTTON_SELECT_RANDOM) ?
+                                tryToUpdateMeetingInfo(userData.statuses[4], MEETING_ROLE_EVALUATION, userData.statuses[5]) :
+                                updateMeetingInfo(userData.statuses[4], text, userData.statuses[5], true);
+
+                            if (meetingUpdated) {
+                                var successMessage = (text == MEETING_EVALUATION_BUTTON_SELECT_RANDOM) ?
+                                    format(MEETING_ASSIGN_ROLE_SUCCESS, userData.statuses[5], MEETING_ROLE_EVALUATION, userData.statuses[4]) :
+                                    format(MEETING_ASSIGN_ROLE_SUCCESS, userData.statuses[5], text, userData.statuses[4]);
+                                    
+                                var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, userData.statuses[5]);
+                                if (memberInfo) {
+                                  var callName = memberInfo.callName || memberInfo.name;
+                                  var evaluation = (text == MEETING_EVALUATION_BUTTON_SELECT_RANDOM) ? MEETING_ROLE_EVALUATION : text;
+                                  
+                                  sendText(memberInfo.telegramId, format(MEETING_ASSIGN_ROLE_SUCCESS_MEMBER, callName, userData.statuses[4], evaluation));
+                                }
+                                showMenu(userData.telegramId, successMessage);
+                            } else {
+                                var failedMessage = (text == MEETING_EVALUATION_BUTTON_SELECT_RANDOM) ?
+                                    format(MEETING_EVALUATION_SIGN_UP_ALL_BUSY, userData.statuses[4]) :
+                                    format(MEETING_EVALUATION_SIGN_UP_BUSY, text, userData.statuses[4]);
+
+                                sendText(userData.telegramId, failedMessage);
+                                goBack(userData);
                             }
-                            showMenu(userData.telegramId, format(MEETING_ASSIGN_ROLE_SUCCESS, userData.statuses[5], text, userData.statuses[4]));
-                        } else {
-                            showMenu(userData.telegramId, format(MEETING_ASSIGN_ROLE_BUSY_ROLE, text, userData.statuses[4]), getMeetingRoles(userData.statuses[4], true));
+                            return false;
                         }
-                        return true;
+                      }
                     }
+                    
+                    if (text == MEETING_ROLE_EVALUATION) {
+                      var speeches = getMeetingSpeeches(userData.statuses[4]);
+                      if (speeches) {
+                        var message = MEETING_EVALUATION_SELECT_SPEECH + '\n\n';
+                        var buttons = [];
+                        
+                        for (var i = 0; i < speeches.length; i++) {
+                          var speech = speeches[i];                                          
+                          message += format(MEETING_EVALUATION_SELECT_LIST, 
+                                            speech.name, speech.speaker, 
+                                            speech.title, speech.project);
+                          buttons.push(format(MEETING_EVALUATION_BUTTON_SELECT, speech.number));
+                        }
+                        buttons.push(MEETING_EVALUATION_BUTTON_SELECT_RANDOM);
+                        
+                        showMenu(userData.telegramId, message, buttons, 1);
+                        return true;
+                      }
+                      showMenu(userData.telegramId, format(MEETING_EVALUATION_SIGN_UP_ALL_BUSY, userData.statuses[4]), getMeetingRoles(userData.statuses[4]));
+                      return false;
+                    } 
+                    
+                    if (tryToUpdateMeetingInfo(userData.statuses[4], text, userData.statuses[5])) {
+                      var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, userData.statuses[5]);
+                      if (memberInfo) {
+                        var callName = memberInfo.callName || memberInfo.name;
+                        sendText(memberInfo.telegramId, format(MEETING_ASSIGN_ROLE_SUCCESS_MEMBER, callName, userData.statuses[4], text));
+                      }
+                      showMenu(userData.telegramId, format(MEETING_ASSIGN_ROLE_SUCCESS, userData.statuses[5], text, userData.statuses[4]));
+                    } else {
+                      showMenu(userData.telegramId, format(MEETING_ASSIGN_ROLE_BUSY_ROLE, text, userData.statuses[4]), getMeetingRoles(userData.statuses[4], true));
+                    }
+                    return true;
                 } else {
                     return searchMemberInDatabase(text, userData.telegramId, format(MEETING_ASSIGN_ROLE_AVAILABLE_ROLES, userData.statuses[4]), getMeetingRoles(userData.statuses[4], true));
                 }
             } else {
-                showMenu(userData.telegramId, MEETING_ASSIGN_ROLE_SELECT_MEMBER, getAllMembers()); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                showMenu(userData.telegramId, MEETING_ASSIGN_ROLE_SELECT_MEMBER, getAllMembers());
                 return true;
             }
         } else if (userData.statuses[3] == MEETING_SIGN_UP_ROLE) {
             if (userData.statuses[4]) {
-                if (userData.statuses[5]) {
-                    if (!userData.statuses[6]) {
-                        if (tryToUpdateMeetingInfo(text, userData.statuses[4], userData.statuses[5])) {
-                            showMenu(userData.telegramId, format(MEETING_ASSIGN_ROLE_SUCCESS, userData.statuses[5], userData.statuses[4], text));
-                        } else {
-                            showMenu(userData.telegramId, format(MEETING_ASSIGN_ROLE_BUSY_DATE, userData.statuses[4], text), getAvailableRoleDates(userData.statuses[4], true));
+                if (userData.statuses[5]) { 
+                    if (userData.statuses[6]) {
+                       if(!userData.statuses[7]) {
+                         if (text.indexOf(MEETING_ROLE_EVALUATION) > -1 || text.indexOf(MEETING_EVALUATION_BUTTON_SELECT_RANDOM) > -1) {
+                            var meetingUpdated = (text == MEETING_EVALUATION_BUTTON_SELECT_RANDOM) ?
+                                tryToUpdateMeetingInfo(userData.statuses[6], MEETING_ROLE_EVALUATION, userData.statuses[5]) :
+                                updateMeetingInfo(userData.statuses[6], text, userData.statuses[5], true);
+
+                            if (meetingUpdated) {
+                                var successMessage = (text == MEETING_EVALUATION_BUTTON_SELECT_RANDOM) ?
+                                    format(MEETING_ASSIGN_ROLE_SUCCESS, userData.statuses[5], MEETING_ROLE_EVALUATION, userData.statuses[6]) :
+                                    format(MEETING_ASSIGN_ROLE_SUCCESS, userData.statuses[5], text, userData.statuses[6]);
+                                    
+                                var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, userData.statuses[5]);
+                                if (memberInfo) {
+                                  var callName = memberInfo.callName || memberInfo.name;
+                                  var evaluation = (text == MEETING_EVALUATION_BUTTON_SELECT_RANDOM) ? MEETING_ROLE_EVALUATION : text;
+                                  
+                                  sendText(memberInfo.telegramId, format(MEETING_ASSIGN_ROLE_SUCCESS_MEMBER, callName, userData.statuses[6], evaluation));
+                                }
+                                showMenu(userData.telegramId, successMessage);
+                            } else {
+                                var failedMessage = (text == MEETING_EVALUATION_BUTTON_SELECT_RANDOM) ?
+                                    format(MEETING_EVALUATION_SIGN_UP_ALL_BUSY, userData.statuses[6]) :
+                                    format(MEETING_EVALUATION_SIGN_UP_BUSY, text, userData.statuses[6]);
+
+                                sendText(userData.telegramId, failedMessage);
+                                goBack(userData);
+                            }
+                            return false;
                         }
-                        return true;
+                      }
                     }
+                    if (userData.statuses[4] == MEETING_ROLE_EVALUATION) {
+                      var speeches = getMeetingSpeeches(text);
+                      if (speeches) {
+                        var message = MEETING_EVALUATION_SELECT_SPEECH + '\n\n';
+                        var buttons = [];
+                        
+                        for (var i = 0; i < speeches.length; i++) {
+                          var speech = speeches[i];                                          
+                          message += format(MEETING_EVALUATION_SELECT_LIST, 
+                                            speech.name, speech.speaker, 
+                                            speech.title, speech.project);
+                          buttons.push(format(MEETING_EVALUATION_BUTTON_SELECT, speech.number));
+                        }
+                        buttons.push(MEETING_EVALUATION_BUTTON_SELECT_RANDOM);
+                        
+                        showMenu(userData.telegramId, message, buttons, 1);
+                        return true;
+                      }
+                      showMenu(userData.telegramId, format(MEETING_EVALUATION_SIGN_UP_ALL_BUSY, text), getMeetingRoles(text));
+                      return false;
+                    } 
+                    
+                    if (tryToUpdateMeetingInfo(text, userData.statuses[4], userData.statuses[5])) {
+                      var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, userData.statuses[5]);
+                      if (memberInfo) {
+                        var callName = memberInfo.callName || memberInfo.name;
+                        sendText(memberInfo.telegramId, format(MEETING_ASSIGN_ROLE_SUCCESS_MEMBER, callName, text, userData.statuses[4]));
+                      }
+                      showMenu(userData.telegramId, format(MEETING_ASSIGN_ROLE_SUCCESS, userData.statuses[5], userData.statuses[4], text));
+                    } else {
+                      showMenu(userData.telegramId, format(MEETING_ASSIGN_ROLE_BUSY_DATE, userData.statuses[4], text), getAvailableRoleDates(text, true));
+                    }
+                    return true;
                 } else {
                     return searchMemberInDatabase(text, userData.telegramId, format(MEETING_ASSIGN_ROLE_AVAILABLE_DATES, userData.statuses[4]), getAvailableRoleDates(userData.statuses[4], true));
                 }

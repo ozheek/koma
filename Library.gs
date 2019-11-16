@@ -42,6 +42,13 @@ var LIBRARY_ADDED_SUCCESS = 'Книгу <b>{0}</b> (<i>{1}</i>) успішно �
 var LIBRARY_FINANCE_MORTGAGE = 'Застава за книгу';
 var LIBRARY_FINANCE_BOOK_FEE = 'Внесок за книгу';
 
+var LIBRARY_RETURN_LIBRARIAN_NOTIFICATION = '📚 <b>Сповіщення по бібліотеці</b>\n\nКористувач <b>{0}</b> (<i>{1}, {2}</i>) {3} <b>{4}</b> (<i>{5}</i>).\
+                                \n\n<b>Операцiю провiв:</b> {6}\
+                                \n\n<b>Книга знаходиться:</b> {7}\n<b>Книга належить:</b> {8}\
+                                \n\n<b>Код книги:</b> {9}.';
+var LIBRARY_TOOK_BOOK = 'взяв книгу';
+var LIBRARY_RETURNED_BOOK = 'повернув книгу';
+
 var LIBRARY_READ_INFO = 'Ви збираєтесь видати книгу <b>{0}</b> (<i>{1}</i>). Застава за цю книгу {2}.';
 var LIBRARY_READ_SUCCESSES = 'Від сьогоднішнього дня книгу <b>{0}</b> (<i>{1}</i>) читає <b>{2}</b>, книгу зарезервовано на <b>{3} днів</b>, внесено заставу <b>{4}грн</b>. Сплачено за користування книгою {5}грн 😍';
 var LIBRARY_READ_CANCEL = 'Операцію скасовано 😯 Книга досі вільна, її може взяти інший читач.';
@@ -78,7 +85,7 @@ var LIBRARY_TAKE_CANCELED = '{0}, привіт!\
 \n\nНа жаль, ви не забрали книгу <b>{1}</b> (<i>{2}</i>) і її резерв було скасовано.\
 \n\nЯкщо ви плануєте ще взяти цю книгу, зарезервуйте її, будь ласка, ще раз 😊';
 var LIBRARY_TAKE_REQUEST = '📚 <b>Сповіщення по бібліотеці</b>\n\nКористувач <b>{0}</b> (<i>{1}, {2}</i>) хоче взяти книгу <b>{3}</b> (<i>{4}</i>).\
-                                \n\n<b>Книга знаходиться:</b> {5}\n<b>Книга знаходиться:</b> {6}\
+                                \n\n<b>Книга знаходиться:</b> {5}\n<b>Книга належить:</b> {6}\
                                 \n\n<b>Код книги:</b> {7}.';
 
 /* ПРАВИЛА КОРИСТУВАННЯ БIБЛIОТЕКОЮ */
@@ -296,6 +303,16 @@ function processLibraryManagement(userData, text) {
                                 insertLibraryHistory(code, title, author, LIBRARY_HISTORY_TOOK, userData.fullName, reader);
                                 showMenu(userData.telegramId, format(LIBRARY_READ_SUCCESSES, title, author, reader, days, mortgage, LIBRARY_BOOK_FEE));
                                 showParentManagementMenu(userData);
+                                
+                                if (userData.fields[MEMBERS_HEADER_POSITION] != OFFICER_POSITION_LIBRARIAN) {
+                                  var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, reader);
+                                   var message = format(LIBRARY_RETURN_LIBRARIAN_NOTIFICATION, memberInfo.fullName, memberInfo.fields[MEMBERS_HEADER_EMAIL_ADDRESS],
+                                     '+' + memberInfo.fields[MEMBERS_HEADER_MOBILE_PHONE_NUMBER], LIBRARY_TOOK_BOOK, bookInfo[LIBRARY_HEADER_TITLE],
+                                     bookInfo[LIBRARY_HEADER_AUTHOR], userData.fullName, bookInfo[LIBRARY_HEADER_PLACE], bookInfo[LIBRARY_HEADER_OWNER],
+                                     bookInfo[LIBRARY_HISTORY_HEADER_CODE]);
+                                
+                                   sendMessageToOfficer(OFFICER_POSITION_LIBRARIAN, message);
+                                }
                               } else {
                                 showMenu(userData.telegramId, format(LIBRARY_READ_BUSY, title, author, bookInfo[LIBRARY_HEADER_READER]));
                               }
@@ -367,7 +384,7 @@ function processLibraryManagement(userData, text) {
         } else if (userData.statuses[2] == LIBRARY_RETURN_BOOK) {
             if (userData.statuses[3]) {
                 var bookInfo = getLibraryBookInformation(userData.statuses[3]);
-                if (text == YES) {
+                if (text == YES) { 
                     updateLibraryBook(userData.statuses[3], LIBRARY_BOOK_STATUS_FREE, '', '', '', '', '');
                     insertFinanceData(FINANCE_LISTS_TYPE_LIBRARY, bookInfo[LIBRARY_HEADER_READER], -1 * bookInfo[LIBRARY_HEADER_PAID_MORTGAGE], userData.fullName, LIBRARY_FINANCE_MORTGAGE);
                     insertLibraryHistory(userData.statuses[3], bookInfo[LIBRARY_HEADER_TITLE], bookInfo[LIBRARY_HEADER_AUTHOR], LIBRARY_HISTORY_RETURNED,
@@ -375,6 +392,16 @@ function processLibraryManagement(userData, text) {
 
                     showMenu(userData.telegramId, format(LIBRARY_RETURN_SUCCESS, bookInfo[LIBRARY_HEADER_TITLE], bookInfo[LIBRARY_HEADER_AUTHOR]));
                     showParentManagementMenu(userData);
+                    
+                    if (userData.fields[MEMBERS_HEADER_POSITION] != OFFICER_POSITION_LIBRARIAN) {
+                      var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, bookInfo[LIBRARY_HEADER_READER]);
+                      var message = format(LIBRARY_RETURN_LIBRARIAN_NOTIFICATION, memberInfo.fullName, memberInfo.fields[MEMBERS_HEADER_EMAIL_ADDRESS],
+                                           '+' + memberInfo.fields[MEMBERS_HEADER_MOBILE_PHONE_NUMBER], LIBRARY_RETURNED_BOOK, bookInfo[LIBRARY_HEADER_TITLE],
+                                           bookInfo[LIBRARY_HEADER_AUTHOR], userData.fullName, bookInfo[LIBRARY_HEADER_PLACE], bookInfo[LIBRARY_HEADER_OWNER],
+                                           bookInfo[LIBRARY_HISTORY_HEADER_CODE]);
+                      
+                      sendMessageToOfficer(OFFICER_POSITION_LIBRARIAN, message);
+                    }
                     return false;
                 } else if (text == NO) {
                     showMenu(userData.telegramId, format(LIBRARY_RETURN_CANCEL, bookInfo[LIBRARY_HEADER_TITLE], bookInfo[LIBRARY_HEADER_AUTHOR], bookInfo[LIBRARY_HEADER_READER]));

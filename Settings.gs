@@ -9,7 +9,8 @@ function setRemindTriggers(){
   ScriptApp.newTrigger("sendMeetingNotifications").timeBased().atHour(16).everyDays(1).inTimezone("Europe/Kiev").create();   
   ScriptApp.newTrigger("deleteExpiredCallbacks").timeBased().atHour(05).everyDays(7).inTimezone("Europe/Kiev").create();  
   ScriptApp.newTrigger("checkProgramBeforeMeeting").timeBased().everyHours(2).inTimezone("Europe/Kiev").create();  
-  ScriptApp.newTrigger("checkMembershipAndSendNotifications").timeBased().everyWeeks(2).onWeekDay(ScriptApp.WeekDay.TUESDAY).atHour(18).inTimezone("Europe/Kiev").create();  
+  ScriptApp.newTrigger("checkMembershipAndSendNotifications").timeBased().everyWeeks(2).onWeekDay(ScriptApp.WeekDay.TUESDAY).atHour(18).inTimezone("Europe/Kiev").create();
+  ScriptApp.newTrigger("searchUnfinishedRegistrationsAndNotifyUsers").timeBased().atHour(14).everyDays(1).inTimezone("Europe/Kiev").create();
 }
 
 /* НАЛАШТУВАННЯ */
