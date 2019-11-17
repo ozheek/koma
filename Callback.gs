@@ -82,12 +82,24 @@ function processCallback(contents) {
                 var role = statuses[2];
                 var fullName = statuses[3];
                 
-                var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, fullName);
-                if (updateMeetingInfo(date, role, fullName, true)) {
+                if (role == MEETING_ROLE_EVALUATION)
+                {
+                  var userData = getMemberInfo(MEMBERS_HEADER_TELEGRAM_ID, callbackId);
+                
+                  userData.statuses = [MANAGEMENT, MEETING, MEETING_ASSIGN_ROLE, MEETING_SIGN_UP_DATE, date, fullName];
+                  userData.status = userData.statuses.join('___') + '___';
+                
+                  processRequest(userData, role);    
+                }
+                else 
+                {
+                  var memberInfo = getMemberInfo(MEMBERS_HEADER_FULLNAME, fullName);
+                  if (tryToUpdateMeetingInfo(date, role, fullName, true)) {
                     sendText(memberInfo.telegramId, format(MEETING_ROLE_REQUEST_CONFIRMED, memberInfo.callName, date, role));
                     sendText(callbackId, format(MEETING_ROLE_REQUEST_CONFIRMED_INFO, fullName, role, date));
-                } else {
+                  } else {
                     sendText(callbackId, format(MEETING_ROLE_REQUEST_BUSY, role, date, fullName));
+                  }
                 }
             } else if (statuses[0] == MEETING_ROLE_REQUEST_REJECT_CALLBACK) {
                 var date = statuses[1];
