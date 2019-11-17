@@ -333,26 +333,28 @@ function processLibraryManagement(userData, text) {
                       }
                    }  
                 } else {
-                    var bookInfo = getLibraryBookInformation(userData.statuses[3]);
+                    if (searchMemberInDatabase(text, userData.telegramId, null, null)) {
                     
-                    if(bookInfo[LIBRARY_HEADER_STATUS] == LIBRARY_BOOK_STATUS_RESERVED) 
-                    {
-                        if(bookInfo[LIBRARY_HEADER_READER] != text) 
-                        {
+                      var bookInfo = getLibraryBookInformation(userData.statuses[3]);
+                      
+                      if(bookInfo[LIBRARY_HEADER_STATUS] == LIBRARY_BOOK_STATUS_RESERVED) {
+                        if(bookInfo[LIBRARY_HEADER_READER] != text) {
                           showMenu(userData.telegramId, format(LIBRARY_READ_BOOK_IS_RESERVED_WARNING, bookInfo[LIBRARY_HEADER_TITLE], bookInfo[LIBRARY_HEADER_AUTHOR], bookInfo[LIBRARY_HEADER_READER], text), [NO, YES]);
                           return true;
                         }
-                    }
-                    
-                    var mortgages = [];
-                    
-                    if (bookInfo[LIBRARY_HEADER_MORTGAGE] && bookInfo[LIBRARY_HEADER_MORTGAGE] > 0) 
-                    {
-                      mortgages.push(bookInfo[LIBRARY_HEADER_MORTGAGE] + LIBRARY_READ_MORTGAGE_CURRENCY);
-                    }
-                    mortgages.push(LIBRARY_READ_MORTGAGE_ZERO);
-                    showMenu(userData.telegramId, LIBRARY_READ_MORTGAGE, mortgages);
-                    return true;
+                      }
+                      
+                      var mortgages = [];
+                      
+                      if (bookInfo[LIBRARY_HEADER_MORTGAGE] && bookInfo[LIBRARY_HEADER_MORTGAGE] > 0) 
+                      {
+                        mortgages.push(bookInfo[LIBRARY_HEADER_MORTGAGE] + LIBRARY_READ_MORTGAGE_CURRENCY);
+                      }
+                      mortgages.push(LIBRARY_READ_MORTGAGE_ZERO);
+                      showMenu(userData.telegramId, LIBRARY_READ_MORTGAGE, mortgages);
+                      return true;
+                   } 
+                   return false;
                 }
             } else {
                if(text == LIBRARY_SHOW_LIST) {
